@@ -114,7 +114,7 @@ class GeCoS_IO_V2 extends IPSModule
 		$arrayValues[] = array("ServiceTyp" => "I²C", "ServiceStatus" => $ServiceArray["I2C"]["Status"], "rowColor" => $ServiceArray["I2C"]["Color"]);
 		$arrayValues[] = array("ServiceTyp" => "Serielle Schnittstelle (RS232)", "ServiceStatus" => $ServiceArray["Serielle Schnittstelle"]["Status"], "rowColor" => $ServiceArray["Serielle Schnittstelle"]["Color"]);
 		$arrayValues[] = array("ServiceTyp" => "Shell Zugriff", "ServiceStatus" => $ServiceArray["Shell Zugriff"]["Status"], "rowColor" => $ServiceArray["Shell Zugriff"]["Color"]);
-		$arrayValues[] = array("ServiceTyp" => "PIGPIO Server", "ServiceStatus" => $ServiceArray["PIGPIO Server"]["Status"], "rowColor" => $ServiceArray["PIGPIO Server"]["Color"]);
+		//$arrayValues[] = array("ServiceTyp" => "PIGPIO Server", "ServiceStatus" => $ServiceArray["PIGPIO Server"]["Status"], "rowColor" => $ServiceArray["PIGPIO Server"]["Color"]);
 		
 		$arrayElements[] = array("type" => "List", "name" => "Raspi_Config", "caption" => "Konfiguration", "rowCount" => 4, "add" => false, "delete" => false, "sort" => "", "columns" => $arrayColumns, "values" => $arrayValues);
 	
@@ -836,19 +836,18 @@ class GeCoS_IO_V2 extends IPSModule
 			}
 			
 			//PIGPIOD
-			$PathPIGPIOD = "/etc/systemd/system/pigpiod.service.d/public.conf";
+			//$PathPIGPIOD = "/etc/systemd/system/pigpiod.service.d/public.conf";
 			// Prüfen, ob die Datei existiert
-			if ($sftp->file_exists($PathPIGPIOD)) {
-				$this->SendDebug("CheckConfig", "PIGPIO-Server ist aktiviert", 0);
-				$arrayCheckConfig["PIGPIO Server"]["Status"] = "aktiviert";
-				$arrayCheckConfig["PIGPIO Server"]["Color"] = "#00FF00";
-			}
-			else {
-				$this->SendDebug("CheckConfig", "PIGPIO-Server ist deaktiviert!", 0);
-				IPS_LogMessage("GeCoS_IO CheckConfig", "PIGPIO-Server ist deaktiviert!");
-				$arrayCheckConfig["PIGPIO Server"]["Status"] = "deaktiviert";
-				$arrayCheckConfig["PIGPIO Server"]["Color"] = "#FF0000";
-			}
+			//if ($sftp->file_exists($PathPIGPIOD)) {
+			//	$this->SendDebug("CheckConfig", "PIGPIO-Server ist aktiviert", 0);
+			//	$arrayCheckConfig["PIGPIO Server"]["Status"] = "aktiviert";
+			//	$arrayCheckConfig["PIGPIO Server"]["Color"] = "#00FF00";
+			//} else {
+			//	$this->SendDebug("CheckConfig", "PIGPIO-Server ist deaktiviert!", 0);
+			//	IPS_LogMessage("GeCoS_IO CheckConfig", "PIGPIO-Server ist deaktiviert!");
+			//	$arrayCheckConfig["PIGPIO Server"]["Status"] = "deaktiviert";
+			//	$arrayCheckConfig["PIGPIO Server"]["Color"] = "#FF0000";
+			//}
 			
 		}
 			
