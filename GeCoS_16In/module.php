@@ -107,14 +107,18 @@
 	 	switch ($data->Function) {
 			case "SAI":
 			   	If ($this->ReadPropertyBoolean("Open") == true) {
-					$Value = intval($data->Value); 
-					$this->SendDebug("ReceiveData", "SAI Value: ".$Value, 0);
-					// Statusvariablen setzen
-					for ($i = 0; $i <= 15; $i++) {
-						$Bitvalue = boolval($Value & pow(2, $i));					
-						If (GetValueBoolean($this->GetIDForIdent("Input_X".$i)) <> $Bitvalue) {
-							SetValueBoolean($this->GetIDForIdent("Input_X".$i), $Bitvalue);
-						}
+					if ($data->StatusMessage =="OK") {						
+						$Value = intval($data->Value); 
+						$this->SendDebug("ReceiveData", "SAI Value: ".$Value, 0);
+						// Statusvariablen setzen
+						for ($i = 0; $i <= 15; $i++) {
+							$Bitvalue = boolval($Value & pow(2, $i));					
+							If (GetValueBoolean($this->GetIDForIdent("Input_X".$i)) <> $Bitvalue) {
+								SetValueBoolean($this->GetIDForIdent("Input_X".$i), $Bitvalue);
+							}
+					} else {
+						$this->SendDebug("16IN Error", "Fehler Eingang lesen", 0);	
+						
 					}
 				}
 				break; 
