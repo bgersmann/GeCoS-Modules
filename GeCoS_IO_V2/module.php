@@ -759,8 +759,8 @@ class GeCoS_IO_V2 extends IPSModule
 		$arrayCheckConfig["Serielle Schnittstelle"]["Color"] = "#FFFF00";
 		$arrayCheckConfig["Shell Zugriff"]["Status"] = "unbekannt";
 		$arrayCheckConfig["Shell Zugriff"]["Color"] = "#FFFF00";
-		$arrayCheckConfig["PIGPIO Server"]["Status"] = "unbekannt";
-		$arrayCheckConfig["PIGPIO Server"]["Color"] = "#FFFF00";
+		//$arrayCheckConfig["PIGPIO Server"]["Status"] = "unbekannt";
+		//$arrayCheckConfig["PIGPIO Server"]["Color"] = "#FFFF00";
 		
 		If (($this->ReadPropertyBoolean("Open") == true) AND ($this->GetParentStatus() == 102)) {			
 			set_include_path(__DIR__.'/../libs');
