@@ -862,11 +862,7 @@ class GeCoS_IO_V2 extends IPSModule
 		      	$this->SendDebug("Netzanbindung", "Angegebene IP ".$this->ReadPropertyString("IPAddress")." reagiert", 0);
 		      	If ($this->GetStatus() <> 102) {
 				$status = @fsockopen($this->ReadPropertyString("IPAddress"), 8000, $errno, $errstr, 10);
-			} else {
-				$status=true;
-			}	      
-			
-				if (!$status) {
+			if (!$status) {
 					SetValueBoolean($this->GetIDForIdent("ServerStatus"), false);
 					IPS_LogMessage("GeCoS_IO Netzanbindung","Port ist geschlossen!");
 					$this->SendDebug("Netzanbindung", "Port ist geschlossen!", 0);
@@ -902,6 +898,7 @@ class GeCoS_IO_V2 extends IPSModule
 						$this->SetStatus(102);
 					}
 	   			}
+			}		      
 		}
 		else {
 			SetValueBoolean($this->GetIDForIdent("ServerStatus"), false);
