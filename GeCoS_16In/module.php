@@ -119,7 +119,7 @@
 						}
 					} else {
 						//$this->SendDebug("16IN Error", "Fehler Eingang lesen", 0);	
-						$this->LogMessage("16IN Fehler Eingang lesen", KL_WARNING);
+						$this->LogMessage("16IN Fehler Eingang lesen - ".$data->StatusMessage, KL_WARNING);
 					}
 				}
 				break; 
