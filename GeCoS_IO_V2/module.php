@@ -127,6 +127,7 @@ class GeCoS_IO_V2 extends IPSModule
 			$arrayActions[] = array("type" => "Button", "caption" => "Setzen der Real-Time-Clock auf IPS-Zeit", "onClick" => 'GeCoSIOV2_SetRTC_Data($id);');		
 			$arrayActions[] = array("type" => "Button", "caption" => "Server-Softwareupdate", "onClick" => 'GeCoSIOV2_GetUpdate($id);');
 			$arrayActions[] = array("type" => "Button", "caption" => "Restart Server-Software", "onClick" => 'GeCoSIOV2_ServerRestart($id);');
+			$arrayActions[] = array("type" => "Button", "caption" => "Restart Raspberry PI", "onClick" => 'GeCoSIOV2_ServerRestart($id);');
 		}
 		else {
 			$arrayActions[] = array("type" => "Label", "caption" => "Diese Funktionen stehen erst nach Eingabe und Übernahme der erforderlichen Daten zur Verfügung!");
@@ -898,9 +899,11 @@ class GeCoS_IO_V2 extends IPSModule
 						$this->SetStatus(102);
 					}
 	   			}
+			} else {
+				$this->SendDebug("Netzanbindung", "Modul verbunden", 0);
+				$result = true;
 			}		      
-		}
-		else {
+		} else {
 			SetValueBoolean($this->GetIDForIdent("ServerStatus"), false);
 			IPS_LogMessage("GeCoS_IO Netzanbindung","IP ".$this->ReadPropertyString("IPAddress")." reagiert nicht!");
 			$this->SendDebug("Netzanbindung", "IP ".$this->ReadPropertyString("IPAddress")." reagiert nicht!", 0);
