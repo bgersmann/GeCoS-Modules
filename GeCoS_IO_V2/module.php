@@ -127,9 +127,6 @@ class GeCoS_IO_V2 extends IPSModule
 			$arrayActions[] = array("type" => "Button", "caption" => "Setzen der Real-Time-Clock auf IPS-Zeit", "onClick" => 'GeCoSIOV2_SetRTC_Data($id);');		
 			$arrayActions[] = array("type" => "Button", "caption" => "Server-Softwareupdate", "onClick" => 'GeCoSIOV2_GetUpdate($id);');
 			$arrayActions[] = array("type" => "Button", "caption" => "Restart Server-Software", "onClick" => 'GeCoSIOV2_ServerRestart($id);');
-			//$arrayActions[] = array("type" => "Button", "caption" => "Restart Raspberry PI", "onClick" => 'GeCoSIOV2_RPiReboot($id);');
-			//$arrayActions[] = array("type" => "Button", "caption" => "Shutdown Raspberry PI", "onClick" => 'GeCoSIOV2_RPiShutdown($id);');
-			$arrayActions[] = array("type" => "Button", "caption" => "Restart Raspberry PI", "onClick" => 'GeCoSIOV2_ServerRestart($id);');
 		}
 		else {
 			$arrayActions[] = array("type" => "Label", "caption" => "Diese Funktionen stehen erst nach Eingabe und Übernahme der erforderlichen Daten zur Verfügung!");
@@ -854,7 +851,6 @@ class GeCoS_IO_V2 extends IPSModule
 			
 		}
 			
-		return serialize($arrayCheckConfig);
 	}
 	
 	private function ConnectionTest()
@@ -891,9 +887,6 @@ class GeCoS_IO_V2 extends IPSModule
 							$this->SetStatus(102);
 						}
 					}
-				}
-	   		} else {
-					fclose($status);
 	   			}
 	   			else {
 	   				fclose($status);
@@ -904,9 +897,6 @@ class GeCoS_IO_V2 extends IPSModule
 						$this->SetStatus(102);
 					}
 	   			}
-			} else {
-				$this->SendDebug("Netzanbindung", "Modul bereits verbunden", 0);
-				$result = true;
 			}		      
 		}
 		else {
@@ -917,7 +907,7 @@ class GeCoS_IO_V2 extends IPSModule
 				$this->SetStatus(201);
 			}
 		}
-		return $result;
+	return $result;
 	}
 	
 	private function InstanceArraySearch(String $SearchKey, Int $SearchValue)
@@ -979,7 +969,8 @@ class GeCoS_IO_V2 extends IPSModule
 		$OWHardware = array("10" => "DS18S20 Temperatur", "12" => "DS2406 Switch", "1D" => "DS2423 Counter" , "28" => "DS18B20 Temperatur", "3a" => "DS2413 2 Ch. Switch", "29" => "DS2408 8 Ch.Switch", "05" => "DS2405 Switch", "26" => "DS2438 Batt.Monitor");
 		If (array_key_exists($FamilyCode, $OWHardware)) {
 			$OWHardwareText = $OWHardware[$FamilyCode];
-		} else {
+		}
+		else {
 			$OWHardwareText = "Unbekannter 1-Wire-Typ!";
 		}
 		
@@ -988,17 +979,6 @@ class GeCoS_IO_V2 extends IPSModule
 	
 	private function RegisterProfileInteger($Name, $Icon, $Prefix, $Suffix, $MinValue, $MaxValue, $StepSize)
 	{
-	    if (!IPS_VariableProfileExists($Name))
-	    {
-	    	IPS_CreateVariableProfile($Name, 1);
-	    } else {
-			$profile = IPS_GetVariableProfile($Name);
-	        if ($profile['ProfileType'] != 0)
-	        	throw new Exception("Variable profile type does not match for profile " . $Name);
-	    }
-	    ($Name, $Icon);
-	    IPS_SetVariableProfileText($Name, $Prefix, $Suffix);
-	    IPS_SetVariableProfileValues($Name, $MinValue, $MaxValue, $StepSize);    
 	        if (!IPS_VariableProfileExists($Name))
 	        {
 	            IPS_CreateVariableProfile($Name, 1);
