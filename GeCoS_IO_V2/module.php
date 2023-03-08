@@ -851,6 +851,7 @@ class GeCoS_IO_V2 extends IPSModule
 			
 		}
 			
+	return serialize($arrayCheckConfig);
 	}
 	
 	private function ConnectionTest()
