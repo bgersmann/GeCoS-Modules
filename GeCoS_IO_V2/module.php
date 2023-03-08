@@ -127,6 +127,8 @@ class GeCoS_IO_V2 extends IPSModule
 			$arrayActions[] = array("type" => "Button", "caption" => "Setzen der Real-Time-Clock auf IPS-Zeit", "onClick" => 'GeCoSIOV2_SetRTC_Data($id);');		
 			$arrayActions[] = array("type" => "Button", "caption" => "Server-Softwareupdate", "onClick" => 'GeCoSIOV2_GetUpdate($id);');
 			$arrayActions[] = array("type" => "Button", "caption" => "Restart Server-Software", "onClick" => 'GeCoSIOV2_ServerRestart($id);');
+			$arrayActions[] = array("type" => "Button", "caption" => "Restart Raspberry", "onClick" => 'GeCoSIOV2_RPiReboot($id);');
+			$arrayActions[] = array("type" => "Button", "caption" => "Shutdown Raspberry", "onClick" => 'GeCoSIOV2_RPiShutdown($id);');
 		}
 		else {
 			$arrayActions[] = array("type" => "Label", "caption" => "Diese Funktionen stehen erst nach Eingabe und Übernahme der erforderlichen Daten zur Verfügung!");
@@ -749,7 +751,18 @@ class GeCoS_IO_V2 extends IPSModule
 		$Result = $this->SSH_Connect("sudo systemctl restart gecos.service");
 		$this->SendDebug("ServerRestart", "Ergebnis: ".$Result, 0);
 	}
-	
+	public function RPiReboot()
+	{
+		$this->SendDebug("ServerRestart", "Ausfuehrung", 0);
+		$Result = $this->SSH_Connect("sudo reboot");
+		$this->SendDebug("ServerRestart", "Ergebnis: ".$Result, 0);
+	}
+	public function RPiShutdown()
+	{
+		$this->SendDebug("ServerRestart", "Ausfuehrung", 0);
+		$Result = $this->SSH_Connect("sudo shutdown");
+		$this->SendDebug("ServerRestart", "Ergebnis: ".$Result, 0);
+	}
 	private function CheckConfig()
 	{
 		$arrayCheckConfig = array();
