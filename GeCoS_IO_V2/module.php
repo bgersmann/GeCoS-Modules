@@ -833,22 +833,7 @@ class GeCoS_IO_V2 extends IPSModule
 					$arrayCheckConfig["Shell Zugriff"]["Status"] = "aktiviert";
 					$arrayCheckConfig["Shell Zugriff"]["Color"] = "#FF0000";
 				}
-			}
-			
-			//PIGPIOD
-			//$PathPIGPIOD = "/etc/systemd/system/pigpiod.service.d/public.conf";
-			// Prüfen, ob die Datei existiert
-			//if ($sftp->file_exists($PathPIGPIOD)) {
-			//	$this->SendDebug("CheckConfig", "PIGPIO-Server ist aktiviert", 0);
-			//	$arrayCheckConfig["PIGPIO Server"]["Status"] = "aktiviert";
-			//	$arrayCheckConfig["PIGPIO Server"]["Color"] = "#00FF00";
-			//} else {
-			//	$this->SendDebug("CheckConfig", "PIGPIO-Server ist deaktiviert!", 0);
-			//	IPS_LogMessage("GeCoS_IO CheckConfig", "PIGPIO-Server ist deaktiviert!");
-			//	$arrayCheckConfig["PIGPIO Server"]["Status"] = "deaktiviert";
-			//	$arrayCheckConfig["PIGPIO Server"]["Color"] = "#FF0000";
-			//}
-			
+			}	
 		}
 			
 	return serialize($arrayCheckConfig);
@@ -898,7 +883,10 @@ class GeCoS_IO_V2 extends IPSModule
 						$this->SetStatus(102);
 					}
 	   			}
-			}		      
+			} else {
+				$this->SendDebug("Netzanbindung", "Modul bereits verbunden", 0);
+				$result = true;
+			}	      
 		}
 		else {
 			SetValueBoolean($this->GetIDForIdent("ServerStatus"), false);
