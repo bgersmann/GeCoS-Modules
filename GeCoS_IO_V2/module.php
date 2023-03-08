@@ -129,11 +129,14 @@ class GeCoS_IO_V2 extends IPSModule
 			$arrayActions[] = array("type" => "Button", "caption" => "Restart Server-Software", "onClick" => 'GeCoSIOV2_ServerRestart($id);');
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 			//$arrayActions[] = array("type" => "Button", "caption" => "Restart Raspberry PI", "onClick" => 'GeCoSIOV2_RPiReboot($id);');
 			//$arrayActions[] = array("type" => "Button", "caption" => "Shutdown Raspberry PI", "onClick" => 'GeCoSIOV2_RPiShutdown($id);');
 =======
 			$arrayActions[] = array("type" => "Button", "caption" => "Restart Raspberry PI", "onClick" => 'GeCoSIOV2_ServerRestart($id);');
 >>>>>>> parent of 10511b0 (Update module.php)
+=======
+>>>>>>> parent of bbdd8ef (Update module.php)
 =======
 >>>>>>> parent of bbdd8ef (Update module.php)
 		}
@@ -914,9 +917,12 @@ class GeCoS_IO_V2 extends IPSModule
 					}
 	   			}
 <<<<<<< HEAD
+<<<<<<< HEAD
 			} else {
 				$this->SendDebug("Netzanbindung", "Modul bereits verbunden", 0);
 				$result = true;
+=======
+>>>>>>> parent of bbdd8ef (Update module.php)
 =======
 >>>>>>> parent of bbdd8ef (Update module.php)
 			}		      
