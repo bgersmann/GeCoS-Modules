@@ -128,11 +128,14 @@ class GeCoS_IO_V2 extends IPSModule
 			$arrayActions[] = array("type" => "Button", "caption" => "Server-Softwareupdate", "onClick" => 'GeCoSIOV2_GetUpdate($id);');
 			$arrayActions[] = array("type" => "Button", "caption" => "Restart Server-Software", "onClick" => 'GeCoSIOV2_ServerRestart($id);');
 <<<<<<< HEAD
+<<<<<<< HEAD
 			//$arrayActions[] = array("type" => "Button", "caption" => "Restart Raspberry PI", "onClick" => 'GeCoSIOV2_RPiReboot($id);');
 			//$arrayActions[] = array("type" => "Button", "caption" => "Shutdown Raspberry PI", "onClick" => 'GeCoSIOV2_RPiShutdown($id);');
 =======
 			$arrayActions[] = array("type" => "Button", "caption" => "Restart Raspberry PI", "onClick" => 'GeCoSIOV2_ServerRestart($id);');
 >>>>>>> parent of 10511b0 (Update module.php)
+=======
+>>>>>>> parent of bbdd8ef (Update module.php)
 		}
 		else {
 			$arrayActions[] = array("type" => "Label", "caption" => "Diese Funktionen stehen erst nach Eingabe und Übernahme der erforderlichen Daten zur Verfügung!");
@@ -910,11 +913,15 @@ class GeCoS_IO_V2 extends IPSModule
 						$this->SetStatus(102);
 					}
 	   			}
+<<<<<<< HEAD
 			} else {
 				$this->SendDebug("Netzanbindung", "Modul bereits verbunden", 0);
 				$result = true;
+=======
+>>>>>>> parent of bbdd8ef (Update module.php)
 			}		      
-		} else {
+		}
+		else {
 			SetValueBoolean($this->GetIDForIdent("ServerStatus"), false);
 			IPS_LogMessage("GeCoS_IO Netzanbindung","IP ".$this->ReadPropertyString("IPAddress")." reagiert nicht!");
 			$this->SendDebug("Netzanbindung", "IP ".$this->ReadPropertyString("IPAddress")." reagiert nicht!", 0);
