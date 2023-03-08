@@ -127,18 +127,9 @@ class GeCoS_IO_V2 extends IPSModule
 			$arrayActions[] = array("type" => "Button", "caption" => "Setzen der Real-Time-Clock auf IPS-Zeit", "onClick" => 'GeCoSIOV2_SetRTC_Data($id);');		
 			$arrayActions[] = array("type" => "Button", "caption" => "Server-Softwareupdate", "onClick" => 'GeCoSIOV2_GetUpdate($id);');
 			$arrayActions[] = array("type" => "Button", "caption" => "Restart Server-Software", "onClick" => 'GeCoSIOV2_ServerRestart($id);');
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 			//$arrayActions[] = array("type" => "Button", "caption" => "Restart Raspberry PI", "onClick" => 'GeCoSIOV2_RPiReboot($id);');
 			//$arrayActions[] = array("type" => "Button", "caption" => "Shutdown Raspberry PI", "onClick" => 'GeCoSIOV2_RPiShutdown($id);');
-=======
 			$arrayActions[] = array("type" => "Button", "caption" => "Restart Raspberry PI", "onClick" => 'GeCoSIOV2_ServerRestart($id);');
->>>>>>> parent of 10511b0 (Update module.php)
-=======
->>>>>>> parent of bbdd8ef (Update module.php)
-=======
->>>>>>> parent of bbdd8ef (Update module.php)
 		}
 		else {
 			$arrayActions[] = array("type" => "Label", "caption" => "Diese Funktionen stehen erst nach Eingabe und Übernahme der erforderlichen Daten zur Verfügung!");
@@ -900,15 +891,12 @@ class GeCoS_IO_V2 extends IPSModule
 							$this->SetStatus(102);
 						}
 					}
-<<<<<<< HEAD
 				}
 	   		} else {
 					fclose($status);
-=======
 	   			}
 	   			else {
 	   				fclose($status);
->>>>>>> parent of 10511b0 (Update module.php)
 					//IPS_LogMessage("GeCoS_IO Netzanbindung","Port ist geöffnet");
 					$this->SendDebug("Netzanbindung", "Port ist geoeffnet", 0);
 					$result = true;
@@ -916,15 +904,9 @@ class GeCoS_IO_V2 extends IPSModule
 						$this->SetStatus(102);
 					}
 	   			}
-<<<<<<< HEAD
-<<<<<<< HEAD
 			} else {
 				$this->SendDebug("Netzanbindung", "Modul bereits verbunden", 0);
 				$result = true;
-=======
->>>>>>> parent of bbdd8ef (Update module.php)
-=======
->>>>>>> parent of bbdd8ef (Update module.php)
 			}		      
 		}
 		else {
@@ -1006,7 +988,6 @@ class GeCoS_IO_V2 extends IPSModule
 	
 	private function RegisterProfileInteger($Name, $Icon, $Prefix, $Suffix, $MinValue, $MaxValue, $StepSize)
 	{
-<<<<<<< HEAD
 	    if (!IPS_VariableProfileExists($Name))
 	    {
 	    	IPS_CreateVariableProfile($Name, 1);
@@ -1018,7 +999,6 @@ class GeCoS_IO_V2 extends IPSModule
 	    ($Name, $Icon);
 	    IPS_SetVariableProfileText($Name, $Prefix, $Suffix);
 	    IPS_SetVariableProfileValues($Name, $MinValue, $MaxValue, $StepSize);    
-=======
 	        if (!IPS_VariableProfileExists($Name))
 	        {
 	            IPS_CreateVariableProfile($Name, 1);
@@ -1032,7 +1012,6 @@ class GeCoS_IO_V2 extends IPSModule
 	        IPS_SetVariableProfileIcon($Name, $Icon);
 	        IPS_SetVariableProfileText($Name, $Prefix, $Suffix);
 	        IPS_SetVariableProfileValues($Name, $MinValue, $MaxValue, $StepSize);    
->>>>>>> parent of 10511b0 (Update module.php)
 	}    
 	
 	private function RegisterProfileBoolean($Name, $Icon)
