@@ -844,7 +844,7 @@ class GeCoS_IO_V2 extends IPSModule
 			}			
 		}
 			
-	return serialize($arrayCheckConfig);
+		return serialize($arrayCheckConfig);
 	}
 	
 	private function ConnectionTest()
@@ -880,7 +880,7 @@ class GeCoS_IO_V2 extends IPSModule
 						$this->SetStatus(102);
 					}
 				}
-	   			} else {
+	   		} else {
 					fclose($status);
 					//IPS_LogMessage("GeCoS_IO Netzanbindung","Port ist geöffnet");
 					$this->SendDebug("Netzanbindung", "Port ist geoeffnet", 0);
@@ -890,7 +890,7 @@ class GeCoS_IO_V2 extends IPSModule
 					}
 				}
 			} else {
-				$this->SendDebug("Netzanbindung", "Modul verbunden", 0);
+				$this->SendDebug("Netzanbindung", "Modul bereits verbunden", 0);
 				$result = true;
 			}		      
 		} else {
@@ -901,7 +901,7 @@ class GeCoS_IO_V2 extends IPSModule
 				$this->SetStatus(201);
 			}
 		}
-	return $result;
+		return $result;
 	}
 	
 	private function InstanceArraySearch(String $SearchKey, Int $SearchValue)
@@ -961,8 +961,7 @@ class GeCoS_IO_V2 extends IPSModule
 		$OWHardware = array("10" => "DS18S20 Temperatur", "12" => "DS2406 Switch", "1D" => "DS2423 Counter" , "28" => "DS18B20 Temperatur", "3a" => "DS2413 2 Ch. Switch", "29" => "DS2408 8 Ch.Switch", "05" => "DS2405 Switch", "26" => "DS2438 Batt.Monitor");
 		If (array_key_exists($FamilyCode, $OWHardware)) {
 			$OWHardwareText = $OWHardware[$FamilyCode];
-		}
-		else {
+		} else {
 			$OWHardwareText = "Unbekannter 1-Wire-Typ!";
 		}		
 		return $OWHardwareText;
@@ -975,7 +974,7 @@ class GeCoS_IO_V2 extends IPSModule
 	    	IPS_CreateVariableProfile($Name, 1);
 	    } else {
 			$profile = IPS_GetVariableProfile($Name);
-	        if ($profile['ProfileType'] != 1)
+	        if ($profile['ProfileType'] != 0)
 	        	throw new Exception("Variable profile type does not match for profile " . $Name);
 	    }
 	    ($Name, $Icon);
