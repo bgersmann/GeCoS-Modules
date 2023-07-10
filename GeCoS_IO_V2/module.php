@@ -796,7 +796,7 @@ class GeCoS_IO_V2 extends IPSModule
 					$arrayCheckConfig["Serielle Schnittstelle"]["Color"] = "#00FF00";
 				} else {
 					$this->SendDebug("CheckConfig", "Serielle Schnittstelle ist deaktiviert!", 0);
-					IPS_LogMessage("GeCoS_IO CheckConfig", "Serielle Schnittstelle ist deaktiviert!");
+					//IPS_LogMessage("GeCoS_IO CheckConfig", "Serielle Schnittstelle ist deaktiviert!");
 					$arrayCheckConfig["Serielle Schnittstelle"]["Status"] = "deaktiviert";
 					$arrayCheckConfig["Serielle Schnittstelle"]["Color"] = "#FF0000";
 				}
