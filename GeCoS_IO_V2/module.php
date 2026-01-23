@@ -722,6 +722,9 @@ class GeCoS_IO_V2 extends IPSModule
 		$this->SendDebug("GetUpdate", "Ausfuehrung", 0);
 		$Result = $this->SSH_Connect("sudo wget -O /usr/local/bin/GeCoS-Server.py https://raw.githubusercontent.com/bgersmann/GeCoS-Server/master/GeCoS-Server.py");
 		$this->SendDebug("GetUpdate", "Ergebnis: " . $Result, 0);
+		$Result = $this->SSH_Connect("sudo wget -O /usr/local/bin/GeCoS-Server.py https://raw.githubusercontent.com/bgersmann/GeCoS-Server/master/Mux.py");
+		$this->SendDebug("GetUpdate", "Ausfuehrung", 0);
+
 	}
 
 	public function ServerRestart()
