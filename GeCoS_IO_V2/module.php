@@ -18,7 +18,7 @@ class AutoLoaderPHPSecLib
 
     public function loadClass($className): void
     {
-        $LibPath = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'libs' . DIRECTORY_SEPARATOR .'phpseclib'. DIRECTORY_SEPARATOR;
+        $LibPath = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'libs' . DIRECTORY_SEPARATOR;
         $file = $LibPath . str_replace(['\\', 'phpseclib3'], [DIRECTORY_SEPARATOR, 'phpseclib'], $className) . '.php';
         if (file_exists($file)) {
             require_once $file;
@@ -789,7 +789,7 @@ class GeCoS_IO_V2 extends IPSModule
 		if (($this->ReadPropertyBoolean("Open") == true) and ($this->GetParentStatus() == 102)) {
 			$AutoLoader = new AutoLoaderPHPSecLib('Net\SFTP');
 			$AutoLoader->register();
-			$sftp =new \phpseclib\Net\SFTP($this->ReadPropertyString("IPAddress"));
+			$sftp =new \phpseclib3\Net\SFTP($this->ReadPropertyString("IPAddress"));
 			$login = @$sftp->login($this->ReadPropertyString("User"), $this->ReadPropertyString("Password"));
 
 			if ($login == false) {
