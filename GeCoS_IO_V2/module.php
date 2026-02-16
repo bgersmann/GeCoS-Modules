@@ -866,16 +866,12 @@ class GeCoS_IO_V2 extends IPSModule
 			//IPS_LogMessage("GeCoS_IO Netzanbindung","Angegebene IP ".$this->ReadPropertyString("IPAddress")." reagiert");
 			$this->SendDebug("Netzanbindung", "Angegebene IP " . $this->ReadPropertyString("IPAddress") . " reagiert", 0);
 			if ($this->GetStatus() <> 102) {
-				$status = @fsockopen($this->ReadPropertyString("IPAddress"), 8000, $errno, $errstr, 10);
+				//$status = @fsockopen($this->ReadPropertyString("IPAddress"), 8000, $errno, $errstr, 10);
+				$status=true;
 				if (!$status) {
 					SetValueBoolean($this->GetIDForIdent("ServerStatus"), false);
 					IPS_LogMessage("GeCoS_IO Netzanbindung", "Port ist geschlossen!");
 					$this->SendDebug("Netzanbindung", "Port ist geschlossen!", 0);
-					// Versuchen PIGPIO zu starten
-					//IPS_LogMessage("GeCoS_IO Netzanbindung","Versuche PIGPIO per SSH zu starten...");
-					//$this->SendDebug("Netzanbindung", "Versuche Server-Software per SSH zu starten...", 0);
-					// Hier muss das Skript gestartet werden
-					//$this->SSH_Connect("sudo pigpiod");
 					$status = @fsockopen($this->ReadPropertyString("IPAddress"), 8000, $errno, $errstr, 10);
 					if (!$status) {
 						IPS_LogMessage("GeCoS_IO Netzanbindung", "Port ist geschlossen!");
@@ -885,7 +881,6 @@ class GeCoS_IO_V2 extends IPSModule
 						}
 					} else {
 						fclose($status);
-						//IPS_LogMessage("GeCoS_IO Netzanbindung","Port ist geöffnet");
 						$this->SendDebug("Netzanbindung", "Port ist geoeffnet", 0);
 						$result = true;
 						if ($this->GetStatus() <> 102) {
@@ -894,7 +889,6 @@ class GeCoS_IO_V2 extends IPSModule
 					}
 				} else {
 					fclose($status);
-					//IPS_LogMessage("GeCoS_IO Netzanbindung","Port ist geöffnet");
 					$this->SendDebug("Netzanbindung", "Port ist geoeffnet", 0);
 					$result = true;
 					if ($this->GetStatus() <> 102) {
