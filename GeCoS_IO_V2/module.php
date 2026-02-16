@@ -865,39 +865,20 @@ class GeCoS_IO_V2 extends IPSModule
 		if (Sys_Ping($this->ReadPropertyString("IPAddress"), 2000)) {
 			//IPS_LogMessage("GeCoS_IO Netzanbindung","Angegebene IP ".$this->ReadPropertyString("IPAddress")." reagiert");
 			$this->SendDebug("Netzanbindung", "Angegebene IP " . $this->ReadPropertyString("IPAddress") . " reagiert", 0);
-			if ($this->GetStatus() <> 102) {
-				//$status = @fsockopen($this->ReadPropertyString("IPAddress"), 8000, $errno, $errstr, 10);
-				$status=true;
-				if (!$status) {
-					SetValueBoolean($this->GetIDForIdent("ServerStatus"), false);
-					IPS_LogMessage("GeCoS_IO Netzanbindung", "Port ist geschlossen!");
-					$this->SendDebug("Netzanbindung", "Port ist geschlossen!", 0);
-					$status = @fsockopen($this->ReadPropertyString("IPAddress"), 8000, $errno, $errstr, 10);
-					if (!$status) {
-						IPS_LogMessage("GeCoS_IO Netzanbindung", "Port ist geschlossen!");
-						$this->SendDebug("Netzanbindung", "Port ist geschlossen!", 0);
-						if ($this->GetStatus() <> 201) {
-							$this->SetStatus(201);
-						}
-					} else {
-						fclose($status);
-						$this->SendDebug("Netzanbindung", "Port ist geoeffnet", 0);
-						$result = true;
-						if ($this->GetStatus() <> 102) {
-							$this->SetStatus(102);
-						}
-					}
-				} else {
-					//fclose($status);
-					$this->SendDebug("Netzanbindung", "Port ist geoeffnet", 0);
-					$result = true;
-					if ($this->GetStatus() <> 102) {
-						$this->SetStatus(102);
-					}
+			$parentConnected = ($this->GetParentStatus() == 102);
+			if ($parentConnected) {
+				$this->SendDebug("Netzanbindung", "Parent ist verbunden", 0);
+				$result = true;
+				if ($this->GetStatus() <> 102) {
+					$this->SetStatus(102);
 				}
 			} else {
-				$this->SendDebug("Netzanbindung", "Modul bereits verbunden", 0);
-				$result = true;
+				SetValueBoolean($this->GetIDForIdent("ServerStatus"), false);
+				IPS_LogMessage("GeCoS_IO Netzanbindung", "Parent ist nicht verbunden!");
+				$this->SendDebug("Netzanbindung", "Parent ist nicht verbunden!", 0);
+				if ($this->GetStatus() <> 201) {
+					$this->SetStatus(201);
+				}
 			}
 		} else {
 			SetValueBoolean($this->GetIDForIdent("ServerStatus"), false);
