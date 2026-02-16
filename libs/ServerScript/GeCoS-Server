@@ -1,3 +1,0 @@
-[submodule "libs/GeCoSServer"]
-	path = libs/GeCoSServer
-	url = https://github.com/bgersmann/GeCoS-Server.git
