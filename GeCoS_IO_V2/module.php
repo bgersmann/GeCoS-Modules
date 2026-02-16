@@ -888,7 +888,7 @@ class GeCoS_IO_V2 extends IPSModule
 						}
 					}
 				} else {
-					fclose($status);
+					//fclose($status);
 					$this->SendDebug("Netzanbindung", "Port ist geoeffnet", 0);
 					$result = true;
 					if ($this->GetStatus() <> 102) {
