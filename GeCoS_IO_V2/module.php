@@ -789,7 +789,7 @@ class GeCoS_IO_V2 extends IPSModule
 		if (($this->ReadPropertyBoolean("Open") == true) and ($this->GetParentStatus() == 102)) {
 			$AutoLoader = new AutoLoaderPHPSecLib('Net\SFTP');
 			$AutoLoader->register();
-			$sftp =new \phpseclib3\Net\SFTP($this->ReadPropertyString("IPAddress"));
+			$sftp =new \phpseclib\Net\SFTP($this->ReadPropertyString("IPAddress"));
 			$login = @$sftp->login($this->ReadPropertyString("User"), $this->ReadPropertyString("Password"));
 
 			if ($login == false) {
