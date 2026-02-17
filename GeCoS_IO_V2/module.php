@@ -800,7 +800,8 @@ class GeCoS_IO_V2 extends IPSModule
 			}
 
 			// I²C Schnittstelle
-			$PathConfig = "/boot/config.txt";
+			//$PathConfig = "/boot/config.txt";
+			$PathConfig = $sftp->file_exists("/boot/firmware/config.txt") ? "/boot/firmware/config.txt" : "/boot/config.txt";
 			// Prüfen, ob die Datei existiert
 			if (!$sftp->file_exists($PathConfig)) {
 				$this->SendDebug("CheckConfig", $PathConfig . " nicht gefunden!", 0);
@@ -835,6 +836,7 @@ class GeCoS_IO_V2 extends IPSModule
 
 			//Serielle Schnittstelle
 			$PathCmdline = "/boot/cmdline.txt";
+			$PathCmdline = $sftp->file_exists("/boot/firmware/cmdline.txt") ? "/boot/firmware/cmdline.txt" : "/boot/cmdline.txt";
 			// Prüfen, ob die Datei existiert
 			if (!$sftp->file_exists($PathCmdline)) {
 				$this->SendDebug("CheckConfig", $PathCmdline . " nicht gefunden!", 0);
