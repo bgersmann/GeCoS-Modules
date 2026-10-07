@@ -46,17 +46,17 @@ class GeCoS_IO_V2 extends IPSModuleStrict
 		$this->RegisterTimer("GetSystemStatus", 0, 'GeCoSIOV2_GetSystemStatus($_IPS["TARGET"]);');
 
 		// Statusvariablen anlegen
-		//$this->RegisterVariableInteger("Boardversion", "GeCoS-Server", "IPS2CeCoSIO.Boardversion", 25);
+		//$this->RegisterVariableInteger("Boardversion", $this->Translate("GeCoS-Server"), "IPS2CeCoSIO.Boardversion", 25);
 
-		//$this->RegisterVariableInteger("SoftwareVersion", "SoftwareVersion", "", 30);
+		//$this->RegisterVariableInteger("SoftwareVersion", $this->Translate("SoftwareVersion"), "", 30);
 
-		$this->RegisterVariableFloat("RTC_Temperature", "RTC Temperatur", array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "SUFFIX" => " °C", "DIGITS" => 1, "ICON" => "temperature-half", "USAGE_TYPE" => 1), 40);
+		$this->RegisterVariableFloat("RTC_Temperature", $this->Translate("RTC Temperatur"), array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "SUFFIX" => " °C", "DIGITS" => 1, "ICON" => "temperature-half", "USAGE_TYPE" => 1), 40);
 
-		$this->RegisterVariableInteger("RTC_Timestamp", "RTC Zeitstempel", array("PRESENTATION" => VARIABLE_PRESENTATION_DATE_TIME, "DATE" => 1, "MONTH_TEXT" => false, "DAY_OF_THE_WEEK" => false, "TIME" => 2), 50);
+		$this->RegisterVariableInteger("RTC_Timestamp", $this->Translate("RTC Zeitstempel"), array("PRESENTATION" => VARIABLE_PRESENTATION_DATE_TIME, "DATE" => 1, "MONTH_TEXT" => false, "DAY_OF_THE_WEEK" => false, "TIME" => 2), 50);
 
-		$this->RegisterVariableBoolean("ServerStatus", "Server Status", array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "ICON" => "circle-info", "OPTIONS" => json_encode(array(array("Value" => false, "Caption" => "Inaktiv", "IconActive" => false, "IconValue" => "", "ColorActive" => true, "ColorValue" => 0xFF0000), array("Value" => true, "Caption" => "Aktiv", "IconActive" => false, "IconValue" => "", "ColorActive" => true, "ColorValue" => 0x00FF00)))), 60);
+		$this->RegisterVariableBoolean("ServerStatus", $this->Translate("Server Status"), array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "ICON" => "circle-info", "OPTIONS" => json_encode(array(array("Value" => false, "Caption" => $this->Translate("Inaktiv"), "IconActive" => false, "IconValue" => "", "ColorActive" => true, "ColorValue" => 0xFF0000), array("Value" => true, "Caption" => $this->Translate("Aktiv"), "IconActive" => false, "IconValue" => "", "ColorActive" => true, "ColorValue" => 0x00FF00)))), 60);
 
-		$this->RegisterVariableInteger("LastKeepAlive", "Letztes Keep Alive", array("PRESENTATION" => VARIABLE_PRESENTATION_DATE_TIME, "DATE" => 1, "MONTH_TEXT" => false, "DAY_OF_THE_WEEK" => false, "TIME" => 2), 70);
+		$this->RegisterVariableInteger("LastKeepAlive", $this->Translate("Letztes Keep Alive"), array("PRESENTATION" => VARIABLE_PRESENTATION_DATE_TIME, "DATE" => 1, "MONTH_TEXT" => false, "DAY_OF_THE_WEEK" => false, "TIME" => 2), 70);
 
 		$ModulesArray = array();
 		$this->SetBuffer("ModulesArray", serialize($ModulesArray));
@@ -114,8 +114,8 @@ class GeCoS_IO_V2 extends IPSModuleStrict
 		$ServiceArray = array();
 		$ServiceArray = unserialize($this->CheckConfig());
 		$arrayValues[] = array("ServiceTyp" => "I²C", "ServiceStatus" => $ServiceArray["I2C"]["Status"], "rowColor" => $ServiceArray["I2C"]["Color"]);
-		$arrayValues[] = array("ServiceTyp" => "Serielle Schnittstelle (RS232)", "ServiceStatus" => $ServiceArray["Serielle Schnittstelle"]["Status"], "rowColor" => $ServiceArray["Serielle Schnittstelle"]["Color"]);
-		$arrayValues[] = array("ServiceTyp" => "Shell Zugriff", "ServiceStatus" => $ServiceArray["Shell Zugriff"]["Status"], "rowColor" => $ServiceArray["Shell Zugriff"]["Color"]);
+		$arrayValues[] = array("ServiceTyp" => $this->Translate("Serielle Schnittstelle (RS232)"), "ServiceStatus" => $ServiceArray["Serielle Schnittstelle"]["Status"], "rowColor" => $ServiceArray["Serielle Schnittstelle"]["Color"]);
+		$arrayValues[] = array("ServiceTyp" => $this->Translate("Shell Zugriff"), "ServiceStatus" => $ServiceArray["Shell Zugriff"]["Status"], "rowColor" => $ServiceArray["Shell Zugriff"]["Color"]);
 		//$arrayValues[] = array("ServiceTyp" => "PIGPIO Server", "ServiceStatus" => $ServiceArray["PIGPIO Server"]["Status"], "rowColor" => $ServiceArray["PIGPIO Server"]["Color"]);
 
 		$arrayElements[] = array("type" => "List", "name" => "Raspi_Config", "caption" => "Konfiguration", "rowCount" => 4, "add" => false, "delete" => false, "sort" => "", "columns" => $arrayColumns, "values" => $arrayValues);
@@ -666,7 +666,7 @@ class GeCoS_IO_V2 extends IPSModuleStrict
 			$ssh = new \phpseclib3\Net\SSH2($this->ReadPropertyString("IPAddress"));
 			$login = @$ssh->login($this->ReadPropertyString("User"), $this->ReadPropertyString("Password"));
 			if ($login == false) {
-				$this->LogMessage("Angegebene IP " . $this->ReadPropertyString("IPAddress") . " reagiert nicht!", KL_WARNING);
+				$this->LogMessage(sprintf($this->Translate("Angegebene IP %s reagiert nicht!"), $this->ReadPropertyString("IPAddress")), KL_WARNING);
 				$this->SendDebug("SSH-Connect", "Angegebene IP " . $this->ReadPropertyString("IPAddress") . " reagiert nicht!", 0);
 				$Result = "";
 				return false;
@@ -688,7 +688,7 @@ class GeCoS_IO_V2 extends IPSModuleStrict
 			$ssh = new \phpseclib3\Net\SSH2($this->ReadPropertyString("IPAddress"));
 			$login = @$ssh->login($this->ReadPropertyString("User"), $this->ReadPropertyString("Password"));
 			if ($login == false) {
-				$this->LogMessage("Angegebene IP " . $this->ReadPropertyString("IPAddress") . " reagiert nicht!", KL_WARNING);
+				$this->LogMessage(sprintf($this->Translate("Angegebene IP %s reagiert nicht!"), $this->ReadPropertyString("IPAddress")), KL_WARNING);
 				$this->SendDebug("SSH-Connect", "Angegebene IP " . $this->ReadPropertyString("IPAddress") . " reagiert nicht!", 0);
 				$Result = "";
 				return false;
@@ -739,13 +739,13 @@ class GeCoS_IO_V2 extends IPSModuleStrict
 	private function CheckConfig()
 	{
 		$arrayCheckConfig = array();
-		$arrayCheckConfig["I2C"]["Status"] = "unbekannt";
+		$arrayCheckConfig["I2C"]["Status"] = $this->Translate("unbekannt");
 		$arrayCheckConfig["I2C"]["Color"] = "#FFFF00";
-		$arrayCheckConfig["Serielle Schnittstelle"]["Status"] = "unbekannt";
+		$arrayCheckConfig["Serielle Schnittstelle"]["Status"] = $this->Translate("unbekannt");
 		$arrayCheckConfig["Serielle Schnittstelle"]["Color"] = "#FFFF00";
-		$arrayCheckConfig["Shell Zugriff"]["Status"] = "unbekannt";
+		$arrayCheckConfig["Shell Zugriff"]["Status"] = $this->Translate("unbekannt");
 		$arrayCheckConfig["Shell Zugriff"]["Color"] = "#FFFF00";
-		//$arrayCheckConfig["PIGPIO Server"]["Status"] = "unbekannt";
+		//$arrayCheckConfig["PIGPIO Server"]["Status"] = $this->Translate("unbekannt");
 		//$arrayCheckConfig["PIGPIO Server"]["Color"] = "#FFFF00";
 
 		if (($this->ReadPropertyBoolean("Open") == true) and ($this->GetParentStatus() == 102)) {
@@ -756,7 +756,7 @@ class GeCoS_IO_V2 extends IPSModuleStrict
 
 			if ($login == false) {
 				$this->SendDebug("CheckConfig", "Angegebene IP " . $this->ReadPropertyString("IPAddress") . " reagiert nicht!", 0);
-				$this->LogMessage("Angegebene IP " . $this->ReadPropertyString("IPAddress") . " reagiert nicht!", KL_WARNING);
+				$this->LogMessage(sprintf($this->Translate("Angegebene IP %s reagiert nicht!"), $this->ReadPropertyString("IPAddress")), KL_WARNING);
 				$Result = "";
 				return serialize($arrayCheckConfig);
 			}
@@ -767,31 +767,31 @@ class GeCoS_IO_V2 extends IPSModuleStrict
 			// Prüfen, ob die Datei existiert
 			if (!$sftp->file_exists($PathConfig)) {
 				$this->SendDebug("CheckConfig", $PathConfig . " nicht gefunden!", 0);
-				$this->LogMessage($PathConfig . " nicht gefunden!", KL_WARNING);
+				$this->LogMessage(sprintf($this->Translate("%s nicht gefunden!"), $PathConfig), KL_WARNING);
 			} else {
 				$FileContentConfig = $sftp->get($PathConfig);
 				// Prüfen ob I2C aktiviert ist
 				$Pattern = "/(?:\r\n|\n|\r)(\s*)(device_tree_param|dtparam)=([^,]*,)*i2c(_arm)?(=(on|true|yes|1))(\s*)($:\r\n|\n|\r)/";
 				if (preg_match($Pattern, $FileContentConfig)) {
 					$this->SendDebug("CheckConfig", "I2C ist aktiviert", 0);
-					$arrayCheckConfig["I2C"]["Status"] = "aktiviert";
+					$arrayCheckConfig["I2C"]["Status"] = $this->Translate("aktiviert");
 					$arrayCheckConfig["I2C"]["Color"] = "#00FF00";
 				} else {
 					$this->SendDebug("CheckConfig", "I2C ist deaktiviert!", 0);
-					$this->LogMessage("I2C ist deaktiviert!", KL_WARNING);
-					$arrayCheckConfig["I2C"]["Status"] = "deaktiviert";
+					$this->LogMessage($this->Translate("I2C ist deaktiviert!"), KL_WARNING);
+					$arrayCheckConfig["I2C"]["Status"] = $this->Translate("deaktiviert");
 					$arrayCheckConfig["I2C"]["Color"] = "#FF0000";
 				}
 				// Prüfen ob die serielle Schnittstelle aktiviert ist
 				$Pattern = "/(?:\r\n|\n|\r)(\s*)(enable_uart)(=(on|true|yes|1))(\s*)($:\r\n|\n|\r)/";
 				if (preg_match($Pattern, $FileContentConfig)) {
 					$this->SendDebug("CheckConfig", "Serielle Schnittstelle ist aktiviert", 0);
-					$arrayCheckConfig["Serielle Schnittstelle"]["Status"] = "aktiviert";
+					$arrayCheckConfig["Serielle Schnittstelle"]["Status"] = $this->Translate("aktiviert");
 					$arrayCheckConfig["Serielle Schnittstelle"]["Color"] = "#00FF00";
 				} else {
 					$this->SendDebug("CheckConfig", "Serielle Schnittstelle ist deaktiviert!", 0);
 					//IPS_LogMessage("GeCoS_IO CheckConfig", "Serielle Schnittstelle ist deaktiviert!");
-					$arrayCheckConfig["Serielle Schnittstelle"]["Status"] = "deaktiviert";
+					$arrayCheckConfig["Serielle Schnittstelle"]["Status"] = $this->Translate("deaktiviert");
 					$arrayCheckConfig["Serielle Schnittstelle"]["Color"] = "#FF0000";
 				}
 			}
@@ -802,19 +802,19 @@ class GeCoS_IO_V2 extends IPSModuleStrict
 			// Prüfen, ob die Datei existiert
 			if (!$sftp->file_exists($PathCmdline)) {
 				$this->SendDebug("CheckConfig", $PathCmdline . " nicht gefunden!", 0);
-				$this->LogMessage($PathCmdline . " nicht gefunden!", KL_WARNING);
+				$this->LogMessage(sprintf($this->Translate("%s nicht gefunden!"), $PathCmdline), KL_WARNING);
 			} else {
 				$FileContentCmdline = $sftp->get($PathCmdline);
 				// Prüfen ob die Shell der serielle Schnittstelle aktiviert ist
 				$Pattern = "/console=(serial0|ttyAMA(0|1)|tty(0|1))/";
 				if (preg_match($Pattern, $FileContentCmdline)) {
 					$this->SendDebug("CheckConfig", "Shell-Zugriff auf serieller Schnittstelle ist deaktiviert", 0);
-					$arrayCheckConfig["Shell Zugriff"]["Status"] = "deaktiviert";
+					$arrayCheckConfig["Shell Zugriff"]["Status"] = $this->Translate("deaktiviert");
 					$arrayCheckConfig["Shell Zugriff"]["Color"] = "#00FF00";
 				} else {
 					$this->SendDebug("CheckConfig", "Shell-Zugriff auf serieller Schnittstelle ist aktiviert!", 0);
-					$this->LogMessage("Shell-Zugriff auf serieller Schnittstelle ist aktiviert!", KL_WARNING);
-					$arrayCheckConfig["Shell Zugriff"]["Status"] = "aktiviert";
+					$this->LogMessage($this->Translate("Shell-Zugriff auf serieller Schnittstelle ist aktiviert!"), KL_WARNING);
+					$arrayCheckConfig["Shell Zugriff"]["Status"] = $this->Translate("aktiviert");
 					$arrayCheckConfig["Shell Zugriff"]["Color"] = "#FF0000";
 				}
 			}
@@ -838,7 +838,7 @@ class GeCoS_IO_V2 extends IPSModuleStrict
 				}
 			} else {
 				$this->SetValue("ServerStatus", false);
-				$this->LogMessage("Parent ist nicht verbunden!", KL_WARNING);
+				$this->LogMessage($this->Translate("Parent ist nicht verbunden!"), KL_WARNING);
 				$this->SendDebug("Netzanbindung", "Parent ist nicht verbunden!", 0);
 				if ($this->GetStatus() <> 201) {
 					$this->SetStatus(201);
@@ -846,7 +846,7 @@ class GeCoS_IO_V2 extends IPSModuleStrict
 			}
 		} else {
 			$this->SetValue("ServerStatus", false);
-			$this->LogMessage("IP " . $this->ReadPropertyString("IPAddress") . " reagiert nicht!", KL_WARNING);
+			$this->LogMessage(sprintf($this->Translate("Angegebene IP %s reagiert nicht!"), $this->ReadPropertyString("IPAddress")), KL_WARNING);
 			$this->SendDebug("Netzanbindung", "IP " . $this->ReadPropertyString("IPAddress") . " reagiert nicht!", 0);
 			if ($this->GetStatus() <> 201) {
 				$this->SetStatus(201);

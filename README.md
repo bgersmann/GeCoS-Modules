@@ -241,9 +241,14 @@ Aus den Messwerten werden Taupunkt, absolute Luftfeuchtigkeit und der relative L
 ## 5. Versionshistorie
 
 ### 3.0
+- Lokalisierung Englisch (Konfigurationsformulare, Variablennamen, Logmeldungen)
 - Umstellung auf `IPSModuleStrict`, Mindestversion Symcon 8.2
 - Darstellungen statt Variablenprofilen
 - WTH/WTHQ/WSens: robustere Fehlerbehandlung (Fehlerstatus erst nach mehreren Fehlversuchen, Prüfung der JSON-Antwort, HTTP-Timeout); Archiv-Logging wird nicht mehr vom Modul gesetzt
 - 1-Wire: Messbereich laut Datenblatt, DS2413-Ausgänge schaltbar, DS2438 auf GeCoS IO V2 umgestellt
 - Konfiguratoren zeigen nur Instanzen am eigenen IO
 - Modul GeCoS_RegVar entfernt
+
+## Lizenzen
+
+Für die SSH-Verbindung zum Raspberry Pi wird [phpseclib](https://github.com/phpseclib/phpseclib) mitgeliefert (MIT-Lizenz, siehe `libs/phpseclib/LICENSE`).

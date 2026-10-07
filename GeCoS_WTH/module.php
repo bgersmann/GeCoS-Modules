@@ -19,43 +19,43 @@
 		$this->RegisterPropertyInteger("Humidity_ID", 0);
 		
 		//Status-Variablen anlegen
-		$this->RegisterVariableFloat("Hardware", "Hardware-Version", $this->ValuePresentation("", 1, "microchip"), 10);
+		$this->RegisterVariableFloat("Hardware", $this->Translate("Hardware-Version"), $this->ValuePresentation("", 1, "microchip"), 10);
 		$this->DisableAction("Hardware");
 		
-		$this->RegisterVariableFloat("Firmware", "Firmware-Version", $this->ValuePresentation("", 1, "microchip"), 20);
+		$this->RegisterVariableFloat("Firmware", $this->Translate("Firmware-Version"), $this->ValuePresentation("", 1, "microchip"), 20);
 		$this->DisableAction("Firmware");
 		
-		$this->RegisterVariableFloat("Temperature", "Temperatur", $this->ValuePresentation(" °C", 1, "temperature-half", 1), 30);
+		$this->RegisterVariableFloat("Temperature", $this->Translate("Temperatur"), $this->ValuePresentation(" °C", 1, "temperature-half", 1), 30);
 		$this->DisableAction("Temperature");
 		
-		$this->RegisterVariableFloat("TemperatureOW", "1-Wire Temperatur", $this->ValuePresentation(" °C", 1, "temperature-half", 1), 35);
+		$this->RegisterVariableFloat("TemperatureOW", $this->Translate("1-Wire Temperatur"), $this->ValuePresentation(" °C", 1, "temperature-half", 1), 35);
 		$this->DisableAction("Temperature");
 		
-		$this->RegisterVariableFloat("Pressure", "Luftdruck (abs)", $this->ValuePresentation(" hPa", 1, "gauge"), 40);
+		$this->RegisterVariableFloat("Pressure", $this->Translate("Luftdruck (abs)"), $this->ValuePresentation(" hPa", 1, "gauge"), 40);
 		$this->DisableAction("Pressure");
 		
-		$this->RegisterVariableFloat("PressureRel", "Luftdruck (rel)", $this->ValuePresentation(" hPa", 1, "gauge"), 50);
+		$this->RegisterVariableFloat("PressureRel", $this->Translate("Luftdruck (rel)"), $this->ValuePresentation(" hPa", 1, "gauge"), 50);
 		$this->DisableAction("PressureRel");
 		
-		$this->RegisterVariableFloat("HumidityAbs", "Luftfeuchtigkeit (abs)", $this->ValuePresentation(" g/m³", 1, "droplet"), 60);
+		$this->RegisterVariableFloat("HumidityAbs", $this->Translate("Luftfeuchtigkeit (abs)"), $this->ValuePresentation(" g/m³", 1, "droplet"), 60);
 		$this->DisableAction("HumidityAbs");
 		
-		$this->RegisterVariableFloat("Humidity", "Luftfeuchtigkeit (rel)", $this->ValuePresentation(" %", 1, "droplet"), 70);
+		$this->RegisterVariableFloat("Humidity", $this->Translate("Luftfeuchtigkeit (rel)"), $this->ValuePresentation(" %", 1, "droplet"), 70);
 		$this->DisableAction("Humidity");
 		
-		$this->RegisterVariableFloat("DewPointTemperature", "Taupunkt Temperatur", $this->ValuePresentation(" °C", 1, "temperature-half", 1), 80);
+		$this->RegisterVariableFloat("DewPointTemperature", $this->Translate("Taupunkt Temperatur"), $this->ValuePresentation(" °C", 1, "temperature-half", 1), 80);
 		$this->DisableAction("DewPointTemperature");
 		
-		$this->RegisterVariableFloat("PressureTrend1h", "Luftdruck 1h-Trend", $this->ValuePresentation(" hPa", 1, "gauge"), 90);
+		$this->RegisterVariableFloat("PressureTrend1h", $this->Translate("Luftdruck 1h-Trend"), $this->ValuePresentation(" hPa", 1, "gauge"), 90);
 		$this->DisableAction("PressureTrend1h");
 		
-		$this->RegisterVariableFloat("PressureTrend3h", "Luftdruck 3h-Trend", $this->ValuePresentation(" hPa", 1, "gauge"), 100);
+		$this->RegisterVariableFloat("PressureTrend3h", $this->Translate("Luftdruck 3h-Trend"), $this->ValuePresentation(" hPa", 1, "gauge"), 100);
 		$this->DisableAction("PressureTrend3h");
 		
-		$this->RegisterVariableFloat("PressureTrend12h", "Luftdruck 12h-Trend", $this->ValuePresentation(" hPa", 1, "gauge"), 110);
+		$this->RegisterVariableFloat("PressureTrend12h", $this->Translate("Luftdruck 12h-Trend"), $this->ValuePresentation(" hPa", 1, "gauge"), 110);
 		$this->DisableAction("PressureTrend12h");
 		
-		$this->RegisterVariableFloat("PressureTrend24h", "Luftdruck 24h-Trend", $this->ValuePresentation(" hPa", 1, "gauge"), 120);
+		$this->RegisterVariableFloat("PressureTrend24h", $this->Translate("Luftdruck 24h-Trend"), $this->ValuePresentation(" hPa", 1, "gauge"), 120);
 		$this->DisableAction("PressureTrend24h");
         }
  	
@@ -264,7 +264,7 @@
 		$Context = stream_context_create(array("http" => array("timeout" => 5)));
 		$contents = @file_get_contents('http://'.$IP.'/json', false, $Context);
 		If ($contents === false) {
-			$this->HandleFailure("Keine Antwort von ".$IP);
+			$this->HandleFailure(sprintf($this->Translate("Keine Antwort von %s"), $IP));
 			return false;
 		}
 		If (!mb_check_encoding($contents, "UTF-8")) {
@@ -272,12 +272,12 @@
 		}
 		$data = json_decode($contents);
 		If (!is_object($data)) {
-			$this->HandleFailure("Ungültige JSON-Daten von ".$IP." (".json_last_error_msg().")");
+			$this->HandleFailure(sprintf($this->Translate("Ungültige JSON-Daten von %s (%s)"), $IP, json_last_error_msg()));
 			return false;
 		}
 		foreach ($RequiredKeys as $Key) {
 			If (!property_exists($data, $Key)) {
-				$this->HandleFailure("Unvollständige Daten von ".$IP." (fehlt: ".$Key.")");
+				$this->HandleFailure(sprintf($this->Translate("Unvollständige Daten von %s (fehlt: %s)"), $IP, $Key));
 				return false;
 			}
 		}
@@ -285,7 +285,7 @@
 		// Erfolgreich - Fehlerzähler zurücksetzen
 		$ErrorCount = intval($this->GetBuffer("ErrorCount"));
 		If ($ErrorCount >= $this->GetMaxErrors()) {
-			$this->LogMessage("Verbindung zu ".$IP." wiederhergestellt (nach ".$ErrorCount." Fehlversuchen)", KL_MESSAGE);
+			$this->LogMessage(sprintf($this->Translate("Verbindung zu %s wiederhergestellt (nach %d Fehlversuchen)"), $IP, $ErrorCount), KL_MESSAGE);
 		}
 		$this->SetBuffer("ErrorCount", 0);
 		If ($this->GetStatus() <> 102) {
@@ -302,7 +302,7 @@
 		$MaxErrors = $this->GetMaxErrors();
 		$this->SendDebug("RequestData", $Message." (Fehlversuch ".$ErrorCount."/".$MaxErrors.")", 0);
 		If ($ErrorCount == $MaxErrors) {
-			$this->LogMessage($Message." - ".$ErrorCount." Fehlversuche in Folge", KL_ERROR);
+			$this->LogMessage(sprintf($this->Translate("%s - %d Fehlversuche in Folge"), $Message, $ErrorCount), KL_ERROR);
 		}
 		If (($ErrorCount >= $MaxErrors) AND ($this->GetStatus() <> 202)) {
 			$this->SetStatus(202);

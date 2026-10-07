@@ -17,7 +17,7 @@
 		
 		//Status-Variablen anlegen
 		for ($i = 0; $i <= 15; $i++) {
-			$this->RegisterVariableBoolean("Output_X".$i, "Ausgang X".$i, array("PRESENTATION" => VARIABLE_PRESENTATION_SWITCH), ($i + 1) * 10);
+			$this->RegisterVariableBoolean("Output_X".$i, sprintf($this->Translate("Ausgang X%d"), $i), array("PRESENTATION" => VARIABLE_PRESENTATION_SWITCH), ($i + 1) * 10);
 			$this->EnableAction("Output_X".$i);	
 		}
         }

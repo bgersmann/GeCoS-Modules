@@ -14,16 +14,16 @@
 		$this->RegisterTimer("Messzyklus", 0, 'GeCoSDS2438_Measurement($_IPS["TARGET"]);');
 
 		//Status-Variablen anlegen
-		$this->RegisterVariableFloat("Temperature", "Temperatur", array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "SUFFIX" => " °C", "DIGITS" => 1, "ICON" => "temperature-half", "USAGE_TYPE" => 1, "MIN" => -55, "MAX" => 125), 10);
+		$this->RegisterVariableFloat("Temperature", $this->Translate("Temperatur"), array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "SUFFIX" => " °C", "DIGITS" => 1, "ICON" => "temperature-half", "USAGE_TYPE" => 1, "MIN" => -55, "MAX" => 125), 10);
           	$this->DisableAction("Temperature");
 
-		$this->RegisterVariableFloat("VAD", "VAD", array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "SUFFIX" => " V", "DIGITS" => 2, "ICON" => "bolt"), 20);
+		$this->RegisterVariableFloat("VAD", $this->Translate("VAD"), array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "SUFFIX" => " V", "DIGITS" => 2, "ICON" => "bolt"), 20);
           	$this->DisableAction("VAD");
 
-		$this->RegisterVariableFloat("VDD", "VDD", array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "SUFFIX" => " V", "DIGITS" => 2, "ICON" => "bolt"), 30);
+		$this->RegisterVariableFloat("VDD", $this->Translate("VDD"), array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "SUFFIX" => " V", "DIGITS" => 2, "ICON" => "bolt"), 30);
           	$this->DisableAction("VDD");
 
-		$this->RegisterVariableFloat("XSENS", "XSENS", array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "DIGITS" => 2), 40);
+		$this->RegisterVariableFloat("XSENS", $this->Translate("XSENS"), array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "DIGITS" => 2), 40);
           	$this->DisableAction("XSENS");
         }
 

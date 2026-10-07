@@ -1,0 +1,38 @@
+{
+    "translations": {
+        "en": {
+            "%s nicht gefunden!": "%s not found!",
+            "Aktiv": "Active",
+            "Analyse der Raspberry Pi Konfiguration:": "Analysis of the Raspberry Pi configuration:",
+            "Angegebene IP %s reagiert nicht!": "Specified IP %s does not respond!",
+            "Connection String der seriellen Schnittstelle (z.B. /dev/serial0):": "Connection string of the serial interface (e.g. /dev/serial0):",
+            "Datenverbindung ist gestört": "Data connection is disrupted",
+            "Diese Funktionen stehen erst nach Eingabe und Übernahme der erforderlichen Daten zur Verfügung!": "These functions are only available after the required data has been entered and applied!",
+            "Funktion der Seriellen Schnittstelle:": "Function of the serial interface:",
+            "Herstellerinformationen": "Manufacturer information",
+            "I2C ist deaktiviert!": "I2C is disabled!",
+            "Inaktiv": "Inactive",
+            "Instanz ist aktiv": "Instance is active",
+            "Instanz ist fehlerhaft": "Instance is faulty",
+            "Instanz ist inaktiv": "Instance is inactive",
+            "Instanz wird erstellt": "Instance is being created",
+            "Konfiguration": "Configuration",
+            "Letztes Keep Alive": "Last keep alive",
+            "Nutzung": "Usage",
+            "Parent ist nicht verbunden!": "Parent is not connected!",
+            "RTC Temperatur": "RTC temperature",
+            "RTC Zeitstempel": "RTC timestamp",
+            "Restart Server-Software": "Restart server software",
+            "Serielle Schnittstelle (RS232)": "Serial interface (RS232)",
+            "Server Status": "Server status",
+            "Server-Softwareupdate": "Server software update",
+            "Setzen der Real-Time-Clock auf IPS-Zeit": "Set real-time clock to Symcon time",
+            "Shell Zugriff": "Shell access",
+            "Shell-Zugriff auf serieller Schnittstelle ist aktiviert!": "Shell access on the serial interface is enabled!",
+            "Zugriffsdaten des Raspberry Pi SSH:": "SSH credentials of the Raspberry Pi:",
+            "aktiviert": "enabled",
+            "deaktiviert": "disabled",
+            "unbekannt": "unknown"
+        }
+    }
+}

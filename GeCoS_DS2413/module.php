@@ -240,12 +240,12 @@
 			$Ident = "Status_".$Port;
 			If ($this->ReadPropertyInteger("DeviceFunction_".$Port) == 0) {
 				// Ausgang: schaltbar
-				$this->RegisterVariableBoolean($Ident, "Status (".$Port.")", array("PRESENTATION" => VARIABLE_PRESENTATION_SWITCH), ($Port + 1) * 10);
+				$this->RegisterVariableBoolean($Ident, sprintf($this->Translate("Status (%d)"), $Port), array("PRESENTATION" => VARIABLE_PRESENTATION_SWITCH), ($Port + 1) * 10);
 				$this->EnableAction($Ident);
 			}
 			else {
 				// Eingang: nur Anzeige
-				$this->RegisterVariableBoolean($Ident, "Status (".$Port.")", array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION), ($Port + 1) * 10);
+				$this->RegisterVariableBoolean($Ident, sprintf($this->Translate("Status (%d)"), $Port), array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION), ($Port + 1) * 10);
 				$this->DisableAction($Ident);
 			}
 		}

@@ -15,7 +15,7 @@
 		$this->RegisterTimer("Messzyklus", 0, 'GeCoSDS18B20_Measurement($_IPS["TARGET"]);');
 		
 		//Status-Variablen anlegen
-		$this->RegisterVariableFloat("Temperature", "Temperatur", array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "SUFFIX" => " °C", "DIGITS" => 1, "ICON" => "temperature-half", "USAGE_TYPE" => 1, "MIN" => -55, "MAX" => 125), 10);
+		$this->RegisterVariableFloat("Temperature", $this->Translate("Temperatur"), array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "SUFFIX" => " °C", "DIGITS" => 1, "ICON" => "temperature-half", "USAGE_TYPE" => 1, "MIN" => -55, "MAX" => 125), 10);
         }
  	
 	public function GetConfigurationForm(): string

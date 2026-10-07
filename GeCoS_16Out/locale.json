@@ -1,0 +1,27 @@
+{
+    "translations": {
+        "en": {
+            "Aktiv": "Active",
+            "Ausgang X%d": "Output X%d",
+            "Ausgänge nach der Initialisierung setzen": "Set outputs after initialization",
+            "Device Adresse": "Device address",
+            "Device konnte nicht gefunden werden": "Device could not be found",
+            "GeCoS I²C-Bus": "GeCoS I²C bus",
+            "GeCoS I²C-Bus 0": "GeCoS I²C bus 0",
+            "GeCoS I²C-Bus 1": "GeCoS I²C bus 1",
+            "GeCoS I²C-Bus 2": "GeCoS I²C bus 2",
+            "Herstellerinformationen": "Manufacturer information",
+            "Instanz ist aktiv": "Instance is active",
+            "Instanz ist fehlerhaft": "Instance is faulty",
+            "Instanz ist inaktiv": "Instance is inactive",
+            "Instanz wird erstellt": "Instance is being created",
+            "I²C-Kommunikationfehler!": "I²C communication error!",
+            "Start-Status": "Start state",
+            "Startwert": "Start value",
+            "Status erhalten": "Keep state",
+            "alle Ausgänge aus": "All outputs off",
+            "alle Ausgänge ein": "All outputs on",
+            "bestimmter Status": "Specific state"
+        }
+    }
+}

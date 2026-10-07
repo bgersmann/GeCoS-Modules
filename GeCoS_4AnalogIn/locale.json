@@ -1,0 +1,24 @@
+{
+    "translations": {
+        "en": {
+            "Aktiv": "Active",
+            "Auflösung": "Resolution",
+            "Auflösung des Kanals wählen (Default 12 Bit)": "Select the channel resolution (default 12 bit)",
+            "Device Adresse": "Device address",
+            "Device konnte nicht gefunden werden": "Device could not be found",
+            "Diese Funktionen stehen erst nach Eingabe und Übernahme der erforderlichen Daten zur Verfügung!": "These functions are only available after the required data has been entered and applied!",
+            "Eingang X%d": "Input X%d",
+            "GeCoS I²C-Bus": "GeCoS I²C bus",
+            "GeCoS I²C-Bus 0": "GeCoS I²C bus 0",
+            "GeCoS I²C-Bus 1": "GeCoS I²C bus 1",
+            "GeCoS I²C-Bus 2": "GeCoS I²C bus 2",
+            "Herstellerinformationen": "Manufacturer information",
+            "Instanz ist aktiv": "Instance is active",
+            "Instanz ist fehlerhaft": "Instance is faulty",
+            "Instanz ist inaktiv": "Instance is inactive",
+            "Instanz wird erstellt": "Instance is being created",
+            "Optionen Kanal %d": "Options channel %d",
+            "Sekunden": "Seconds"
+        }
+    }
+}

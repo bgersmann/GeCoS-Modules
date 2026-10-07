@@ -1,0 +1,16 @@
+{
+    "translations": {
+        "en": {
+            "Aktiv": "Active",
+            "Device konnte nicht gefunden werden": "Device could not be found",
+            "Device liefert Fehlerwert -85": "Device returns error value -85",
+            "Herstellerinformationen": "Manufacturer information",
+            "Instanz ist aktiv": "Instance is active",
+            "Instanz ist fehlerhaft": "Instance is faulty",
+            "Instanz ist inaktiv": "Instance is inactive",
+            "Instanz wird erstellt": "Instance is being created",
+            "Messzyklus": "Measuring interval",
+            "Temperatur": "Temperature"
+        }
+    }
+}

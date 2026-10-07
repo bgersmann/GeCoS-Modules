@@ -1,0 +1,31 @@
+{
+    "translations": {
+        "en": {
+            "Aktiv": "Active",
+            "Device Adresse": "Device address",
+            "Device konnte nicht gefunden werden": "Device could not be found",
+            "Farbe %d": "Color %d",
+            "Farbe Alle": "Color all",
+            "GeCoS I²C-Bus": "GeCoS I²C bus",
+            "GeCoS I²C-Bus 0": "GeCoS I²C bus 0",
+            "GeCoS I²C-Bus 1": "GeCoS I²C bus 1",
+            "GeCoS I²C-Bus 2": "GeCoS I²C bus 2",
+            "Herstellerinformationen": "Manufacturer information",
+            "Instanz ist aktiv": "Instance is active",
+            "Instanz ist fehlerhaft": "Instance is faulty",
+            "Instanz ist inaktiv": "Instance is inactive",
+            "Instanz wird erstellt": "Instance is being created",
+            "Intensität Blau %d": "Intensity blue %d",
+            "Intensität Blau Alle": "Intensity blue all",
+            "Intensität Grün %d": "Intensity green %d",
+            "Intensität Grün Alle": "Intensity green all",
+            "Intensität Rot %d": "Intensity red %d",
+            "Intensität Rot Alle": "Intensity red all",
+            "Intensität Weiß %d": "Intensity white %d",
+            "Intensität Weiß Alle": "Intensity white all",
+            "Status RGB Alle": "Status RGB all",
+            "Status Weiß %d": "Status white %d",
+            "Status Weiß Alle": "Status white all"
+        }
+    }
+}

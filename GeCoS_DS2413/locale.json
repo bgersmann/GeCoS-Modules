@@ -1,0 +1,21 @@
+{
+    "translations": {
+        "en": {
+            "Aktiv": "Active",
+            "An (0)": "On (0)",
+            "An (1)": "On (1)",
+            "Aus (0)": "Off (0)",
+            "Aus (1)": "Off (1)",
+            "Device konnte nicht gefunden werden": "Device could not be found",
+            "Diese Funktionen stehen erst nach Eingabe und Übernahme der erforderlichen Daten zur Verfügung!": "These functions are only available after the required data has been entered and applied!",
+            "Digital Input": "Digital input",
+            "Digital Output": "Digital output",
+            "Herstellerinformationen": "Manufacturer information",
+            "Instanz ist aktiv": "Instance is active",
+            "Instanz ist fehlerhaft": "Instance is faulty",
+            "Instanz ist inaktiv": "Instance is inactive",
+            "Instanz wird erstellt": "Instance is being created",
+            "Sekunden": "Seconds"
+        }
+    }
+}

@@ -15,7 +15,7 @@
 		
 		//Status-Variablen anlegen
 		for ($i = 0; $i <= 15; $i++) {
-			$this->RegisterVariableBoolean("Input_X".$i, "Eingang X".$i, array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION), ($i + 1) * 10);
+			$this->RegisterVariableBoolean("Input_X".$i, sprintf($this->Translate("Eingang X%d"), $i), array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION), ($i + 1) * 10);
 			$this->DisableAction("Input_X".$i);	
 		}
 		
@@ -111,7 +111,7 @@
 						}
 					} else {
 						//$this->SendDebug("16IN Error", "Fehler Eingang lesen", 0);	
-						$this->LogMessage("16IN Fehler Eingang lesen", KL_WARNING);
+						$this->LogMessage($this->Translate("16IN Fehler Eingang lesen"), KL_WARNING);
 					}
 				}
 				break; 

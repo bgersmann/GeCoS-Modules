@@ -16,53 +16,53 @@
 		$MHz = array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "SUFFIX" => " MHz", "DIGITS" => 1, "ICON" => "gauge-high");
 		
 		//Status-Variablen anlegen
-		$this->RegisterVariableString("Board", "Board", array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION), 10);
+		$this->RegisterVariableString("Board", $this->Translate("Board"), array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION), 10);
 		$this->DisableAction("Board");
-		$this->RegisterVariableString("Revision", "Revision", array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION), 20);
+		$this->RegisterVariableString("Revision", $this->Translate("Revision"), array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION), 20);
 		$this->DisableAction("Revision");
-		$this->RegisterVariableString("Hardware", "Hardware", array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION), 30);
+		$this->RegisterVariableString("Hardware", $this->Translate("Hardware"), array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION), 30);
 		$this->DisableAction("Hardware");
-		$this->RegisterVariableString("Serial", "Serial", array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION), 40);
+		$this->RegisterVariableString("Serial", $this->Translate("Serial"), array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION), 40);
 		$this->DisableAction("Serial");
-		$this->RegisterVariableString("Software", "Software", array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION), 50);
+		$this->RegisterVariableString("Software", $this->Translate("Software"), array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION), 50);
 		$this->DisableAction("Software");
-		$this->RegisterVariableFloat("MemoryCPU", "Memory CPU", $MB, 60);
+		$this->RegisterVariableFloat("MemoryCPU", $this->Translate("Memory CPU"), $MB, 60);
 		$this->DisableAction("MemoryCPU");
-		$this->RegisterVariableFloat("MemoryGPU", "Memory GPU", $MB, 70);
+		$this->RegisterVariableFloat("MemoryGPU", $this->Translate("Memory GPU"), $MB, 70);
 		$this->DisableAction("MemoryGPU");
-		$this->RegisterVariableString("Hostname", "Hostname", array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION), 80);
+		$this->RegisterVariableString("Hostname", $this->Translate("Hostname"), array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION), 80);
 		$this->DisableAction("Hostname");
-		$this->RegisterVariableString("Uptime", "Uptime", array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION), 90);
+		$this->RegisterVariableString("Uptime", $this->Translate("Uptime"), array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION), 90);
 		$this->DisableAction("Uptime");
 		// CPU/GPU
-		$this->RegisterVariableFloat("TemperaturCPU", "Temperature CPU", array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "SUFFIX" => " °C", "DIGITS" => 1, "ICON" => "temperature-half", "USAGE_TYPE" => 1), 100);
+		$this->RegisterVariableFloat("TemperaturCPU", $this->Translate("Temperature CPU"), array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "SUFFIX" => " °C", "DIGITS" => 1, "ICON" => "temperature-half", "USAGE_TYPE" => 1), 100);
 		$this->DisableAction("TemperaturCPU");
-		$this->RegisterVariableFloat("TemperaturGPU", "Temperature GPU", array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "SUFFIX" => " °C", "DIGITS" => 1, "ICON" => "temperature-half", "USAGE_TYPE" => 1), 110);
+		$this->RegisterVariableFloat("TemperaturGPU", $this->Translate("Temperature GPU"), array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "SUFFIX" => " °C", "DIGITS" => 1, "ICON" => "temperature-half", "USAGE_TYPE" => 1), 110);
 		$this->DisableAction("TemperaturGPU");
-		$this->RegisterVariableFloat("VoltageCPU", "Voltage CPU", array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "SUFFIX" => " V", "DIGITS" => 2, "ICON" => "bolt"), 120);
+		$this->RegisterVariableFloat("VoltageCPU", $this->Translate("Voltage CPU"), array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "SUFFIX" => " V", "DIGITS" => 2, "ICON" => "bolt"), 120);
 		$this->DisableAction("VoltageCPU");
-		$this->RegisterVariableFloat("ARM_Frequenzy", "ARM Frequenzy", $MHz, 130);
+		$this->RegisterVariableFloat("ARM_Frequenzy", $this->Translate("ARM Frequenzy"), $MHz, 130);
 		$this->DisableAction("ARM_Frequenzy");
 		// CPU Auslastung
-		$this->RegisterVariableFloat("AverageLoad", "CPU AverageLoad", array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "PERCENTAGE" => true, "MIN" => 0, "MAX" => 1, "SUFFIX" => " %", "DIGITS" => 1, "ICON" => "gauge"), 140);
+		$this->RegisterVariableFloat("AverageLoad", $this->Translate("CPU AverageLoad"), array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "PERCENTAGE" => true, "MIN" => 0, "MAX" => 1, "SUFFIX" => " %", "DIGITS" => 1, "ICON" => "gauge"), 140);
 		$this->DisableAction("AverageLoad");
 		$this->SetBuffer("PrevTotal", 0);
 		$this->SetBuffer("PrevIdle", 0);
 		// Arbeitsspeicher
-		$this->RegisterVariableFloat("MemoryTotal", "Memory Total", $MB, 200);
+		$this->RegisterVariableFloat("MemoryTotal", $this->Translate("Memory Total"), $MB, 200);
 		$this->DisableAction("MemoryTotal");
-		$this->RegisterVariableFloat("MemoryFree", "Memory Free", $MB, 210);
+		$this->RegisterVariableFloat("MemoryFree", $this->Translate("Memory Free"), $MB, 210);
 		$this->DisableAction("MemoryFree");
-		$this->RegisterVariableFloat("MemoryAvailable", "Memory Available", $MB, 220);
+		$this->RegisterVariableFloat("MemoryAvailable", $this->Translate("Memory Available"), $MB, 220);
 		$this->DisableAction("MemoryAvailable");
 		// SD-Card
-		$this->RegisterVariableFloat("SD_Card_Total", "SD-Card Total", $MB, 300);
+		$this->RegisterVariableFloat("SD_Card_Total", $this->Translate("SD-Card Total"), $MB, 300);
 		$this->DisableAction("SD_Card_Total");
-		$this->RegisterVariableFloat("SD_Card_Used", "SD-Card Used", $MB, 310);
+		$this->RegisterVariableFloat("SD_Card_Used", $this->Translate("SD-Card Used"), $MB, 310);
 		$this->DisableAction("SD_Card_Used");
-		$this->RegisterVariableFloat("SD_Card_Available", "SD-Card Available", $MB, 320);
+		$this->RegisterVariableFloat("SD_Card_Available", $this->Translate("SD-Card Available"), $MB, 320);
 		$this->DisableAction("SD_Card_Available");
-		$this->RegisterVariableFloat("SD_Card_Used_rel", "SD-Card Used (rel)", array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "PERCENTAGE" => true, "MIN" => 0, "MAX" => 1, "SUFFIX" => " %", "DIGITS" => 1, "ICON" => "gauge"), 330);
+		$this->RegisterVariableFloat("SD_Card_Used_rel", $this->Translate("SD-Card Used (rel)"), array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "PERCENTAGE" => true, "MIN" => 0, "MAX" => 1, "SUFFIX" => " %", "DIGITS" => 1, "ICON" => "gauge"), 330);
 		$this->DisableAction("SD_Card_Used_rel");
       }
 
@@ -234,7 +234,7 @@
 								}
 								else {
 									$this->SetValue("AverageLoad", 0);
-									$this->LogMessage("Es ist ein unbekannter Fehler bei der CPU-Usage-Berechnung aufgetreten!", KL_WARNING);
+									$this->LogMessage($this->Translate("Es ist ein unbekannter Fehler bei der CPU-Usage-Berechnung aufgetreten!"), KL_WARNING);
 								}
 								break;
 							case "5":

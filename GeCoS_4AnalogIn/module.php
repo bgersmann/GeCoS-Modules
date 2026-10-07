@@ -30,7 +30,7 @@
 		
 		//Status-Variablen anlegen
 		for ($i = 0; $i <= 3; $i++) {
-			$this->RegisterVariableFloat("Input_X".$i, "Eingang X".$i, $Volt, ($i + 1) * 10);
+			$this->RegisterVariableFloat("Input_X".$i, sprintf($this->Translate("Eingang X%d"), $i), $Volt, ($i + 1) * 10);
 			$this->DisableAction("Input_X".$i);
 		}
         }
@@ -77,7 +77,7 @@
 		
 		for ($i = 0; $i <= 3; $i++) {
 			$arrayElements[] = array("type" => "Label", "label" => "_____________________________________________________________________________________________________");
-			$arrayElements[] = array("type" => "Label", "label" => "Optionen Kanal ".($i + 1));
+			$arrayElements[] = array("type" => "Label", "label" => sprintf($this->Translate("Optionen Kanal %d"), $i + 1));
 			$arrayElements[] = array("name" => "Active_".$i, "type" => "CheckBox",  "caption" => "Aktiv"); 
 			$arrayElements[] = array("type" => "Label", "label" => "Auflösung des Kanals wählen (Default 12 Bit)");
 			$arrayElements[] = array("type" => "Select", "name" => "Resolution_".$i, "caption" => "Auflösung", "options" => $arrayOptionsResolution );
