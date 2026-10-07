@@ -69,21 +69,21 @@
 	public function GetConfigurationForm(): string
 	{ 
 		$arrayStatus = array(); 
-		$arrayStatus[] = array("code" => 101, "icon" => "inactive", "caption" => "Instanz wird erstellt"); 
-		$arrayStatus[] = array("code" => 102, "icon" => "active", "caption" => "Instanz ist aktiv");
-		$arrayStatus[] = array("code" => 104, "icon" => "inactive", "caption" => "Instanz ist inaktiv");
-		$arrayStatus[] = array("code" => 200, "icon" => "error", "caption" => "Instanz ist fehlerhaft");
+		$arrayStatus[] = array("code" => 101, "icon" => "inactive", "caption" => "Instance is being created"); 
+		$arrayStatus[] = array("code" => 102, "icon" => "active", "caption" => "Instance is active");
+		$arrayStatus[] = array("code" => 104, "icon" => "inactive", "caption" => "Instance is inactive");
+		$arrayStatus[] = array("code" => 200, "icon" => "error", "caption" => "Instance is faulty");
 		
 		$arrayElements = array(); 
-		$arrayElements[] = array("name" => "Open", "type" => "CheckBox",  "caption" => "Aktiv"); 
+		$arrayElements[] = array("name" => "Open", "type" => "CheckBox",  "caption" => "Active"); 
  			
-		$arrayElements[] = array("type" => "IntervalBox", "name" => "Messzyklus", "caption" => "Sekunden");
+		$arrayElements[] = array("type" => "IntervalBox", "name" => "Messzyklus", "caption" => "Seconds");
 		$arrayElements[] = array("type" => "Label", "label" => "_____________________________________________________________________________________________________");
 
-		$arrayElements[] = array("type" => "Button", "label" => "Herstellerinformationen", "onClick" => "echo 'https://www.gedad.de/projekte/projekte-f%C3%BCr-privat/gedad-control/'");
+		$arrayElements[] = array("type" => "Button", "label" => "Manufacturer information", "onClick" => "echo 'https://www.gedad.de/projekte/projekte-f%C3%BCr-privat/gedad-control/'");
 	
 		$arrayActions = array();
-		$arrayActions[] = array("type" => "Label", "label" => "Diese Funktionen stehen erst nach Eingabe und Übernahme der erforderlichen Daten zur Verfügung!");
+		$arrayActions[] = array("type" => "Label", "label" => "These functions are only available after the required data has been entered and applied!");
 		
 		
  		return JSON_encode(array("status" => $arrayStatus, "elements" => $arrayElements, "actions" => $arrayActions)); 		 
@@ -234,7 +234,7 @@
 								}
 								else {
 									$this->SetValue("AverageLoad", 0);
-									$this->LogMessage($this->Translate("Es ist ein unbekannter Fehler bei der CPU-Usage-Berechnung aufgetreten!"), KL_WARNING);
+									$this->LogMessage($this->Translate("An unknown error occurred while calculating the CPU usage!"), KL_WARNING);
 								}
 								break;
 							case "5":

@@ -1,15 +1,15 @@
 {
     "translations": {
-        "en": {
-            "Adresse": "Address",
-            "GeCoS-Bus": "GeCoS bus",
-            "GeCoS-Module": "GeCoS modules",
-            "Herstellerinformationen": "Manufacturer information",
-            "Instanz ist aktiv": "Instance is active",
-            "Instanz ist inaktiv": "Instance is inactive",
-            "Instanz wird erstellt": "Instance is being created",
-            "I²C-Kommunikationfehler!": "I²C communication error!",
-            "Typ": "Type"
+        "de": {
+            "Address": "Adresse",
+            "GeCoS bus": "GeCoS-Bus",
+            "GeCoS modules": "GeCoS-Module",
+            "Instance is active": "Instanz ist aktiv",
+            "Instance is being created": "Instanz wird erstellt",
+            "Instance is inactive": "Instanz ist inaktiv",
+            "I²C communication error!": "I²C-Kommunikationfehler!",
+            "Manufacturer information": "Herstellerinformationen",
+            "Type": "Typ"
         }
     }
 }

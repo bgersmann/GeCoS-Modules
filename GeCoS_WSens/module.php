@@ -17,85 +17,85 @@
 		$this->RegisterPropertyInteger("Humidity_ID", 0);
 		
 		//Status-Variablen anlegen
-		$this->RegisterVariableFloat("Hardware", $this->Translate("Hardware-Version"), $this->ValuePresentation("", 1, "microchip"), 10);
+		$this->RegisterVariableFloat("Hardware", $this->Translate("Hardware version"), $this->ValuePresentation("", 1, "microchip"), 10);
 		
-		$this->RegisterVariableFloat("Firmware", $this->Translate("Firmware-Version"), $this->ValuePresentation("", 1, "microchip"), 20);
+		$this->RegisterVariableFloat("Firmware", $this->Translate("Firmware version"), $this->ValuePresentation("", 1, "microchip"), 20);
 		
-		$this->RegisterVariableFloat("Temperature", $this->Translate("Temperatur"), $this->ValuePresentation(" °C", 1, "temperature-half", 1), 30);
+		$this->RegisterVariableFloat("Temperature", $this->Translate("Temperature"), $this->ValuePresentation(" °C", 1, "temperature-half", 1), 30);
 		
-		$this->RegisterVariableFloat("Pressure", $this->Translate("Luftdruck (abs)"), $this->ValuePresentation(" hPa", 1, "gauge"), 40);
+		$this->RegisterVariableFloat("Pressure", $this->Translate("Air pressure (abs)"), $this->ValuePresentation(" hPa", 1, "gauge"), 40);
 		
-		$this->RegisterVariableFloat("PressureRel", $this->Translate("Luftdruck (rel)"), $this->ValuePresentation(" hPa", 1, "gauge"), 50);
+		$this->RegisterVariableFloat("PressureRel", $this->Translate("Air pressure (rel)"), $this->ValuePresentation(" hPa", 1, "gauge"), 50);
 		
-		$this->RegisterVariableFloat("HumidityAbs", $this->Translate("Luftfeuchtigkeit (abs)"), $this->ValuePresentation(" g/m³", 1, "droplet"), 60);
+		$this->RegisterVariableFloat("HumidityAbs", $this->Translate("Humidity (abs)"), $this->ValuePresentation(" g/m³", 1, "droplet"), 60);
 		
-		$this->RegisterVariableFloat("Humidity", $this->Translate("Luftfeuchtigkeit (rel)"), $this->ValuePresentation(" %", 1, "droplet"), 70);
+		$this->RegisterVariableFloat("Humidity", $this->Translate("Humidity (rel)"), $this->ValuePresentation(" %", 1, "droplet"), 70);
 		
-		$this->RegisterVariableFloat("DewPointTemperature", $this->Translate("Taupunkt Temperatur"), $this->ValuePresentation(" °C", 1, "temperature-half", 1), 80);
+		$this->RegisterVariableFloat("DewPointTemperature", $this->Translate("Dew point temperature"), $this->ValuePresentation(" °C", 1, "temperature-half", 1), 80);
 		
-		$this->RegisterVariableFloat("PressureTrend1h", $this->Translate("Luftdruck 1h-Trend"), $this->ValuePresentation(" hPa", 1, "gauge"), 90);
+		$this->RegisterVariableFloat("PressureTrend1h", $this->Translate("Air pressure 1h trend"), $this->ValuePresentation(" hPa", 1, "gauge"), 90);
 		
-		$this->RegisterVariableFloat("PressureTrend3h", $this->Translate("Luftdruck 3h-Trend"), $this->ValuePresentation(" hPa", 1, "gauge"), 100);
+		$this->RegisterVariableFloat("PressureTrend3h", $this->Translate("Air pressure 3h trend"), $this->ValuePresentation(" hPa", 1, "gauge"), 100);
 		
-		$this->RegisterVariableFloat("PressureTrend12h", $this->Translate("Luftdruck 12h-Trend"), $this->ValuePresentation(" hPa", 1, "gauge"), 110);
+		$this->RegisterVariableFloat("PressureTrend12h", $this->Translate("Air pressure 12h trend"), $this->ValuePresentation(" hPa", 1, "gauge"), 110);
 		
-		$this->RegisterVariableFloat("PressureTrend24h", $this->Translate("Luftdruck 24h-Trend"), $this->ValuePresentation(" hPa", 1, "gauge"), 120);
+		$this->RegisterVariableFloat("PressureTrend24h", $this->Translate("Air pressure 24h trend"), $this->ValuePresentation(" hPa", 1, "gauge"), 120);
 		
-		$this->RegisterVariableInteger("AirQuality", $this->Translate("Luftqualität"), $this->AirQualityPresentation(), 130);
+		$this->RegisterVariableInteger("AirQuality", $this->Translate("Air quality"), $this->AirQualityPresentation(), 130);
 		$this->SetValue("AirQuality", 0);
 		
-		$this->RegisterVariableInteger("AirQualityIndex", $this->Translate("Luftqualität Index"), $this->ValuePresentation("", 0, "wind"), 140);
+		$this->RegisterVariableInteger("AirQualityIndex", $this->Translate("Air quality index"), $this->ValuePresentation("", 0, "wind"), 140);
 		
-		$this->RegisterVariableInteger("AirQualityGenauigkeit", $this->Translate("Luftqualität Genauigkeit"), $this->ValuePresentation("", 0), 142);
+		$this->RegisterVariableInteger("AirQualityGenauigkeit", $this->Translate("Air quality accuracy"), $this->ValuePresentation("", 0), 142);
 		
-		$this->RegisterVariableInteger("CO2", $this->Translate("CO 2"), $this->ValuePresentation(" ppm", 0, "gauge"), 144);
+		$this->RegisterVariableInteger("CO2", $this->Translate("CO2"), $this->ValuePresentation(" ppm", 0, "gauge"), 144);
 		
-		$this->RegisterVariableInteger("CO2Genauigkeit", $this->Translate("CO 2 Genauigkeit"), $this->ValuePresentation("", 0), 146);
+		$this->RegisterVariableInteger("CO2Genauigkeit", $this->Translate("CO2 accuracy"), $this->ValuePresentation("", 0), 146);
 		
-		$this->RegisterVariableInteger("Intensity_W", $this->Translate("Intensität Weiß"), $this->ValuePresentation(" lx", 0, "lightbulb"), 150);
+		$this->RegisterVariableInteger("Intensity_W", $this->Translate("Intensity white"), $this->ValuePresentation(" lx", 0, "lightbulb"), 150);
 		
-		$this->RegisterVariableInteger("Intensity_R", $this->Translate("Intensität Rot"), $this->ValuePresentation(" lx", 0, "lightbulb"), 160);
+		$this->RegisterVariableInteger("Intensity_R", $this->Translate("Intensity red"), $this->ValuePresentation(" lx", 0, "lightbulb"), 160);
 		
-		$this->RegisterVariableInteger("Intensity_G", $this->Translate("Intensität Grün"), $this->ValuePresentation(" lx", 0, "lightbulb"), 170);
+		$this->RegisterVariableInteger("Intensity_G", $this->Translate("Intensity green"), $this->ValuePresentation(" lx", 0, "lightbulb"), 170);
 		
-		$this->RegisterVariableInteger("Intensity_B", $this->Translate("Intensität Blau"), $this->ValuePresentation(" lx", 0, "lightbulb"), 180);
+		$this->RegisterVariableInteger("Intensity_B", $this->Translate("Intensity blue"), $this->ValuePresentation(" lx", 0, "lightbulb"), 180);
 		
-		$this->RegisterVariableInteger("FailureCode", $this->Translate("Fehlercode"), $this->ValuePresentation("", 0), 190);
+		$this->RegisterVariableInteger("FailureCode", $this->Translate("Error code"), $this->ValuePresentation("", 0), 190);
 		$this->SetValue("FailureCode", 0);
         }
  	
 	public function GetConfigurationForm(): string
 	{ 
 		$arrayStatus = array(); 
-		$arrayStatus[] = array("code" => 101, "icon" => "inactive", "caption" => "Instanz wird erstellt"); 
-		$arrayStatus[] = array("code" => 102, "icon" => "active", "caption" => "Instanz ist aktiv");
-		$arrayStatus[] = array("code" => 104, "icon" => "inactive", "caption" => "Instanz ist inaktiv");
-		$arrayStatus[] = array("code" => 200, "icon" => "error", "caption" => "Instanz ist fehlerhaft");
-		$arrayStatus[] = array("code" => 201, "icon" => "error", "caption" => "Device konnte nicht gefunden werden");
-		$arrayStatus[] = array("code" => 202, "icon" => "error", "caption" => "Kommunikationfehler!");
+		$arrayStatus[] = array("code" => 101, "icon" => "inactive", "caption" => "Instance is being created"); 
+		$arrayStatus[] = array("code" => 102, "icon" => "active", "caption" => "Instance is active");
+		$arrayStatus[] = array("code" => 104, "icon" => "inactive", "caption" => "Instance is inactive");
+		$arrayStatus[] = array("code" => 200, "icon" => "error", "caption" => "Instance is faulty");
+		$arrayStatus[] = array("code" => 201, "icon" => "error", "caption" => "Device could not be found");
+		$arrayStatus[] = array("code" => 202, "icon" => "error", "caption" => "Communication error!");
 		
 		$arrayElements = array(); 
-		$arrayElements[] = array("name" => "Open", "type" => "CheckBox",  "caption" => "Aktiv"); 
-		$arrayElements[] = array("type" => "Label", "label" => "IP oder Hostname");
+		$arrayElements[] = array("name" => "Open", "type" => "CheckBox",  "caption" => "Active"); 
+		$arrayElements[] = array("type" => "Label", "label" => "IP or hostname");
 		$arrayElements[] = array("type" => "ValidationTextBox", "name" => "IPAddress", "caption" => "IP");
-		$arrayElements[] = array("type" => "Label", "label" => "Miniumum 5 Sekunden, 0 => Aus");
-		$arrayElements[] = array("type" => "IntervalBox", "name" => "Timer_1", "caption" => "Sekunden");
-		$arrayElements[] = array("type" => "Label", "label" => "Anzahl Fehlversuche in Folge, bevor die Instanz auf Fehler geht");
-		$arrayElements[] = array("type" => "NumberSpinner", "name" => "MaxErrors", "caption" => "Fehlversuche", "minimum" => 1, "maximum" => 100);
+		$arrayElements[] = array("type" => "Label", "label" => "Minimum 5 seconds, 0 => off");
+		$arrayElements[] = array("type" => "IntervalBox", "name" => "Timer_1", "caption" => "Seconds");
+		$arrayElements[] = array("type" => "Label", "label" => "Number of consecutive failed attempts before the instance reports an error");
+		$arrayElements[] = array("type" => "NumberSpinner", "name" => "MaxErrors", "caption" => "Failed attempts", "minimum" => 1, "maximum" => 100);
  		$arrayElements[] = array("type" => "Label", "label" => "_____________________________________________________________________________________________________");
-		$arrayElements[] = array("type" => "Label", "label" => "Korrektur des Luftdrucks nach Hohenangabe");
-		$arrayElements[] = array("type" => "NumberSpinner", "name" => "Altitude", "caption" => "Höhe über NN (m)");
-		$arrayElements[] = array("type" => "Label", "label" => "Optionale Angabe von externen Quellen");
-		$arrayElements[] = array("type" => "SelectVariable", "name" => "Temperature_ID", "caption" => "Temperatur");
-		$arrayElements[] = array("type" => "SelectVariable", "name" => "Humidity_ID", "caption" => "Luftfeuchtigkeit");
+		$arrayElements[] = array("type" => "Label", "label" => "Air pressure correction based on altitude");
+		$arrayElements[] = array("type" => "NumberSpinner", "name" => "Altitude", "caption" => "Altitude above sea level (m)");
+		$arrayElements[] = array("type" => "Label", "label" => "Optional external sources");
+		$arrayElements[] = array("type" => "SelectVariable", "name" => "Temperature_ID", "caption" => "Temperature");
+		$arrayElements[] = array("type" => "SelectVariable", "name" => "Humidity_ID", "caption" => "Humidity");
 		$arrayElements[] = array("type" => "Label", "label" => "_____________________________________________________________________________________________________");
 		$arrayElements[] = array("type" => "Label", "label" => "_____________________________________________________________________________________________________");
-		$arrayElements[] = array("type" => "Label", "label" => "Die Luftdruck-Trends werden berechnet, sobald für die Variable \"Luftdruck (abs)\" das Logging im Archiv aktiviert ist.");
+		$arrayElements[] = array("type" => "Label", "label" => "The air pressure trends are calculated as soon as logging is enabled in the archive for the variable \"Air pressure (abs)\".");
 		$arrayElements[] = array("type" => "Label", "label" => "_____________________________________________________________________________________________________");
-		$arrayElements[] = array("type" => "Button", "label" => "Herstellerinformationen", "onClick" => "echo 'https://www.gedad.de/projekte/projekte-f%C3%BCr-privat/gedad-control/'");
+		$arrayElements[] = array("type" => "Button", "label" => "Manufacturer information", "onClick" => "echo 'https://www.gedad.de/projekte/projekte-f%C3%BCr-privat/gedad-control/'");
 	
 		$arrayActions = array();
-		$arrayActions[] = array("type" => "Label", "label" => "Diese Funktionen stehen erst nach Eingabe und Übernahme der erforderlichen Daten zur Verfügung!");
+		$arrayActions[] = array("type" => "Label", "label" => "These functions are only available after the required data has been entered and applied!");
 		
 		
  		return JSON_encode(array("status" => $arrayStatus, "elements" => $arrayElements, "actions" => $arrayActions)); 		 
@@ -297,7 +297,7 @@
 		$Context = stream_context_create(array("http" => array("timeout" => 5)));
 		$contents = @file_get_contents('http://'.$IP.'/json', false, $Context);
 		If ($contents === false) {
-			$this->HandleFailure(sprintf($this->Translate("Keine Antwort von %s"), $IP));
+			$this->HandleFailure(sprintf($this->Translate("No response from %s"), $IP));
 			return false;
 		}
 		If (!mb_check_encoding($contents, "UTF-8")) {
@@ -305,12 +305,12 @@
 		}
 		$data = json_decode($contents);
 		If (!is_object($data)) {
-			$this->HandleFailure(sprintf($this->Translate("Ungültige JSON-Daten von %s (%s)"), $IP, json_last_error_msg()));
+			$this->HandleFailure(sprintf($this->Translate("Invalid JSON data from %s (%s)"), $IP, json_last_error_msg()));
 			return false;
 		}
 		foreach ($RequiredKeys as $Key) {
 			If (!property_exists($data, $Key)) {
-				$this->HandleFailure(sprintf($this->Translate("Unvollständige Daten von %s (fehlt: %s)"), $IP, $Key));
+				$this->HandleFailure(sprintf($this->Translate("Incomplete data from %s (missing: %s)"), $IP, $Key));
 				return false;
 			}
 		}
@@ -318,7 +318,7 @@
 		// Erfolgreich - Fehlerzähler zurücksetzen
 		$ErrorCount = intval($this->GetBuffer("ErrorCount"));
 		If ($ErrorCount >= $this->GetMaxErrors()) {
-			$this->LogMessage(sprintf($this->Translate("Verbindung zu %s wiederhergestellt (nach %d Fehlversuchen)"), $IP, $ErrorCount), KL_MESSAGE);
+			$this->LogMessage(sprintf($this->Translate("Connection to %s restored (after %d failed attempts)"), $IP, $ErrorCount), KL_MESSAGE);
 		}
 		$this->SetBuffer("ErrorCount", 0);
 		If ($this->GetStatus() <> 102) {
@@ -335,7 +335,7 @@
 		$MaxErrors = $this->GetMaxErrors();
 		$this->SendDebug("RequestData", $Message." (Fehlversuch ".$ErrorCount."/".$MaxErrors.")", 0);
 		If ($ErrorCount == $MaxErrors) {
-			$this->LogMessage(sprintf($this->Translate("%s - %d Fehlversuche in Folge"), $Message, $ErrorCount), KL_ERROR);
+			$this->LogMessage(sprintf($this->Translate("%s - %d consecutive failed attempts"), $Message, $ErrorCount), KL_ERROR);
 		}
 		If (($ErrorCount >= $MaxErrors) AND ($this->GetStatus() <> 202)) {
 			$this->SetStatus(202);
@@ -372,13 +372,13 @@
 	{
 		// Wertanzeige mit Text und Farbe je Luftqualitätsstufe
 		$Levels = array(
-			0 => array("Kalibrierung", -1),
-			1 => array("gut", 0x58FA58),
-			2 => array("durchschnittlich", 0xF7FE2E),
-			3 => array("etwas schlecht", 0xFE9A2E),
-			4 => array("schlecht", 0xFF0000),
-			5 => array("schlechter", 0x61380B),
-			6 => array("sehr schlecht", 0x000000)
+			0 => array("Calibration", -1),
+			1 => array("good", 0x58FA58),
+			2 => array("average", 0xF7FE2E),
+			3 => array("slightly bad", 0xFE9A2E),
+			4 => array("bad", 0xFF0000),
+			5 => array("worse", 0x61380B),
+			6 => array("very bad", 0x000000)
 		);
 		$Intervals = array();
 		foreach ($Levels as $Value => $Level) {

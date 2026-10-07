@@ -30,7 +30,7 @@
 		
 		//Status-Variablen anlegen
 		for ($i = 0; $i <= 3; $i++) {
-			$this->RegisterVariableFloat("Input_X".$i, sprintf($this->Translate("Eingang X%d"), $i), $Volt, ($i + 1) * 10);
+			$this->RegisterVariableFloat("Input_X".$i, sprintf($this->Translate("Input X%d"), $i), $Volt, ($i + 1) * 10);
 			$this->DisableAction("Input_X".$i);
 		}
         }
@@ -38,29 +38,29 @@
 	public function GetConfigurationForm(): string
 	{ 
 		$arrayStatus = array(); 
-		$arrayStatus[] = array("code" => 101, "icon" => "inactive", "caption" => "Instanz wird erstellt"); 
-		$arrayStatus[] = array("code" => 102, "icon" => "active", "caption" => "Instanz ist aktiv");
-		$arrayStatus[] = array("code" => 104, "icon" => "inactive", "caption" => "Instanz ist inaktiv");
-		$arrayStatus[] = array("code" => 200, "icon" => "error", "caption" => "Instanz ist fehlerhaft");
-		$arrayStatus[] = array("code" => 201, "icon" => "error", "caption" => "Device konnte nicht gefunden werden");
+		$arrayStatus[] = array("code" => 101, "icon" => "inactive", "caption" => "Instance is being created"); 
+		$arrayStatus[] = array("code" => 102, "icon" => "active", "caption" => "Instance is active");
+		$arrayStatus[] = array("code" => 104, "icon" => "inactive", "caption" => "Instance is inactive");
+		$arrayStatus[] = array("code" => 200, "icon" => "error", "caption" => "Instance is faulty");
+		$arrayStatus[] = array("code" => 201, "icon" => "error", "caption" => "Device could not be found");
 		
 		$arrayElements = array(); 
-		$arrayElements[] = array("name" => "Open", "type" => "CheckBox",  "caption" => "Aktiv"); 
+		$arrayElements[] = array("name" => "Open", "type" => "CheckBox",  "caption" => "Active"); 
  		
 		$arrayOptions = array();
 		for ($i = 105; $i <= 107; $i++) {
 		    	$arrayOptions[] = array("label" => $i." / 0x".strtoupper(dechex($i))."", "value" => $i);
 		}
-		$arrayElements[] = array("type" => "Select", "name" => "DeviceAddress", "caption" => "Device Adresse", "options" => $arrayOptions );
+		$arrayElements[] = array("type" => "Select", "name" => "DeviceAddress", "caption" => "Device address", "options" => $arrayOptions );
 		
 		$arrayOptions = array();
-		$arrayOptions[] = array("label" => "GeCoS I²C-Bus 0", "value" => 0);
-		$arrayOptions[] = array("label" => "GeCoS I²C-Bus 1", "value" => 1);
-		$arrayOptions[] = array("label" => "GeCoS I²C-Bus 2", "value" => 2);
+		$arrayOptions[] = array("label" => "GeCoS I²C bus 0", "value" => 0);
+		$arrayOptions[] = array("label" => "GeCoS I²C bus 1", "value" => 1);
+		$arrayOptions[] = array("label" => "GeCoS I²C bus 2", "value" => 2);
 		
-		$arrayElements[] = array("type" => "Select", "name" => "DeviceBus", "caption" => "GeCoS I²C-Bus", "options" => $arrayOptions );
+		$arrayElements[] = array("type" => "Select", "name" => "DeviceBus", "caption" => "GeCoS I²C bus", "options" => $arrayOptions );
 		
-		$arrayElements[] = array("type" => "IntervalBox", "name" => "Messzyklus", "caption" => "Sekunden");
+		$arrayElements[] = array("type" => "IntervalBox", "name" => "Messzyklus", "caption" => "Seconds");
 		
 		$arrayOptionsResolution = array();
 		$arrayOptionsResolution[] = array("label" => "12 Bit", "value" => 0);
@@ -77,17 +77,17 @@
 		
 		for ($i = 0; $i <= 3; $i++) {
 			$arrayElements[] = array("type" => "Label", "label" => "_____________________________________________________________________________________________________");
-			$arrayElements[] = array("type" => "Label", "label" => sprintf($this->Translate("Optionen Kanal %d"), $i + 1));
-			$arrayElements[] = array("name" => "Active_".$i, "type" => "CheckBox",  "caption" => "Aktiv"); 
-			$arrayElements[] = array("type" => "Label", "label" => "Auflösung des Kanals wählen (Default 12 Bit)");
-			$arrayElements[] = array("type" => "Select", "name" => "Resolution_".$i, "caption" => "Auflösung", "options" => $arrayOptionsResolution );
+			$arrayElements[] = array("type" => "Label", "label" => sprintf($this->Translate("Options channel %d"), $i + 1));
+			$arrayElements[] = array("name" => "Active_".$i, "type" => "CheckBox",  "caption" => "Active"); 
+			$arrayElements[] = array("type" => "Label", "label" => "Select the channel resolution (default 12 bit)");
+			$arrayElements[] = array("type" => "Select", "name" => "Resolution_".$i, "caption" => "Resolution", "options" => $arrayOptionsResolution );
 		}
 				
 		$arrayElements[] = array("type" => "Label", "label" => "_____________________________________________________________________________________________________");
-		$arrayElements[] = array("type" => "Button", "caption" => "Herstellerinformationen", "onClick" => "echo 'https://www.gedad.de/projekte/projekte-f%C3%BCr-privat/gedad-control/';");
+		$arrayElements[] = array("type" => "Button", "caption" => "Manufacturer information", "onClick" => "echo 'https://www.gedad.de/projekte/projekte-f%C3%BCr-privat/gedad-control/';");
 	
 		$arrayActions = array();
-		$arrayActions[] = array("type" => "Label", "label" => "Diese Funktionen stehen erst nach Eingabe und Übernahme der erforderlichen Daten zur Verfügung!");
+		$arrayActions[] = array("type" => "Label", "label" => "These functions are only available after the required data has been entered and applied!");
 		
 		
  		return JSON_encode(array("status" => $arrayStatus, "elements" => $arrayElements, "actions" => $arrayActions)); 		 

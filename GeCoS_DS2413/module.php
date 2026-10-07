@@ -23,22 +23,22 @@
 	public function GetConfigurationForm(): string
 	{ 
 		$arrayStatus = array(); 
-		$arrayStatus[] = array("code" => 101, "icon" => "inactive", "caption" => "Instanz wird erstellt"); 
-		$arrayStatus[] = array("code" => 102, "icon" => "active", "caption" => "Instanz ist aktiv");
-		$arrayStatus[] = array("code" => 104, "icon" => "inactive", "caption" => "Instanz ist inaktiv");
-		$arrayStatus[] = array("code" => 200, "icon" => "error", "caption" => "Instanz ist fehlerhaft");
-		$arrayStatus[] = array("code" => 201, "icon" => "error", "caption" => "Device konnte nicht gefunden werden");
+		$arrayStatus[] = array("code" => 101, "icon" => "inactive", "caption" => "Instance is being created"); 
+		$arrayStatus[] = array("code" => 102, "icon" => "active", "caption" => "Instance is active");
+		$arrayStatus[] = array("code" => 104, "icon" => "inactive", "caption" => "Instance is inactive");
+		$arrayStatus[] = array("code" => 200, "icon" => "error", "caption" => "Instance is faulty");
+		$arrayStatus[] = array("code" => 201, "icon" => "error", "caption" => "Device could not be found");
 		
 		$arrayElements = array(); 
-		$arrayElements[] = array("name" => "Open", "type" => "CheckBox",  "caption" => "Aktiv"); 
+		$arrayElements[] = array("name" => "Open", "type" => "CheckBox",  "caption" => "Active"); 
  		
 		$arrayOptions = array();
 		
 		$arrayElements[] = array("type" => "ValidationTextBox", "name" => "DeviceAddress", "caption" => "Sensor ID");
 		
 		$arrayOptions = array();
-		$arrayOptions[] = array("label" => "Digital Input", "value" => 1);
-		$arrayOptions[] = array("label" => "Digital Output", "value" => 0);
+		$arrayOptions[] = array("label" => "Digital input", "value" => 1);
+		$arrayOptions[] = array("label" => "Digital output", "value" => 0);
 		
 		If ($this->ReadPropertyString("DeviceAddress") <> "Sensorauswahl") {
 			$arrayElements[] = array("type" => "Select", "name" => "DeviceFunction_0", "caption" => "Port (0)", "options" => $arrayOptions );
@@ -47,19 +47,19 @@
 			$arrayElements[] = array("name" => "Invert_1", "type" => "CheckBox",  "caption" => "Invert (1)");
 		}
 		
-		$arrayElements[] = array("type" => "IntervalBox", "name" => "Messzyklus", "caption" => "Sekunden");
+		$arrayElements[] = array("type" => "IntervalBox", "name" => "Messzyklus", "caption" => "Seconds");
 		$arrayElements[] = array("type" => "Label", "label" => "_____________________________________________________________________________________________________");
-		$arrayElements[] = array("type" => "Button", "caption" => "Herstellerinformationen", "onClick" => "echo 'https://www.gedad.de/projekte/projekte-f%C3%BCr-privat/gedad-control/';");
+		$arrayElements[] = array("type" => "Button", "caption" => "Manufacturer information", "onClick" => "echo 'https://www.gedad.de/projekte/projekte-f%C3%BCr-privat/gedad-control/';");
 	
 		$arrayActions = array();
 		If (($this->ReadPropertyString("DeviceAddress") <> "Sensorauswahl") AND ($this->ReadPropertyBoolean("Open") == true)) {
-			$arrayActions[] = array("type" => "Button", "label" => "An (0)", "onClick" => 'GeCoSDS2413_SetPortStatus($id, 0, true);');
-			$arrayActions[] = array("type" => "Button", "label" => "Aus (0)", "onClick" => 'GeCoSDS2413_SetPortStatus($id, 0, false);');
-			$arrayActions[] = array("type" => "Button", "label" => "An (1)", "onClick" => 'GeCoSDS2413_SetPortStatus($id, 1, true);');
-			$arrayActions[] = array("type" => "Button", "label" => "Aus (1)", "onClick" => 'GeCoSDS2413_SetPortStatus($id, 1, false);');
+			$arrayActions[] = array("type" => "Button", "label" => "On (0)", "onClick" => 'GeCoSDS2413_SetPortStatus($id, 0, true);');
+			$arrayActions[] = array("type" => "Button", "label" => "Off (0)", "onClick" => 'GeCoSDS2413_SetPortStatus($id, 0, false);');
+			$arrayActions[] = array("type" => "Button", "label" => "On (1)", "onClick" => 'GeCoSDS2413_SetPortStatus($id, 1, true);');
+			$arrayActions[] = array("type" => "Button", "label" => "Off (1)", "onClick" => 'GeCoSDS2413_SetPortStatus($id, 1, false);');
 		}
 		else {
-			$arrayActions[] = array("type" => "Label", "label" => "Diese Funktionen stehen erst nach Eingabe und Übernahme der erforderlichen Daten zur Verfügung!");
+			$arrayActions[] = array("type" => "Label", "label" => "These functions are only available after the required data has been entered and applied!");
 		}
 	
  		return JSON_encode(array("status" => $arrayStatus, "elements" => $arrayElements, "actions" => $arrayActions)); 		 

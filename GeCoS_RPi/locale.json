@@ -1,15 +1,15 @@
 {
     "translations": {
-        "en": {
-            "Aktiv": "Active",
-            "Diese Funktionen stehen erst nach Eingabe und Übernahme der erforderlichen Daten zur Verfügung!": "These functions are only available after the required data has been entered and applied!",
-            "Es ist ein unbekannter Fehler bei der CPU-Usage-Berechnung aufgetreten!": "An unknown error occurred while calculating the CPU usage!",
-            "Herstellerinformationen": "Manufacturer information",
-            "Instanz ist aktiv": "Instance is active",
-            "Instanz ist fehlerhaft": "Instance is faulty",
-            "Instanz ist inaktiv": "Instance is inactive",
-            "Instanz wird erstellt": "Instance is being created",
-            "Sekunden": "Seconds"
+        "de": {
+            "Active": "Aktiv",
+            "An unknown error occurred while calculating the CPU usage!": "Es ist ein unbekannter Fehler bei der CPU-Usage-Berechnung aufgetreten!",
+            "Instance is active": "Instanz ist aktiv",
+            "Instance is being created": "Instanz wird erstellt",
+            "Instance is faulty": "Instanz ist fehlerhaft",
+            "Instance is inactive": "Instanz ist inaktiv",
+            "Manufacturer information": "Herstellerinformationen",
+            "Seconds": "Sekunden",
+            "These functions are only available after the required data has been entered and applied!": "Diese Funktionen stehen erst nach Eingabe und Übernahme der erforderlichen Daten zur Verfügung!"
         }
     }
 }

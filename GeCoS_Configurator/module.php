@@ -14,19 +14,19 @@
 	public function GetConfigurationForm(): string
 	{
 		$arrayStatus = array();
-		$arrayStatus[] = array("code" => 101, "icon" => "inactive", "caption" => "Instanz wird erstellt");
-		$arrayStatus[] = array("code" => 102, "icon" => "active", "caption" => "Instanz ist aktiv");
-		$arrayStatus[] = array("code" => 104, "icon" => "inactive", "caption" => "Instanz ist inaktiv");
-		$arrayStatus[] = array("code" => 202, "icon" => "error", "caption" => "I²C-Kommunikationfehler!");
+		$arrayStatus[] = array("code" => 101, "icon" => "inactive", "caption" => "Instance is being created");
+		$arrayStatus[] = array("code" => 102, "icon" => "active", "caption" => "Instance is active");
+		$arrayStatus[] = array("code" => 104, "icon" => "inactive", "caption" => "Instance is inactive");
+		$arrayStatus[] = array("code" => 202, "icon" => "error", "caption" => "I²C communication error!");
 		// GeCoS-Module
 		$arrayElements = array();
 		$arraySort = array();
 		$arraySort = array("column" => "DeviceType", "direction" => "ascending");
 
 		$arrayColumns = array();
-		$arrayColumns[] = array("caption" => "Typ", "name" => "DeviceType", "width" => "150px", "visible" => true);
-		$arrayColumns[] = array("caption" => "GeCoS-Bus", "name" => "DeviceBus", "width" => "75px", "visible" => true);
-		$arrayColumns[] = array("caption" => "Adresse", "name" => "DeviceAddress", "width" => "auto", "visible" => true);
+		$arrayColumns[] = array("caption" => "Type", "name" => "DeviceType", "width" => "150px", "visible" => true);
+		$arrayColumns[] = array("caption" => "GeCoS bus", "name" => "DeviceBus", "width" => "75px", "visible" => true);
+		$arrayColumns[] = array("caption" => "Address", "name" => "DeviceAddress", "width" => "auto", "visible" => true);
 
 		$DeviceArray = array();
 		If ($this->HasActiveParent() == true) {
@@ -57,10 +57,10 @@
 			$arrayValues[] = array("DeviceBus" => $Instance[1], "DeviceType" => $Instance[0], "DeviceAddress" => $Instance[2]." / 0x".strtoupper(dechex($Instance[2])), "instanceID" => $InstanceID);
 		}
 
-		$arrayElements[] = array("type" => "Configurator", "name" => "GeCoS_Modules", "caption" => "GeCoS-Module", "rowCount" => 10, "delete" => false, "sort" => $arraySort, "columns" => $arrayColumns, "values" => $arrayValues);
+		$arrayElements[] = array("type" => "Configurator", "name" => "GeCoS_Modules", "caption" => "GeCoS modules", "rowCount" => 10, "delete" => false, "sort" => $arraySort, "columns" => $arrayColumns, "values" => $arrayValues);
 
 		$arrayElements[] = array("type" => "Label", "label" => "_____________________________________________________________________________________________________");
-		$arrayElements[] = array("type" => "Button", "caption" => "Herstellerinformationen", "onClick" => "echo 'https://www.gedad.de/projekte/projekte-f%C3%BCr-privat/gedad-control/';");
+		$arrayElements[] = array("type" => "Button", "caption" => "Manufacturer information", "onClick" => "echo 'https://www.gedad.de/projekte/projekte-f%C3%BCr-privat/gedad-control/';");
 
 		$arrayActions = array();
 

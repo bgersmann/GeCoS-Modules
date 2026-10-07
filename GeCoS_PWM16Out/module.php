@@ -18,9 +18,9 @@
 		
 		//Status-Variablen anlegen
 		for ($i = 0; $i <= 15; $i++) {
-			$this->RegisterVariableBoolean("Output_Bln_X".$i, sprintf($this->Translate("Ausgang X%d"), $i), array("PRESENTATION" => VARIABLE_PRESENTATION_SWITCH), ($i + 1) * 10);
+			$this->RegisterVariableBoolean("Output_Bln_X".$i, sprintf($this->Translate("Output X%d"), $i), array("PRESENTATION" => VARIABLE_PRESENTATION_SWITCH), ($i + 1) * 10);
 			$this->EnableAction("Output_Bln_X".$i);	
-			$this->RegisterVariableInteger("Output_Int_X".$i, sprintf($this->Translate("Ausgang X%d"), $i), $Intensity, (($i + 1) * 10) + 5);
+			$this->RegisterVariableInteger("Output_Int_X".$i, sprintf($this->Translate("Output X%d"), $i), $Intensity, (($i + 1) * 10) + 5);
 			$this->EnableAction("Output_Int_X".$i);	
 		}
         }
@@ -28,31 +28,31 @@
 	public function GetConfigurationForm(): string
 	{ 
 		$arrayStatus = array(); 
-		$arrayStatus[] = array("code" => 101, "icon" => "inactive", "caption" => "Instanz wird erstellt"); 
-		$arrayStatus[] = array("code" => 102, "icon" => "active", "caption" => "Instanz ist aktiv");
-		$arrayStatus[] = array("code" => 104, "icon" => "inactive", "caption" => "Instanz ist inaktiv");
-		$arrayStatus[] = array("code" => 200, "icon" => "error", "caption" => "Instanz ist fehlerhaft");
-		$arrayStatus[] = array("code" => 201, "icon" => "error", "caption" => "Device konnte nicht gefunden werden");
+		$arrayStatus[] = array("code" => 101, "icon" => "inactive", "caption" => "Instance is being created"); 
+		$arrayStatus[] = array("code" => 102, "icon" => "active", "caption" => "Instance is active");
+		$arrayStatus[] = array("code" => 104, "icon" => "inactive", "caption" => "Instance is inactive");
+		$arrayStatus[] = array("code" => 200, "icon" => "error", "caption" => "Instance is faulty");
+		$arrayStatus[] = array("code" => 201, "icon" => "error", "caption" => "Device could not be found");
 				
 		$arrayElements = array(); 
-		$arrayElements[] = array("name" => "Open", "type" => "CheckBox",  "caption" => "Aktiv"); 
+		$arrayElements[] = array("name" => "Open", "type" => "CheckBox",  "caption" => "Active"); 
  		
 		$arrayOptions = array();
 		for ($i = 80; $i <= 87; $i++) {
 		    	$arrayOptions[] = array("label" => $i." / 0x".strtoupper(dechex($i))."", "value" => $i);
 		}
-		$arrayElements[] = array("type" => "Select", "name" => "DeviceAddress", "caption" => "Device Adresse", "options" => $arrayOptions );
+		$arrayElements[] = array("type" => "Select", "name" => "DeviceAddress", "caption" => "Device address", "options" => $arrayOptions );
 		
 		$arrayOptions = array();
-		$arrayOptions[] = array("label" => "GeCoS I²C-Bus 0", "value" => 0);
-		$arrayOptions[] = array("label" => "GeCoS I²C-Bus 1", "value" => 1);
-		$arrayOptions[] = array("label" => "GeCoS I²C-Bus 2", "value" => 2);
+		$arrayOptions[] = array("label" => "GeCoS I²C bus 0", "value" => 0);
+		$arrayOptions[] = array("label" => "GeCoS I²C bus 1", "value" => 1);
+		$arrayOptions[] = array("label" => "GeCoS I²C bus 2", "value" => 2);
 		
 		
-		$arrayElements[] = array("type" => "Select", "name" => "DeviceBus", "caption" => "GeCoS I²C-Bus", "options" => $arrayOptions );
+		$arrayElements[] = array("type" => "Select", "name" => "DeviceBus", "caption" => "GeCoS I²C bus", "options" => $arrayOptions );
 		
 		$arrayElements[] = array("type" => "Label", "label" => "_____________________________________________________________________________________________________");
-		$arrayElements[] = array("type" => "Button", "label" => "Herstellerinformationen", "onClick" => "echo 'https://www.gedad.de/projekte/projekte-f%C3%BCr-privat/gedad-control/'");
+		$arrayElements[] = array("type" => "Button", "label" => "Manufacturer information", "onClick" => "echo 'https://www.gedad.de/projekte/projekte-f%C3%BCr-privat/gedad-control/'");
 		$arrayElements[] = array("type" => "Label", "label" => "_____________________________________________________________________________________________________");
 		$arrayElements[] = array("type" => "Label", "label" => "Test Center"); 
 		$arrayElements[] = array("type" => "TestCenter", "name" => "TestCenter");		

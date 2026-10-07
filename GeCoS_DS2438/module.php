@@ -14,7 +14,7 @@
 		$this->RegisterTimer("Messzyklus", 0, 'GeCoSDS2438_Measurement($_IPS["TARGET"]);');
 
 		//Status-Variablen anlegen
-		$this->RegisterVariableFloat("Temperature", $this->Translate("Temperatur"), array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "SUFFIX" => " °C", "DIGITS" => 1, "ICON" => "temperature-half", "USAGE_TYPE" => 1, "MIN" => -55, "MAX" => 125), 10);
+		$this->RegisterVariableFloat("Temperature", $this->Translate("Temperature"), array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "SUFFIX" => " °C", "DIGITS" => 1, "ICON" => "temperature-half", "USAGE_TYPE" => 1, "MIN" => -55, "MAX" => 125), 10);
           	$this->DisableAction("Temperature");
 
 		$this->RegisterVariableFloat("VAD", $this->Translate("VAD"), array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "SUFFIX" => " V", "DIGITS" => 2, "ICON" => "bolt"), 20);
@@ -30,20 +30,20 @@
 	public function GetConfigurationForm(): string
 	{
 		$arrayStatus = array();
-		$arrayStatus[] = array("code" => 101, "icon" => "inactive", "caption" => "Instanz wird erstellt");
-		$arrayStatus[] = array("code" => 102, "icon" => "active", "caption" => "Instanz ist aktiv");
-		$arrayStatus[] = array("code" => 104, "icon" => "inactive", "caption" => "Instanz ist inaktiv");
-		$arrayStatus[] = array("code" => 200, "icon" => "error", "caption" => "Instanz ist fehlerhaft");
-		$arrayStatus[] = array("code" => 201, "icon" => "error", "caption" => "Device konnte nicht gefunden werden");
-		$arrayStatus[] = array("code" => 202, "icon" => "error", "caption" => "Device liefert Fehlerwert -85");
+		$arrayStatus[] = array("code" => 101, "icon" => "inactive", "caption" => "Instance is being created");
+		$arrayStatus[] = array("code" => 102, "icon" => "active", "caption" => "Instance is active");
+		$arrayStatus[] = array("code" => 104, "icon" => "inactive", "caption" => "Instance is inactive");
+		$arrayStatus[] = array("code" => 200, "icon" => "error", "caption" => "Instance is faulty");
+		$arrayStatus[] = array("code" => 201, "icon" => "error", "caption" => "Device could not be found");
+		$arrayStatus[] = array("code" => 202, "icon" => "error", "caption" => "Device returns error value -85");
 
 		$arrayElements = array();
-		$arrayElements[] = array("name" => "Open", "type" => "CheckBox",  "caption" => "Aktiv");
+		$arrayElements[] = array("name" => "Open", "type" => "CheckBox",  "caption" => "Active");
 		$arrayElements[] = array("type" => "ValidationTextBox", "name" => "DeviceAddress", "caption" => "Sensor ID");
 		$arrayElements[] = array("type" => "NumberSpinner", "name" => "Offset", "caption" => "Offset", "digits" => 1, "suffix" => "°C", "minimum" => -10, "maximum" => 10);
-		$arrayElements[] = array("type" => "NumberSpinner", "name" => "Messzyklus", "caption" => "Messzyklus", "suffix" => "sek", "minimum" => 0);
+		$arrayElements[] = array("type" => "NumberSpinner", "name" => "Messzyklus", "caption" => "Measuring interval", "suffix" => "sek", "minimum" => 0);
 		$arrayElements[] = array("type" => "Label", "caption" => "_____________________________________________________________________________________________________");
-		$arrayElements[] = array("type" => "Button", "caption" => "Herstellerinformationen", "onClick" => "echo 'https://www.gedad.de/projekte/projekte-f%C3%BCr-privat/gedad-control/';");
+		$arrayElements[] = array("type" => "Button", "caption" => "Manufacturer information", "onClick" => "echo 'https://www.gedad.de/projekte/projekte-f%C3%BCr-privat/gedad-control/';");
 
  		return JSON_encode(array("status" => $arrayStatus, "elements" => $arrayElements));
  	}

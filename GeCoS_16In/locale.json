@@ -1,22 +1,22 @@
 {
     "translations": {
-        "en": {
-            "16IN Fehler Eingang lesen": "16IN error reading inputs",
-            "Aktiv": "Active",
-            "Device Adresse": "Device address",
-            "Device konnte nicht gefunden werden": "Device could not be found",
-            "Diese Funktionen stehen erst nach Eingabe und Übernahme der erforderlichen Daten zur Verfügung!": "These functions are only available after the required data has been entered and applied!",
-            "Eingang X%d": "Input X%d",
-            "GeCoS I²C-Bus": "GeCoS I²C bus",
-            "GeCoS I²C-Bus 0": "GeCoS I²C bus 0",
-            "GeCoS I²C-Bus 1": "GeCoS I²C bus 1",
-            "GeCoS I²C-Bus 2": "GeCoS I²C bus 2",
-            "Herstellerinformationen": "Manufacturer information",
-            "Instanz ist aktiv": "Instance is active",
-            "Instanz ist fehlerhaft": "Instance is faulty",
-            "Instanz ist inaktiv": "Instance is inactive",
-            "Instanz wird erstellt": "Instance is being created",
-            "I²C-Kommunikationfehler!": "I²C communication error!"
+        "de": {
+            "16IN error reading inputs": "16IN Fehler Eingang lesen",
+            "Active": "Aktiv",
+            "Device address": "Device Adresse",
+            "Device could not be found": "Device konnte nicht gefunden werden",
+            "GeCoS I²C bus": "GeCoS I²C-Bus",
+            "GeCoS I²C bus 0": "GeCoS I²C-Bus 0",
+            "GeCoS I²C bus 1": "GeCoS I²C-Bus 1",
+            "GeCoS I²C bus 2": "GeCoS I²C-Bus 2",
+            "Input X%d": "Eingang X%d",
+            "Instance is active": "Instanz ist aktiv",
+            "Instance is being created": "Instanz wird erstellt",
+            "Instance is faulty": "Instanz ist fehlerhaft",
+            "Instance is inactive": "Instanz ist inaktiv",
+            "I²C communication error!": "I²C-Kommunikationfehler!",
+            "Manufacturer information": "Herstellerinformationen",
+            "These functions are only available after the required data has been entered and applied!": "Diese Funktionen stehen erst nach Eingabe und Übernahme der erforderlichen Daten zur Verfügung!"
         }
     }
 }

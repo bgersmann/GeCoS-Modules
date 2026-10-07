@@ -20,61 +20,61 @@
 		for ($i = 0; $i <= 3; $i++) {
 			$this->RegisterVariableBoolean("Status_RGB_".($i + 1), sprintf($this->Translate("Status RGB %d"), $i + 1), array("PRESENTATION" => VARIABLE_PRESENTATION_SWITCH), 10 + ($i * 70));
 			$this->EnableAction("Status_RGB_".($i + 1));
-			$this->RegisterVariableInteger("Color_RGB_".($i + 1), sprintf($this->Translate("Farbe %d"), $i + 1), array("PRESENTATION" => VARIABLE_PRESENTATION_COLOR), 20 + ($i * 70));
+			$this->RegisterVariableInteger("Color_RGB_".($i + 1), sprintf($this->Translate("Color %d"), $i + 1), array("PRESENTATION" => VARIABLE_PRESENTATION_COLOR), 20 + ($i * 70));
 			$this->EnableAction("Color_RGB_".($i + 1));
-			$this->RegisterVariableInteger("Intensity_R_".($i + 1), sprintf($this->Translate("Intensität Rot %d"), $i + 1), $Intensity, 30 + ($i * 70) );
+			$this->RegisterVariableInteger("Intensity_R_".($i + 1), sprintf($this->Translate("Intensity red %d"), $i + 1), $Intensity, 30 + ($i * 70) );
 			$this->EnableAction("Intensity_R_".($i + 1));
-			$this->RegisterVariableInteger("Intensity_G_".($i + 1), sprintf($this->Translate("Intensität Grün %d"), $i + 1), $Intensity, 40 + ($i * 70));
+			$this->RegisterVariableInteger("Intensity_G_".($i + 1), sprintf($this->Translate("Intensity green %d"), $i + 1), $Intensity, 40 + ($i * 70));
 			$this->EnableAction("Intensity_G_".($i + 1));
-			$this->RegisterVariableInteger("Intensity_B_".($i + 1), sprintf($this->Translate("Intensität Blau %d"), $i + 1), $Intensity, 50 + ($i * 70));
+			$this->RegisterVariableInteger("Intensity_B_".($i + 1), sprintf($this->Translate("Intensity blue %d"), $i + 1), $Intensity, 50 + ($i * 70));
 			$this->EnableAction("Intensity_B_".($i + 1));
-			$this->RegisterVariableBoolean("Status_W_".($i + 1), sprintf($this->Translate("Status Weiß %d"), $i + 1), array("PRESENTATION" => VARIABLE_PRESENTATION_SWITCH), 60 + ($i * 70));
+			$this->RegisterVariableBoolean("Status_W_".($i + 1), sprintf($this->Translate("Status white %d"), $i + 1), array("PRESENTATION" => VARIABLE_PRESENTATION_SWITCH), 60 + ($i * 70));
 			$this->EnableAction("Status_W_".($i + 1));
-			$this->RegisterVariableInteger("Intensity_W_".($i + 1), sprintf($this->Translate("Intensität Weiß %d"), $i + 1), $Intensity, 70 + ($i * 70));
+			$this->RegisterVariableInteger("Intensity_W_".($i + 1), sprintf($this->Translate("Intensity white %d"), $i + 1), $Intensity, 70 + ($i * 70));
 			$this->EnableAction("Intensity_W_".($i + 1));			
 		}
-		$this->RegisterVariableBoolean("Status_RGB_5", $this->Translate("Status RGB Alle"), array("PRESENTATION" => VARIABLE_PRESENTATION_SWITCH), 290);
+		$this->RegisterVariableBoolean("Status_RGB_5", $this->Translate("Status RGB all"), array("PRESENTATION" => VARIABLE_PRESENTATION_SWITCH), 290);
 		$this->EnableAction("Status_RGB_5");
-		$this->RegisterVariableInteger("Color_RGB_5", $this->Translate("Farbe Alle"), array("PRESENTATION" => VARIABLE_PRESENTATION_COLOR), 300);
+		$this->RegisterVariableInteger("Color_RGB_5", $this->Translate("Color all"), array("PRESENTATION" => VARIABLE_PRESENTATION_COLOR), 300);
 		$this->EnableAction("Color_RGB_5");
-		$this->RegisterVariableInteger("Intensity_R_5", $this->Translate("Intensität Rot Alle"), $Intensity, 310);
+		$this->RegisterVariableInteger("Intensity_R_5", $this->Translate("Intensity red all"), $Intensity, 310);
 		$this->EnableAction("Intensity_R_5");
-		$this->RegisterVariableInteger("Intensity_G_5", $this->Translate("Intensität Grün Alle"), $Intensity, 320);
+		$this->RegisterVariableInteger("Intensity_G_5", $this->Translate("Intensity green all"), $Intensity, 320);
 		$this->EnableAction("Intensity_G_5");
-		$this->RegisterVariableInteger("Intensity_B_5", $this->Translate("Intensität Blau Alle"), $Intensity, 330);
+		$this->RegisterVariableInteger("Intensity_B_5", $this->Translate("Intensity blue all"), $Intensity, 330);
 		$this->EnableAction("Intensity_B_5");
-		$this->RegisterVariableBoolean("Status_W_5", $this->Translate("Status Weiß Alle"), array("PRESENTATION" => VARIABLE_PRESENTATION_SWITCH), 340);
+		$this->RegisterVariableBoolean("Status_W_5", $this->Translate("Status white all"), array("PRESENTATION" => VARIABLE_PRESENTATION_SWITCH), 340);
 		$this->EnableAction("Status_W_5");
-		$this->RegisterVariableInteger("Intensity_W_5", $this->Translate("Intensität Weiß Alle"), $Intensity, 350);
+		$this->RegisterVariableInteger("Intensity_W_5", $this->Translate("Intensity white all"), $Intensity, 350);
 		$this->EnableAction("Intensity_W_5");	
         }
  	
 	public function GetConfigurationForm(): string
 	{ 
 		$arrayStatus = array(); 
-		$arrayStatus[] = array("code" => 101, "icon" => "inactive", "caption" => "Instanz wird erstellt"); 
-		$arrayStatus[] = array("code" => 102, "icon" => "active", "caption" => "Instanz ist aktiv");
-		$arrayStatus[] = array("code" => 104, "icon" => "inactive", "caption" => "Instanz ist inaktiv");
-		$arrayStatus[] = array("code" => 200, "icon" => "error", "caption" => "Instanz ist fehlerhaft");
-		$arrayStatus[] = array("code" => 201, "icon" => "error", "caption" => "Device konnte nicht gefunden werden");
+		$arrayStatus[] = array("code" => 101, "icon" => "inactive", "caption" => "Instance is being created"); 
+		$arrayStatus[] = array("code" => 102, "icon" => "active", "caption" => "Instance is active");
+		$arrayStatus[] = array("code" => 104, "icon" => "inactive", "caption" => "Instance is inactive");
+		$arrayStatus[] = array("code" => 200, "icon" => "error", "caption" => "Instance is faulty");
+		$arrayStatus[] = array("code" => 201, "icon" => "error", "caption" => "Device could not be found");
 				
 		$arrayElements = array(); 
-		$arrayElements[] = array("name" => "Open", "type" => "CheckBox",  "caption" => "Aktiv"); 
+		$arrayElements[] = array("name" => "Open", "type" => "CheckBox",  "caption" => "Active"); 
  		
 		$arrayOptions = array();
 		for ($i = 88; $i <= 95; $i++) {
 		    	$arrayOptions[] = array("label" => $i." / 0x".strtoupper(dechex($i))."", "value" => $i);
 		}
-		$arrayElements[] = array("type" => "Select", "name" => "DeviceAddress", "caption" => "Device Adresse", "options" => $arrayOptions );
+		$arrayElements[] = array("type" => "Select", "name" => "DeviceAddress", "caption" => "Device address", "options" => $arrayOptions );
 		
 		$arrayOptions = array();
-		$arrayOptions[] = array("label" => "GeCoS I²C-Bus 0", "value" => 0);
-		$arrayOptions[] = array("label" => "GeCoS I²C-Bus 1", "value" => 1);
-		$arrayOptions[] = array("label" => "GeCoS I²C-Bus 2", "value" => 2);
+		$arrayOptions[] = array("label" => "GeCoS I²C bus 0", "value" => 0);
+		$arrayOptions[] = array("label" => "GeCoS I²C bus 1", "value" => 1);
+		$arrayOptions[] = array("label" => "GeCoS I²C bus 2", "value" => 2);
 		
-		$arrayElements[] = array("type" => "Select", "name" => "DeviceBus", "caption" => "GeCoS I²C-Bus", "options" => $arrayOptions );
+		$arrayElements[] = array("type" => "Select", "name" => "DeviceBus", "caption" => "GeCoS I²C bus", "options" => $arrayOptions );
 		$arrayElements[] = array("type" => "Label", "label" => "_____________________________________________________________________________________________________");
-		$arrayElements[] = array("type" => "Button", "label" => "Herstellerinformationen", "onClick" => "echo 'https://www.gedad.de/projekte/projekte-f%C3%BCr-privat/gedad-control/'");
+		$arrayElements[] = array("type" => "Button", "label" => "Manufacturer information", "onClick" => "echo 'https://www.gedad.de/projekte/projekte-f%C3%BCr-privat/gedad-control/'");
 		$arrayElements[] = array("type" => "Label", "label" => "_____________________________________________________________________________________________________");
 		$arrayElements[] = array("type" => "Label", "label" => "Test Center"); 
 		$arrayElements[] = array("type" => "TestCenter", "name" => "TestCenter");

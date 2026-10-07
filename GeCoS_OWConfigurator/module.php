@@ -14,10 +14,10 @@
 	public function GetConfigurationForm(): string
 	{
 		$arrayStatus = array();
-		$arrayStatus[] = array("code" => 101, "icon" => "inactive", "caption" => "Instanz wird erstellt");
-		$arrayStatus[] = array("code" => 102, "icon" => "active", "caption" => "Instanz ist aktiv");
-		$arrayStatus[] = array("code" => 104, "icon" => "inactive", "caption" => "Instanz ist inaktiv");
-		$arrayStatus[] = array("code" => 202, "icon" => "error", "caption" => "I²C-Kommunikationfehler!");
+		$arrayStatus[] = array("code" => 101, "icon" => "inactive", "caption" => "Instance is being created");
+		$arrayStatus[] = array("code" => 102, "icon" => "active", "caption" => "Instance is active");
+		$arrayStatus[] = array("code" => 104, "icon" => "inactive", "caption" => "Instance is inactive");
+		$arrayStatus[] = array("code" => 202, "icon" => "error", "caption" => "I²C communication error!");
 
 		// 1-Wire Devices
 		$arrayElements = array();
@@ -25,7 +25,7 @@
 		$arraySort = array("column" => "OWType", "direction" => "ascending");
 
 		$arrayColumns = array();
-		$arrayColumns[] = array("caption" => "Typ", "name" => "OWType", "width" => "250px", "visible" => true);
+		$arrayColumns[] = array("caption" => "Type", "name" => "OWType", "width" => "250px", "visible" => true);
 		$arrayColumns[] = array("caption" => "Serial", "name" => "OWSerial", "width" => "auto", "visible" => true);
 		$OWArray = array();
 		If ($this->HasActiveParent() == true) {
@@ -53,10 +53,10 @@
 			$arrayValues[] = array("OWType" => IPS_GetInstance($InstanceID)['ModuleInfo']['ModuleName'], "OWSerial" => $OWSerial, "instanceID" => $InstanceID);
 		}
 
-		$arrayElements[] = array("type" => "Configurator", "name" => "OWDevices", "caption" => "1-Wire-Komponenten", "rowCount" => 10, "delete" => false, "sort" => $arraySort, "columns" => $arrayColumns, "values" => $arrayValues);
+		$arrayElements[] = array("type" => "Configurator", "name" => "OWDevices", "caption" => "1-Wire components", "rowCount" => 10, "delete" => false, "sort" => $arraySort, "columns" => $arrayColumns, "values" => $arrayValues);
 
 		$arrayElements[] = array("type" => "Label", "label" => "_____________________________________________________________________________________________________");
-		$arrayElements[] = array("type" => "Button", "caption" => "Herstellerinformationen", "onClick" => "echo 'https://www.gedad.de/projekte/projekte-f%C3%BCr-privat/gedad-control/';");
+		$arrayElements[] = array("type" => "Button", "caption" => "Manufacturer information", "onClick" => "echo 'https://www.gedad.de/projekte/projekte-f%C3%BCr-privat/gedad-control/';");
 
 		$arrayActions = array();
 

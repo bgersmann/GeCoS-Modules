@@ -15,7 +15,7 @@
 		
 		//Status-Variablen anlegen
 		for ($i = 0; $i <= 15; $i++) {
-			$this->RegisterVariableBoolean("Input_X".$i, sprintf($this->Translate("Eingang X%d"), $i), array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION), ($i + 1) * 10);
+			$this->RegisterVariableBoolean("Input_X".$i, sprintf($this->Translate("Input X%d"), $i), array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION), ($i + 1) * 10);
 			$this->DisableAction("Input_X".$i);	
 		}
 		
@@ -24,33 +24,33 @@
 	public function GetConfigurationForm(): string
 	{ 
 		$arrayStatus = array(); 
-		$arrayStatus[] = array("code" => 101, "icon" => "inactive", "caption" => "Instanz wird erstellt"); 
-		$arrayStatus[] = array("code" => 102, "icon" => "active", "caption" => "Instanz ist aktiv");
-		$arrayStatus[] = array("code" => 104, "icon" => "inactive", "caption" => "Instanz ist inaktiv");
-		$arrayStatus[] = array("code" => 200, "icon" => "error", "caption" => "Instanz ist fehlerhaft");
-		$arrayStatus[] = array("code" => 201, "icon" => "error", "caption" => "Device konnte nicht gefunden werden");
-		$arrayStatus[] = array("code" => 202, "icon" => "error", "caption" => "I²C-Kommunikationfehler!");
+		$arrayStatus[] = array("code" => 101, "icon" => "inactive", "caption" => "Instance is being created"); 
+		$arrayStatus[] = array("code" => 102, "icon" => "active", "caption" => "Instance is active");
+		$arrayStatus[] = array("code" => 104, "icon" => "inactive", "caption" => "Instance is inactive");
+		$arrayStatus[] = array("code" => 200, "icon" => "error", "caption" => "Instance is faulty");
+		$arrayStatus[] = array("code" => 201, "icon" => "error", "caption" => "Device could not be found");
+		$arrayStatus[] = array("code" => 202, "icon" => "error", "caption" => "I²C communication error!");
 		
 		$arrayElements = array(); 
-		$arrayElements[] = array("name" => "Open", "type" => "CheckBox",  "caption" => "Aktiv"); 
+		$arrayElements[] = array("name" => "Open", "type" => "CheckBox",  "caption" => "Active"); 
  		
 		$arrayOptions = array();
 		for ($i = 32; $i <= 35; $i++) {
 		    	$arrayOptions[] = array("label" => $i." / 0x".strtoupper(dechex($i))." - V2.x", "value" => $i);
 		}
-		$arrayElements[] = array("type" => "Select", "name" => "DeviceAddress", "caption" => "Device Adresse", "options" => $arrayOptions );
+		$arrayElements[] = array("type" => "Select", "name" => "DeviceAddress", "caption" => "Device address", "options" => $arrayOptions );
 		
 		$arrayOptions = array();
-		$arrayOptions[] = array("label" => "GeCoS I²C-Bus 0", "value" => 0);
-		$arrayOptions[] = array("label" => "GeCoS I²C-Bus 1", "value" => 1);
-		$arrayOptions[] = array("label" => "GeCoS I²C-Bus 2", "value" => 2);
+		$arrayOptions[] = array("label" => "GeCoS I²C bus 0", "value" => 0);
+		$arrayOptions[] = array("label" => "GeCoS I²C bus 1", "value" => 1);
+		$arrayOptions[] = array("label" => "GeCoS I²C bus 2", "value" => 2);
 		
-		$arrayElements[] = array("type" => "Select", "name" => "DeviceBus", "caption" => "GeCoS I²C-Bus", "options" => $arrayOptions );
+		$arrayElements[] = array("type" => "Select", "name" => "DeviceBus", "caption" => "GeCoS I²C bus", "options" => $arrayOptions );
 		$arrayElements[] = array("type" => "Label", "label" => "_____________________________________________________________________________________________________");
-		$arrayElements[] = array("type" => "Button", "caption" => "Herstellerinformationen", "onClick" => "echo 'https://www.gedad.de/projekte/projekte-f%C3%BCr-privat/gedad-control/';");
+		$arrayElements[] = array("type" => "Button", "caption" => "Manufacturer information", "onClick" => "echo 'https://www.gedad.de/projekte/projekte-f%C3%BCr-privat/gedad-control/';");
 	
 		//$arrayActions = array();
-		//$arrayActions[] = array("type" => "Label", "label" => "Diese Funktionen stehen erst nach Eingabe und Übernahme der erforderlichen Daten zur Verfügung!");
+		//$arrayActions[] = array("type" => "Label", "label" => "These functions are only available after the required data has been entered and applied!");
 		
 		return JSON_encode(array("status" => $arrayStatus, "elements" => $arrayElements)); 	
  		//return JSON_encode(array("status" => $arrayStatus, "elements" => $arrayElements, "actions" => $arrayActions)); 		 
@@ -111,7 +111,7 @@
 						}
 					} else {
 						//$this->SendDebug("16IN Error", "Fehler Eingang lesen", 0);	
-						$this->LogMessage($this->Translate("16IN Fehler Eingang lesen"), KL_WARNING);
+						$this->LogMessage($this->Translate("16IN error reading inputs"), KL_WARNING);
 					}
 				}
 				break; 

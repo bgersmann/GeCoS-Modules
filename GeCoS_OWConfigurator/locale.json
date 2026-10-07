@@ -1,13 +1,13 @@
 {
     "translations": {
-        "en": {
-            "1-Wire-Komponenten": "1-Wire components",
-            "Herstellerinformationen": "Manufacturer information",
-            "Instanz ist aktiv": "Instance is active",
-            "Instanz ist inaktiv": "Instance is inactive",
-            "Instanz wird erstellt": "Instance is being created",
-            "I²C-Kommunikationfehler!": "I²C communication error!",
-            "Typ": "Type"
+        "de": {
+            "1-Wire components": "1-Wire-Komponenten",
+            "Instance is active": "Instanz ist aktiv",
+            "Instance is being created": "Instanz wird erstellt",
+            "Instance is inactive": "Instanz ist inaktiv",
+            "I²C communication error!": "I²C-Kommunikationfehler!",
+            "Manufacturer information": "Herstellerinformationen",
+            "Type": "Typ"
         }
     }
 }
