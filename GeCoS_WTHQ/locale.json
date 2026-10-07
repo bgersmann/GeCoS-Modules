@@ -29,7 +29,7 @@
             "Instance is inactive": "Instanz ist inaktiv",
             "Invalid JSON data from %s (%s)": "Ungültige JSON-Daten von %s (%s)",
             "Manufacturer information": "Herstellerinformationen",
-            "Minimum 5 seconds, 0 => off": "Miniumum 5 Sekunden, 0 => Aus",
+            "Minimum 5 seconds, 0 => off": "Minimum 5 Sekunden, 0 => Aus",
             "No response from %s": "Keine Antwort von %s",
             "Number of consecutive failed attempts before the instance reports an error": "Anzahl Fehlversuche in Folge, bevor die Instanz auf Fehler geht",
             "Optional external sources": "Optionale Angabe von externen Quellen",
