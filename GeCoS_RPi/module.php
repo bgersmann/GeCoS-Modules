@@ -254,9 +254,9 @@
 							case "5":
 								// Speicher
 								$MemArray = explode("\n", $ResultArray[key($ResultArray)]);
-								$this->SetValue("MemoryTotal", intval(substr($MemArray[0], 16, -3)) / 1000);
-								$this->SetValue("MemoryFree", intval(substr($MemArray[1], 16, -3)) / 1000);
-								$this->SetValue("MemoryAvailable", intval(substr($MemArray[2], 16, -3)) / 1000);
+								$this->SetValue("MemoryTotal", intval(substr($MemArray[0], 16, -3)) / 1024);
+								$this->SetValue("MemoryFree", intval(substr($MemArray[1], 16, -3)) / 1024);
+								$this->SetValue("MemoryAvailable", intval(substr($MemArray[2], 16, -3)) / 1024);
 								break;
 							case "6":
 								// SD-Card
@@ -265,9 +265,9 @@
 								$Lines = array_values(array_filter(explode("\n", trim($ResultArray[key($ResultArray)]))));
 								$MemArray = preg_split('/\s+/', trim(end($Lines)));
 								If ((Count($Lines) >= 2) AND (Count($MemArray) >= 5) AND is_numeric($MemArray[1])) {
-									$this->SetValue("SD_Card_Total", intval($MemArray[1]) / 1000);
-									$this->SetValue("SD_Card_Used", intval($MemArray[2]) / 1000);
-									$this->SetValue("SD_Card_Available", intval($MemArray[3]) / 1000);
+									$this->SetValue("SD_Card_Total", intval($MemArray[1]) / 1024);
+									$this->SetValue("SD_Card_Used", intval($MemArray[2]) / 1024);
+									$this->SetValue("SD_Card_Available", intval($MemArray[3]) / 1024);
 									$this->SetValue("SD_Card_Used_rel", intval($MemArray[4]) / 100 );
 								}
 								else {
