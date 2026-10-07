@@ -1,4 +1,4 @@
-<?
+<?php
     // Klassendefinition
     class GeCoS_PWM16Out extends IPSModuleStrict 
     {

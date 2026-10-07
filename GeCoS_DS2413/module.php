@@ -1,4 +1,4 @@
-<?
+<?php
     // Klassendefinition
     class GeCoS_DS2413 extends IPSModuleStrict 
     {

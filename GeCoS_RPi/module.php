@@ -1,4 +1,4 @@
-<?
+<?php
     // Klassendefinition
     class GeCoS_RPi extends IPSModuleStrict 
     {
@@ -234,7 +234,7 @@
 								}
 								else {
 									$this->SetValue("AverageLoad", 0);
-									IPS_LogMessage("IPS2GPIO RPi", "Es ist ein unbekannter Fehler bei der CPU-Usage-Berechnung aufgetreten!");
+									$this->LogMessage("Es ist ein unbekannter Fehler bei der CPU-Usage-Berechnung aufgetreten!", KL_WARNING);
 								}
 								break;
 							case "5":

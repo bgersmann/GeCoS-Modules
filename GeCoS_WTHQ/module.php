@@ -1,4 +1,4 @@
-<?
+<?php
     // Klassendefinition
     class GeCoS_WTHQ extends IPSModuleStrict 
     {
@@ -15,10 +15,6 @@
 		$this->RegisterPropertyInteger("Altitude", 0);
 		$this->RegisterPropertyFloat("TempOffset", 0);
 		$this->RegisterPropertyFloat("IntensityOffset", 30);
- 	   	$this->RegisterPropertyBoolean("LoggingTemp", false);
- 	    	$this->RegisterPropertyBoolean("LoggingHum", false);
- 	    	$this->RegisterPropertyBoolean("LoggingPres", false);
-		$this->RegisterPropertyBoolean("LoggingAir", false);
 		$this->RegisterPropertyInteger("Temperature_ID", 0);
 		$this->RegisterPropertyInteger("Humidity_ID", 0);
 		
@@ -91,10 +87,8 @@
 		$arrayElements[] = array("type" => "SelectVariable", "name" => "Temperature_ID", "caption" => "Temperatur");
 		$arrayElements[] = array("type" => "SelectVariable", "name" => "Humidity_ID", "caption" => "Luftfeuchtigkeit");
 		$arrayElements[] = array("type" => "Label", "label" => "_____________________________________________________________________________________________________");
-		$arrayElements[] = array("type" => "CheckBox", "name" => "LoggingTemp", "caption" => "Logging Temperatur aktivieren");
-		$arrayElements[] = array("type" => "CheckBox", "name" => "LoggingHum", "caption" => "Logging Luftfeuchtigkeit aktivieren");
-		$arrayElements[] = array("type" => "CheckBox", "name" => "LoggingPres", "caption" => "Logging Luftdruck aktivieren");
-		$arrayElements[] = array("type" => "CheckBox", "name" => "LoggingAir", "caption" => "Logging Luftqualität aktivieren");
+		$arrayElements[] = array("type" => "Label", "label" => "_____________________________________________________________________________________________________");
+		$arrayElements[] = array("type" => "Label", "label" => "Die Luftdruck-Trends werden berechnet, sobald für die Variable \"Luftdruck (abs)\" das Logging im Archiv aktiviert ist.");
 		$arrayElements[] = array("type" => "Label", "label" => "_____________________________________________________________________________________________________");
 		$arrayElements[] = array("type" => "Button", "label" => "Herstellerinformationen", "onClick" => "echo 'https://www.gedad.de/projekte/projekte-f%C3%BCr-privat/gedad-control/'");
 	
@@ -111,14 +105,6 @@
             	// Diese Zeile nicht löschen
             	parent::ApplyChanges();
             			
-		// Logging setzen
-		AC_SetLoggingStatus(IPS_GetInstanceListByModuleID("{43192F0B-135B-4CE7-A0A7-1475603F3060}")[0], $this->GetIDForIdent("Temperature"), $this->ReadPropertyBoolean("LoggingTemp"));
-		AC_SetLoggingStatus(IPS_GetInstanceListByModuleID("{43192F0B-135B-4CE7-A0A7-1475603F3060}")[0], $this->GetIDForIdent("Pressure"), $this->ReadPropertyBoolean("LoggingPres"));
-		AC_SetLoggingStatus(IPS_GetInstanceListByModuleID("{43192F0B-135B-4CE7-A0A7-1475603F3060}")[0], $this->GetIDForIdent("Humidity"), $this->ReadPropertyBoolean("LoggingHum"));
-		AC_SetLoggingStatus(IPS_GetInstanceListByModuleID("{43192F0B-135B-4CE7-A0A7-1475603F3060}")[0], $this->GetIDForIdent("CO2"), $this->ReadPropertyBoolean("LoggingAir"));
-		AC_SetLoggingStatus(IPS_GetInstanceListByModuleID("{43192F0B-135B-4CE7-A0A7-1475603F3060}")[0], $this->GetIDForIdent("TVOC"), $this->ReadPropertyBoolean("LoggingAir"));
-		IPS_ApplyChanges(IPS_GetInstanceListByModuleID("{43192F0B-135B-4CE7-A0A7-1475603F3060}")[0]);
-		
 		// Summary setzen
 		$this->SetSummary($this->ReadPropertyString('IPAddress'));
 		
@@ -253,7 +239,7 @@
 			$PressureRel = $Pressure * exp(($g_n * $Altitude) / ($R * ($Temperature + $T_0 + $C * $e_d + (($gam * $Altitude) / 2))));
 			$this->SetValue("PressureRel", round($PressureRel, 2));
 			// Luftdruck Trends
-			If ($this->ReadPropertyBoolean("LoggingPres") == true) {
+			If ($this->IsPressureLogged()) {
 				$this->SetValue("PressureTrend1h", $this->PressureTrend(1));
 				$this->SetValue("PressureTrend3h", $this->PressureTrend(3));
 				$this->SetValue("PressureTrend12h", $this->PressureTrend(12));
@@ -323,6 +309,14 @@
 		return max(1, $this->ReadPropertyInteger("MaxErrors"));
 	}
 
+	private function IsPressureLogged()
+	{
+		// Die Trends benötigen das Archiv-Logging des Luftdrucks, das der Benutzer selbst aktiviert
+		$ArchiveID = IPS_GetInstanceListByModuleID("{43192F0B-135B-4CE7-A0A7-1475603F3060}")[0];
+		return AC_GetLoggingStatus($ArchiveID, $this->GetIDForIdent("Pressure"));
+	}
+
+	
 	private function PressureTrend(int $interval)
 	{
 		$Result = 0;

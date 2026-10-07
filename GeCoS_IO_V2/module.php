@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * AutoLoaderSSHClientPHPSecLib
  */
@@ -153,29 +153,6 @@ class GeCoS_IO_V2 extends IPSModuleStrict
 			$this->SetBuffer("ModuleReady", 0);
 
 			$ParentID = $this->GetParentID();
-
-			if ($ParentID > 0) {
-				if (IPS_GetProperty($ParentID, 'Host') <> $this->ReadPropertyString('IPAddress')) {
-					IPS_SetProperty($ParentID, 'Host', $this->ReadPropertyString('IPAddress'));
-				}
-				if (IPS_GetProperty($ParentID, 'Port') <> 8000) {
-					IPS_SetProperty($ParentID, 'Port', 8000);
-				}
-				if (IPS_GetProperty($ParentID, 'Open') <> $this->ReadPropertyBoolean("Open")) {
-					IPS_SetProperty($ParentID, 'Open', $this->ReadPropertyBoolean("Open"));
-				}
-				if (IPS_GetName($ParentID) == "Client Socket") {
-					IPS_SetName($ParentID, "GeCoS");
-				}
-				if (IPS_HasChanges($ParentID)) {
-					$Result = @IPS_ApplyChanges($ParentID);
-					if ($Result) {
-						$this->SendDebug("ApplyChanges", "Einrichtung des Client Socket erfolgreich", 0);
-					} else {
-						$this->SendDebug("ApplyChanges", "Einrichtung des Client Socket nicht erfolgreich!", 0);
-					}
-				}
-			}
 
 			// Änderung an den untergeordneten Instanzen
 			$this->RegisterMessage($this->InstanceID, 11101); // Instanz wurde verbunden (InstanceID vom Parent)
@@ -689,7 +666,7 @@ class GeCoS_IO_V2 extends IPSModuleStrict
 			$ssh = new \phpseclib3\Net\SSH2($this->ReadPropertyString("IPAddress"));
 			$login = @$ssh->login($this->ReadPropertyString("User"), $this->ReadPropertyString("Password"));
 			if ($login == false) {
-				IPS_LogMessage("GeCoS_IO SSH-Connect", "Angegebene IP " . $this->ReadPropertyString("IPAddress") . " reagiert nicht!");
+				$this->LogMessage("Angegebene IP " . $this->ReadPropertyString("IPAddress") . " reagiert nicht!", KL_WARNING);
 				$this->SendDebug("SSH-Connect", "Angegebene IP " . $this->ReadPropertyString("IPAddress") . " reagiert nicht!", 0);
 				$Result = "";
 				return false;
@@ -711,7 +688,7 @@ class GeCoS_IO_V2 extends IPSModuleStrict
 			$ssh = new \phpseclib3\Net\SSH2($this->ReadPropertyString("IPAddress"));
 			$login = @$ssh->login($this->ReadPropertyString("User"), $this->ReadPropertyString("Password"));
 			if ($login == false) {
-				IPS_LogMessage("GeCoS_IO SSH-Connect", "Angegebene IP " . $this->ReadPropertyString("IPAddress") . " reagiert nicht!");
+				$this->LogMessage("Angegebene IP " . $this->ReadPropertyString("IPAddress") . " reagiert nicht!", KL_WARNING);
 				$this->SendDebug("SSH-Connect", "Angegebene IP " . $this->ReadPropertyString("IPAddress") . " reagiert nicht!", 0);
 				$Result = "";
 				return false;
@@ -779,7 +756,7 @@ class GeCoS_IO_V2 extends IPSModuleStrict
 
 			if ($login == false) {
 				$this->SendDebug("CheckConfig", "Angegebene IP " . $this->ReadPropertyString("IPAddress") . " reagiert nicht!", 0);
-				IPS_LogMessage("GeCoS_IO CheckConfig", "Angegebene IP " . $this->ReadPropertyString("IPAddress") . " reagiert nicht!");
+				$this->LogMessage("Angegebene IP " . $this->ReadPropertyString("IPAddress") . " reagiert nicht!", KL_WARNING);
 				$Result = "";
 				return serialize($arrayCheckConfig);
 			}
@@ -790,7 +767,7 @@ class GeCoS_IO_V2 extends IPSModuleStrict
 			// Prüfen, ob die Datei existiert
 			if (!$sftp->file_exists($PathConfig)) {
 				$this->SendDebug("CheckConfig", $PathConfig . " nicht gefunden!", 0);
-				IPS_LogMessage("GeCoS_IO CheckConfig", $PathConfig . " nicht gefunden!");
+				$this->LogMessage($PathConfig . " nicht gefunden!", KL_WARNING);
 			} else {
 				$FileContentConfig = $sftp->get($PathConfig);
 				// Prüfen ob I2C aktiviert ist
@@ -801,7 +778,7 @@ class GeCoS_IO_V2 extends IPSModuleStrict
 					$arrayCheckConfig["I2C"]["Color"] = "#00FF00";
 				} else {
 					$this->SendDebug("CheckConfig", "I2C ist deaktiviert!", 0);
-					IPS_LogMessage("GeCoS_IO CheckConfig", "I2C ist deaktiviert!");
+					$this->LogMessage("I2C ist deaktiviert!", KL_WARNING);
 					$arrayCheckConfig["I2C"]["Status"] = "deaktiviert";
 					$arrayCheckConfig["I2C"]["Color"] = "#FF0000";
 				}
@@ -825,7 +802,7 @@ class GeCoS_IO_V2 extends IPSModuleStrict
 			// Prüfen, ob die Datei existiert
 			if (!$sftp->file_exists($PathCmdline)) {
 				$this->SendDebug("CheckConfig", $PathCmdline . " nicht gefunden!", 0);
-				IPS_LogMessage("GeCoS_IO CheckConfig", $PathCmdline . " nicht gefunden!");
+				$this->LogMessage($PathCmdline . " nicht gefunden!", KL_WARNING);
 			} else {
 				$FileContentCmdline = $sftp->get($PathCmdline);
 				// Prüfen ob die Shell der serielle Schnittstelle aktiviert ist
@@ -836,7 +813,7 @@ class GeCoS_IO_V2 extends IPSModuleStrict
 					$arrayCheckConfig["Shell Zugriff"]["Color"] = "#00FF00";
 				} else {
 					$this->SendDebug("CheckConfig", "Shell-Zugriff auf serieller Schnittstelle ist aktiviert!", 0);
-					IPS_LogMessage("GeCoS_IO CheckConfig", "Shell-Zugriff auf serieller Schnittstelle ist aktiviert!");
+					$this->LogMessage("Shell-Zugriff auf serieller Schnittstelle ist aktiviert!", KL_WARNING);
 					$arrayCheckConfig["Shell Zugriff"]["Status"] = "aktiviert";
 					$arrayCheckConfig["Shell Zugriff"]["Color"] = "#FF0000";
 				}
@@ -861,7 +838,7 @@ class GeCoS_IO_V2 extends IPSModuleStrict
 				}
 			} else {
 				$this->SetValue("ServerStatus", false);
-				IPS_LogMessage("GeCoS_IO Netzanbindung", "Parent ist nicht verbunden!");
+				$this->LogMessage("Parent ist nicht verbunden!", KL_WARNING);
 				$this->SendDebug("Netzanbindung", "Parent ist nicht verbunden!", 0);
 				if ($this->GetStatus() <> 201) {
 					$this->SetStatus(201);
@@ -869,7 +846,7 @@ class GeCoS_IO_V2 extends IPSModuleStrict
 			}
 		} else {
 			$this->SetValue("ServerStatus", false);
-			IPS_LogMessage("GeCoS_IO Netzanbindung", "IP " . $this->ReadPropertyString("IPAddress") . " reagiert nicht!");
+			$this->LogMessage("IP " . $this->ReadPropertyString("IPAddress") . " reagiert nicht!", KL_WARNING);
 			$this->SendDebug("Netzanbindung", "IP " . $this->ReadPropertyString("IPAddress") . " reagiert nicht!", 0);
 			if ($this->GetStatus() <> 201) {
 				$this->SetStatus(201);

@@ -1,4 +1,4 @@
-<?
+<?php
     // Klassendefinition
     class GeCoS_4AnalogIn extends IPSModuleStrict 
     {
