@@ -138,21 +138,35 @@
 							case "1":
 								// Hardware-Daten
 								$HardwareArray = explode("\n", $ResultArray[key($ResultArray)]);
+								$SoC = "";
+								$RevisionCode = -1;
 								for ($j = 0; $j <= Count($HardwareArray) - 1; $j++) {
-								    	If (Substr($HardwareArray[$j], 0, 8) == "Hardware") {
-										$PartArray = explode(":", $HardwareArray[$j]);
-										$this->SetValue("Hardware", trim($PartArray[1]));
+									$PartArray = explode(":", $HardwareArray[$j], 2);
+									If (Count($PartArray) < 2) {
+										continue;
 									}
-									If (Substr($HardwareArray[$j], 0, 8) == "Revision") {
-										$PartArray = explode(":", $HardwareArray[$j]);
-										$this->SetValue("Revision", trim($PartArray[1]));
-										$this->SetValue("Board", $this->GetHardware(hexdec($PartArray[1])) );
+									$Key = trim($PartArray[0]);
+									$Value = trim($PartArray[1]);
+								    	If ($Key == "Hardware") {
+										// Nur bei 32-Bit-Kerneln vorhanden
+										$SoC = $Value;
 									}
-									If (Substr($HardwareArray[$j], 0, 6) == "Serial") {
-										$PartArray = explode(":", $HardwareArray[$j]);
-										$this->SetValue("Serial", trim($PartArray[1]));
+									elseIf ($Key == "Revision") {
+										$this->SetValue("Revision", $Value);
+										$RevisionCode = hexdec($Value);
+									}
+									elseIf ($Key == "Serial") {
+										$this->SetValue("Serial", $Value);
 									}
 								}
+								If ($RevisionCode >= 0) {
+									$Board = $this->DecodeRevision($RevisionCode);
+									$this->SetValue("Board", $Board["Board"]);
+									If ($SoC == "") {
+										$SoC = $Board["SoC"];
+									}
+								}
+								$this->SetValue("Hardware", $SoC);
 								break;
 							case "2":
 								// CPU Speicher
@@ -246,18 +260,19 @@
 								break;
 							case "6":
 								// SD-Card
-								$Result = trim(substr($ResultArray[key($ResultArray)], 10, -4));
-								// Array anhand der Leerzeichen trennen
-								$MemArray = explode(" ", $Result);
-								// Leere ArrayValues löschen
-								$MemArray = array_filter($MemArray);
-								// Array neu durchnummerieren
-								$MemArray = array_merge($MemArray);
-								//IPS_LogMessage("IPS2GPIO RPi", serialize($MemArray));
-								$this->SetValue("SD_Card_Total", intval($MemArray[0]) / 1000);
-								$this->SetValue("SD_Card_Used", intval($MemArray[1]) / 1000);
-								$this->SetValue("SD_Card_Available", intval($MemArray[2]) / 1000);
-								$this->SetValue("SD_Card_Used_rel", intval($MemArray[3]) / 100 );
+								// Ausgabe von "df -P /": Kopfzeile + Zeile des Root-Dateisystems
+								// Dateisystem 1024-Blöcke Benutzt Verfügbar Kapazität Eingehängt
+								$Lines = array_values(array_filter(explode("\n", trim($ResultArray[key($ResultArray)]))));
+								$MemArray = preg_split('/\s+/', trim(end($Lines)));
+								If ((Count($Lines) >= 2) AND (Count($MemArray) >= 5) AND is_numeric($MemArray[1])) {
+									$this->SetValue("SD_Card_Total", intval($MemArray[1]) / 1000);
+									$this->SetValue("SD_Card_Used", intval($MemArray[2]) / 1000);
+									$this->SetValue("SD_Card_Available", intval($MemArray[3]) / 1000);
+									$this->SetValue("SD_Card_Used_rel", intval($MemArray[4]) / 100 );
+								}
+								else {
+									$this->SendDebug("ReceiveData", "Unerwartete Ausgabe von df: ".$ResultArray[key($ResultArray)], 0);
+								}
 								break;
 							case "7":
 								// Uptime
@@ -321,7 +336,7 @@
 			// Speicher
 			$CommandArray[5] = "cat /proc/meminfo | grep Mem";
 			// SD-Card
-			$CommandArray[6] = "df -P | grep /dev/root";
+			$CommandArray[6] = "df -P /";
 			// Uptime
 			$CommandArray[7] = "uptime";
 			$this->SendDataToParent(json_encode(Array("DataID"=> "{47113C57-29FE-4A60-9D0E-840022883B89}", "Function" => "get_RPi_connect", "InstanceID" => $this->InstanceID,  "Command" => serialize($CommandArray), "CommandNumber" => 1, "IsArray" => true )));
@@ -355,22 +370,46 @@
 	
 	
 	
-	private function GetHardware(Int $RevNumber)
+	private function DecodeRevision(int $Code)
 	{
-		$Hardware = array(2 => "Rev.0002 Model B PCB-Rev. 1.0 256MB", 3 => "Rev.0003 Model B PCB-Rev. 1.0 256MB", 4 => "Rev.0004 Model B PCB-Rev. 2.0 256MB Sony", 5 => "Rev.0005 Model B PCB-Rev. 2.0 256MB Qisda", 
-			6 => "Rev.0006 Model B PCB-Rev. 2.0 256MB Egoman", 7 => "Rev.0007 Model A PCB-Rev. 2.0 256MB Egoman", 8 => "Rev.0008 Model A PCB-Rev. 2.0 256MB Sony", 9 => "Rev.0009 Model A PCB-Rev. 2.0 256MB Qisda",
-			13 => "Rev.000d Model B PCB-Rev. 2.0 512MB Egoman", 14 => "Rev.000e Model B PCB-Rev. 2.0 512MB Sony", 15 => "Rev.000f Model B PCB-Rev. 2.0 512MB Qisda", 16 => "Rev.0010 Model B+ PCB-Rev. 1.0 512MB Sony",
-			17 => "Rev.0011 Compute Module PCB-Rev. 1.0 512MB Sony", 18 => "Rev.0012 Model A+ PCB-Rev. 1.1 256MB Sony", 19 => "Rev.0013 Model B+ PCB-Rev. 1.2 512MB", 20 => "Rev.0014 Compute Module PCB-Rev. 1.0 512MB Embest",
-			21 => "Rev.0015 Model A+ PCB-Rev. 1.1 256/512MB Embest", 10489920 => "Rev.a01040 2 Model B PCB-Rev. 1.0 1GB", 10489921 => "Rev.a01041 2 Model B PCB-Rev. 1.1 1GB Sony", 10620993 => "Rev.a21041 2 Model B PCB-Rev. 1.1 1GB Embest",
-			10625090 => "Rev.a22042 2 Model B PCB-Rev. 1.2 1GB Embest", 9437330 => "Rev.900092 Zero PCB-Rev. 1.2 512MB Sony", 9437331 => "Rev.900093 Zero PCB-Rev. 1.3 512MB Sony", 10494082 => "Rev.a02082 3 Model B PCB-Rev. 1.2 1GB Sony",
-			10625154 => "Rev.a22082 3 Model B PCB-Rev. 1.2 1GB Embest", 44044353 => "Rev.2a01041 2 Model B PCB-Rev. 1.1 1GB Sony (overvoltage)", 10494163 => "Rev.a020d3 3 Model B+ PCB-Rev. 1.3 1GB Sony");
-		If (array_key_exists($RevNumber, $Hardware)) {
-			$HardwareText = $Hardware[$RevNumber];
+		// Revisionsnummern laut https://www.raspberrypi.com/documentation/computers/raspberry-pi.html#raspberry-pi-revision-codes
+		If (($Code >> 23) & 1) {
+			// Neues Format: NOQuuuWuFMMMCCCCPPPPTTTTTTTTRRRR
+			$Types = array(0x00 => "A", 0x01 => "B", 0x02 => "A+", 0x03 => "B+", 0x04 => "2B", 0x05 => "Alpha", 0x06 => "CM1", 0x08 => "3B",
+				0x09 => "Zero", 0x0A => "CM3", 0x0C => "Zero W", 0x0D => "3B+", 0x0E => "3A+", 0x10 => "CM3+", 0x11 => "4B", 0x12 => "Zero 2 W",
+				0x13 => "400", 0x14 => "CM4", 0x15 => "CM4S", 0x17 => "5", 0x18 => "CM5", 0x19 => "500", 0x1A => "CM5 Lite");
+			$Processors = array(0 => "BCM2835", 1 => "BCM2836", 2 => "BCM2837", 3 => "BCM2711", 4 => "BCM2712");
+			$Manufacturers = array(0 => "Sony UK", 1 => "Egoman", 2 => "Embest", 3 => "Sony Japan", 4 => "Embest", 5 => "Stadium");
+			$Memory = array(0 => "256MB", 1 => "512MB", 2 => "1GB", 3 => "2GB", 4 => "4GB", 5 => "8GB", 6 => "16GB");
+
+			$Type = ($Code >> 4) & 0xFF;
+			$Processor = ($Code >> 12) & 0xF;
+			$Manufacturer = ($Code >> 16) & 0xF;
+			$Mem = ($Code >> 20) & 0x7;
+
+			$Board = "Raspberry Pi ".(array_key_exists($Type, $Types) ? $Types[$Type] : sprintf("Typ 0x%02X", $Type));
+			$Board .= " Rev 1.".($Code & 0xF);
+			If (array_key_exists($Mem, $Memory)) {
+				$Board .= " ".$Memory[$Mem];
+			}
+			If (array_key_exists($Manufacturer, $Manufacturers)) {
+				$Board .= " ".$Manufacturers[$Manufacturer];
+			}
+			$SoC = array_key_exists($Processor, $Processors) ? $Processors[$Processor] : "";
+			return array("Board" => $Board, "SoC" => $SoC);
 		}
-		else {
-			$HardwareText = "Unbekannte Revisions Nummer!";
+
+		// Altes Format (Raspberry Pi 1, Zero/CM1-Vorgänger), Bit 24 = Overvoltage
+		$OldCodes = array(0x02 => "B Rev 1.0 256MB", 0x03 => "B Rev 1.0 256MB", 0x04 => "B Rev 2.0 256MB Sony UK", 0x05 => "B Rev 2.0 256MB Qisda",
+			0x06 => "B Rev 2.0 256MB Egoman", 0x07 => "A Rev 2.0 256MB Egoman", 0x08 => "A Rev 2.0 256MB Sony UK", 0x09 => "A Rev 2.0 256MB Qisda",
+			0x0D => "B Rev 2.0 512MB Egoman", 0x0E => "B Rev 2.0 512MB Sony UK", 0x0F => "B Rev 2.0 512MB Egoman", 0x10 => "B+ Rev 1.2 512MB Sony UK",
+			0x11 => "CM1 Rev 1.0 512MB Sony UK", 0x12 => "A+ Rev 1.1 256MB Sony UK", 0x13 => "B+ Rev 1.2 512MB Embest", 0x14 => "CM1 Rev 1.0 512MB Embest",
+			0x15 => "A+ Rev 1.1 256MB/512MB Embest");
+		$OldCode = $Code & 0xFFFFFF;
+		If (array_key_exists($OldCode, $OldCodes)) {
+			return array("Board" => "Raspberry Pi ".$OldCodes[$OldCode], "SoC" => "BCM2835");
 		}
-	return $HardwareText;
+	return array("Board" => $this->Translate("Unknown revision number"), "SoC" => "");
 	}
 }
 ?>

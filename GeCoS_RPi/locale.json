@@ -9,7 +9,8 @@
             "Instance is inactive": "Instanz ist inaktiv",
             "Manufacturer information": "Herstellerinformationen",
             "Seconds": "Sekunden",
-            "These functions are only available after the required data has been entered and applied!": "Diese Funktionen stehen erst nach Eingabe und Übernahme der erforderlichen Daten zur Verfügung!"
+            "These functions are only available after the required data has been entered and applied!": "Diese Funktionen stehen erst nach Eingabe und Übernahme der erforderlichen Daten zur Verfügung!",
+            "Unknown revision number": "Unbekannte Revisionsnummer"
         }
     }
 }
