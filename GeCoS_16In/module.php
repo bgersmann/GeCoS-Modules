@@ -1,35 +1,27 @@
 <?
     // Klassendefinition
-    class GeCoS_16In extends IPSModule 
+    class GeCoS_16In extends IPSModuleStrict 
     {
 	// PCA9655E
-	public function Destroy() 
-	{
-		//Never delete this line!
-		parent::Destroy();
-		$this->SetTimerInterval("GetInput", 0);
-	}
-	    
 	// Überschreibt die interne IPS_Create($id) Funktion
-        public function Create() 
+        public function Create(): void
         {
             	// Diese Zeile nicht löschen.
             	parent::Create();
  	    	$this->RegisterPropertyBoolean("Open", false);
-		$this->ConnectParent("{5F1C0403-4A74-4F14-829F-9A217CFB2D05}");
  	    	$this->RegisterPropertyInteger("DeviceAddress", 32);
 		$this->RegisterPropertyInteger("DeviceBus", 0);
 		$this->RegisterTimer("GetInput", 0, 'GeCoS16In_GetInput($_IPS["TARGET"]);');
 		
 		//Status-Variablen anlegen
 		for ($i = 0; $i <= 15; $i++) {
-			$this->RegisterVariableBoolean("Input_X".$i, "Eingang X".$i, "~Switch", ($i + 1) * 10);
+			$this->RegisterVariableBoolean("Input_X".$i, "Eingang X".$i, array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION), ($i + 1) * 10);
 			$this->DisableAction("Input_X".$i);	
 		}
 		
         }
  	
-	public function GetConfigurationForm() 
+	public function GetConfigurationForm(): string
 	{ 
 		$arrayStatus = array(); 
 		$arrayStatus[] = array("code" => 101, "icon" => "inactive", "caption" => "Instanz wird erstellt"); 
@@ -65,7 +57,7 @@
  	}           
 	  
         // Überschreibt die intere IPS_ApplyChanges($id) Funktion
-        public function ApplyChanges() 
+        public function ApplyChanges(): void
         {
             	// Diese Zeile nicht löschen
             	parent::ApplyChanges();
@@ -100,7 +92,7 @@
 		}	
 	}
 	
-	public function ReceiveData($JSONString) 
+	public function ReceiveData(string $JSONString): string
 	{
 	    	// Empfangene Daten vom Gateway/Splitter
 	    	$data = json_decode($JSONString);
@@ -113,8 +105,8 @@
 						// Statusvariablen setzen
 						for ($i = 0; $i <= 15; $i++) {
 							$Bitvalue = boolval($Value & pow(2, $i));					
-							If (GetValueBoolean($this->GetIDForIdent("Input_X".$i)) <> $Bitvalue) {
-								SetValueBoolean($this->GetIDForIdent("Input_X".$i), $Bitvalue);
+							If ($this->GetValue("Input_X".$i) <> $Bitvalue) {
+								$this->SetValue("Input_X".$i, $Bitvalue);
 							}
 						}
 					} else {
@@ -141,12 +133,13 @@
 			   	}
 			   	break;	
 	 	}
- 	}
+		return "";
+	}
 	    
 	// Beginn der Funktionen
-	public function GetInput()
+	public function GetInput(): bool
 	{
-		$Result = -1;
+		$Result = false;
 		If ($this->ReadPropertyBoolean("Open") == true) {
 			$this->SendDebug("GetInput", "Ausfuehrung", 0);
 			$Result = $this->SendDataToParent(json_encode(Array("DataID"=> "{47113C57-29FE-4A60-9D0E-840022883B89}", "Function" => "SAI")));
@@ -161,20 +154,8 @@
 				}
 			}
 		}
-	return $Result;
+	return ($Result == true);
 	}
 	    
-	protected function HasActiveParent()
-    	{
-		$this->SendDebug("HasActiveParent", "Ausfuehrung", 0);
-		$Instance = @IPS_GetInstance($this->InstanceID);
-		if ($Instance['ConnectionID'] > 0)
-		{
-			$Parent = IPS_GetInstance($Instance['ConnectionID']);
-			if ($Parent['InstanceStatus'] == 102)
-			return true;
-		}
-        return false;
-    	}  
 }
 ?>

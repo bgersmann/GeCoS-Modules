@@ -1,18 +1,17 @@
 <?
     // Klassendefinition
-    class GeCoS_OWConfigurator extends IPSModule 
+    class GeCoS_OWConfigurator extends IPSModuleStrict 
     {
 	    
 	// Überschreibt die interne IPS_Create($id) Funktion
-        public function Create() 
+        public function Create(): void
         {
             	// Diese Zeile nicht löschen.
             	parent::Create();
-		$this->ConnectParent("{5F1C0403-4A74-4F14-829F-9A217CFB2D05}");
 		
         }
  	
-	public function GetConfigurationForm() 
+	public function GetConfigurationForm(): string
 	{ 
 		$arrayStatus = array(); 
 		$arrayStatus[] = array("code" => 101, "icon" => "inactive", "caption" => "Instanz wird erstellt"); 
@@ -59,7 +58,7 @@
  	}       
 	   
         // Überschreibt die intere IPS_ApplyChanges($id) Funktion
-        public function ApplyChanges() 
+        public function ApplyChanges(): void
         {
             	// Diese Zeile nicht löschen
             	parent::ApplyChanges();
@@ -131,7 +130,8 @@
 	{
 		$FamilyCodeArray = array("10" => "{8179FCFF-E441-4FAC-BCC3-1B97E9D45052}", 
 					"3a" => "{AFB9CF0C-CA31-4336-8B0F-E26168960417}",
-				     "28" => "{18CFA944-CFC9-4A72-8D2A-231604FF7D2A}");
+				     "28" => "{18CFA944-CFC9-4A72-8D2A-231604FF7D2A}",
+				     "26" => "{99250714-5864-43B4-BDF8-E6F62FEBFA8A}");
 		$GUID = $FamilyCodeArray[$FamilyCode];
 	return $GUID;
 	}

@@ -1,16 +1,15 @@
 <?
     // Klassendefinition
-    class GeCoS_16Out extends IPSModule 
+    class GeCoS_16Out extends IPSModuleStrict 
     {
 	// PCA9655E
 	    
 	// Überschreibt die interne IPS_Create($id) Funktion
-        public function Create() 
+        public function Create(): void
         {
             	// Diese Zeile nicht löschen.
             	parent::Create();
  	    	$this->RegisterPropertyBoolean("Open", false);
-		$this->ConnectParent("{5F1C0403-4A74-4F14-829F-9A217CFB2D05}");
  	    	$this->RegisterPropertyInteger("DeviceAddress", 36);
 		$this->RegisterPropertyInteger("DeviceBus", 0);
 		$this->RegisterPropertyInteger("StartOption", -1);
@@ -18,12 +17,12 @@
 		
 		//Status-Variablen anlegen
 		for ($i = 0; $i <= 15; $i++) {
-			$this->RegisterVariableBoolean("Output_X".$i, "Ausgang X".$i, "~Switch", ($i + 1) * 10);
+			$this->RegisterVariableBoolean("Output_X".$i, "Ausgang X".$i, array("PRESENTATION" => VARIABLE_PRESENTATION_SWITCH), ($i + 1) * 10);
 			$this->EnableAction("Output_X".$i);	
 		}
         }
  	
-	public function GetConfigurationForm() 
+	public function GetConfigurationForm(): string
 	{ 
 		$arrayStatus = array(); 
 		$arrayStatus[] = array("code" => 101, "icon" => "inactive", "caption" => "Instanz wird erstellt"); 
@@ -69,7 +68,7 @@
  	}           
 	  
         // Überschreibt die intere IPS_ApplyChanges($id) Funktion
-        public function ApplyChanges() 
+        public function ApplyChanges(): void
         {
             	// Diese Zeile nicht löschen
             	parent::ApplyChanges();
@@ -102,7 +101,7 @@
 		}
 	}
 	
-	public function ReceiveData($JSONString) 
+	public function ReceiveData(string $JSONString): string
 	{
 	    	// Empfangene Daten vom Gateway/Splitter
 	    	$data = json_decode($JSONString);
@@ -115,8 +114,8 @@
 					// Statusvariablen setzen
 					for ($i = 0; $i <= 15; $i++) {
 						$Bitvalue = boolval($Value & pow(2, $i));					
-						If (GetValueBoolean($this->GetIDForIdent("Output_X".$i)) <> $Bitvalue) {
-							SetValueBoolean($this->GetIDForIdent("Output_X".$i), $Bitvalue);
+						If ($this->GetValue("Output_X".$i) <> $Bitvalue) {
+							$this->SetValue("Output_X".$i, $Bitvalue);
 						}
 					}
 				}
@@ -130,8 +129,8 @@
 					// Statusvariablen setzen
 					for ($i = 0; $i <= 15; $i++) {
 						$Bitvalue = boolval($Value & pow(2, $i));					
-						If (GetValueBoolean($this->GetIDForIdent("Output_X".$i)) <> $Bitvalue) {
-							SetValueBoolean($this->GetIDForIdent("Output_X".$i), $Bitvalue);
+						If ($this->GetValue("Output_X".$i) <> $Bitvalue) {
+							$this->SetValue("Output_X".$i, $Bitvalue);
 						}
 					}
 					*/
@@ -155,20 +154,21 @@
 			   	}
 			   	break;
 	 	}
- 	}
+		return "";
+	}
 	
-	public function RequestAction($Ident, $Value) 
+	public function RequestAction(string $Ident, mixed $Value): void
 	{
 		$Number = intval(substr($Ident, 8, 2));
 		$this->SetOutputPin($Number, $Value);
 	}
 	    
 	// Beginn der Funktionen
-	public function SetOutputPin(Int $Output, Bool $Value)
+	public function SetOutputPin(int $Output, bool $Value): bool
 	{
 		$Output = min(15, max(0, $Output));
 		$Value = min(1, max(0, $Value));
-		$Result = -1;
+		$Result = false;
 		If ($this->ReadPropertyBoolean("Open") == true) {
 			$this->SendDebug("SetOutputPin", "Value: ".$Value, 0);
 			
@@ -185,7 +185,7 @@
 				$Result = $this->SendDataToParent(json_encode(Array("DataID"=> "{47113C57-29FE-4A60-9D0E-840022883B89}", "Function" => "SOM", "DeviceAddress" => $this->ReadPropertyInteger("DeviceAddress"), "DeviceBus" => $this->ReadPropertyInteger("DeviceBus"), "Value" => $Bitmask )));
 				$this->SendDebug("SetOutputPin", "Result: ".$Result, 0);
 				If ($Result == true) {
-					SetValueBoolean($this->GetIDForIdent("Output_X".$Output), $Value);
+					$this->SetValue("Output_X".$Output, $Value);
 					$this->SetBuffer("OutputBank", $Bitmask);
 					If ($this->GetStatus() <> 102) {
 						$this->SetStatus(102);
@@ -202,10 +202,10 @@
 				$this->SendDebug("SetOutputPin", "Keine Ausfuehrung moeglich!", 0);
 			}
 		}
-	return $Result;
+	return ($Result == true);
 	}	
 	
-	public function GetOutput()
+	public function GetOutput(): bool
 	{
 		$Result = false;
 		If ($this->ReadPropertyBoolean("Open") == true) {
@@ -222,13 +222,13 @@
 				}
 			}
 		}
-	return $Result;
+	return ($Result == true);
 	}
 	
-	public function GetOutputPin(Int $Output)
+	public function GetOutputPin(int $Output): bool
 	{
 		$Output = min(15, max(0, $Output));
-		$Result = -1;
+		$Result = false;
 		If ($this->ReadPropertyBoolean("Open") == true) {
 			$this->SendDebug("GetOutput", "Ausfuehrung", 0);
 			$Result = $this->GetOutput();
@@ -238,13 +238,13 @@
 			}
 		}
 		
-	return $Result;
+	return ($Result == true);
 	}    
 	    
-	public function SetOutput(int $Value) 
+	public function SetOutput(int $Value): bool
 	{
 		$Value = min(65535, max(0, $Value));
-		$Result = -1;
+		$Result = false;
 		If ($this->ReadPropertyBoolean("Open") == true) {
 			$this->SendDebug("SetOutputBank", "Value: ".$Value, 0);
 			$Result = $this->SendDataToParent(json_encode(Array("DataID"=> "{47113C57-29FE-4A60-9D0E-840022883B89}", "Function" => "SOM", "DeviceAddress" => $this->ReadPropertyInteger("DeviceAddress"), "DeviceBus" => $this->ReadPropertyInteger("DeviceBus"), "Value" => $Value )));
@@ -255,8 +255,8 @@
 				}
 				for ($i = 0; $i <= 15; $i++) {
 					$Bitvalue = boolval($Value & pow(2, $i));					
-					If (GetValueBoolean($this->GetIDForIdent("Output_X".$i)) <> $Bitvalue) {
-						SetValueBoolean($this->GetIDForIdent("Output_X".$i), $Bitvalue);
+					If ($this->GetValue("Output_X".$i) <> $Bitvalue) {
+						$this->SetValue("Output_X".$i, $Bitvalue);
 					}
 				}
 				$this->GetOutput();
@@ -267,7 +267,7 @@
 				}
 			}
 		}
-	return $Result;
+	return ($Result == true);
 	}    
 	
 	private function setBit($byte, $significance) { 
@@ -280,16 +280,5 @@
 	    return $byte & ~(1<<$significance);
 	}
 	    
-	protected function HasActiveParent()
-    	{
-		$Instance = @IPS_GetInstance($this->InstanceID);
-		if ($Instance['ConnectionID'] > 0)
-		{
-			$Parent = IPS_GetInstance($Instance['ConnectionID']);
-			if ($Parent['InstanceStatus'] == 102)
-			return true;
-		}
-        return false;
-    	}  
 }
 ?>

@@ -25,24 +25,11 @@ class AutoLoaderPHPSecLib
         }
     }
 }
-class GeCoS_IO_V2 extends IPSModule
+class GeCoS_IO_V2 extends IPSModuleStrict
 {
 	private $Socket = false;
 
-	public function __construct($InstanceID)
-	{
-		parent::__construct($InstanceID);
-	}
-
-	public function Destroy()
-	{
-		//Never delete this line!
-		parent::Destroy();
-		$this->SetTimerInterval("GetSystemStatus", 0);
-		$this->SetTimerInterval("RTC_Data", 0);
-	}
-
-	public function Create()
+	public function Create(): void
 	{
 		parent::Create();
 
@@ -57,30 +44,19 @@ class GeCoS_IO_V2 extends IPSModule
 		$this->RegisterPropertyString("ConnectionString", "/dev/serial0");
 		$this->RegisterTimer("RTC_Data", 0, 'GeCoSIOV2_GetRTC_Data($_IPS["TARGET"]);');
 		$this->RegisterTimer("GetSystemStatus", 0, 'GeCoSIOV2_GetSystemStatus($_IPS["TARGET"]);');
-		$this->RequireParent("{3CFF0FD9-E306-41DB-9B5A-9D06D38576C3}");
-
-		// Profile anlegen
-		$this->RegisterProfileInteger("IPS2CeCoSIO.Boardversion", "Information", "", "", 0, 1, 1);
-		IPS_SetVariableProfileAssociation("IPS2CeCoSIO.Boardversion", 0, "Version 1", "Information", -1);
-		IPS_SetVariableProfileAssociation("IPS2CeCoSIO.Boardversion", 1, "Version 2", "Information", -1);
-		IPS_SetVariableProfileAssociation("IPS2CeCoSIO.Boardversion", 99, "Unbekannter Fehler!", "Alert", -1);
-
-		$this->RegisterProfileBoolean("IPS2CeCoSIO.ActiveInactive", "Information");
-		IPS_SetVariableProfileAssociation("IPS2CeCoSIO.ActiveInactive", 0, "Inaktiv", 0xFF0000, -1);
-		IPS_SetVariableProfileAssociation("IPS2CeCoSIO.ActiveInactive", 1, "Aktiv", 0x00FF00, -1);
 
 		// Statusvariablen anlegen
 		//$this->RegisterVariableInteger("Boardversion", "GeCoS-Server", "IPS2CeCoSIO.Boardversion", 25);
 
 		//$this->RegisterVariableInteger("SoftwareVersion", "SoftwareVersion", "", 30);
 
-		$this->RegisterVariableFloat("RTC_Temperature", "RTC Temperatur", "~Temperature", 40);
+		$this->RegisterVariableFloat("RTC_Temperature", "RTC Temperatur", array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "SUFFIX" => " °C", "DIGITS" => 1, "ICON" => "temperature-half", "USAGE_TYPE" => 1), 40);
 
-		$this->RegisterVariableInteger("RTC_Timestamp", "RTC Zeitstempel", "~UnixTimestamp", 50);
+		$this->RegisterVariableInteger("RTC_Timestamp", "RTC Zeitstempel", array("PRESENTATION" => VARIABLE_PRESENTATION_DATE_TIME, "DATE" => 1, "MONTH_TEXT" => false, "DAY_OF_THE_WEEK" => false, "TIME" => 2), 50);
 
-		$this->RegisterVariableBoolean("ServerStatus", "Server Status", "IPS2CeCoSIO.ActiveInactive", 60);
+		$this->RegisterVariableBoolean("ServerStatus", "Server Status", array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "ICON" => "circle-info", "OPTIONS" => json_encode(array(array("Value" => false, "Caption" => "Inaktiv", "IconActive" => false, "IconValue" => "", "ColorActive" => true, "ColorValue" => 0xFF0000), array("Value" => true, "Caption" => "Aktiv", "IconActive" => false, "IconValue" => "", "ColorActive" => true, "ColorValue" => 0x00FF00)))), 60);
 
-		$this->RegisterVariableInteger("LastKeepAlive", "Letztes Keep Alive", "~UnixTimestamp", 70);
+		$this->RegisterVariableInteger("LastKeepAlive", "Letztes Keep Alive", array("PRESENTATION" => VARIABLE_PRESENTATION_DATE_TIME, "DATE" => 1, "MONTH_TEXT" => false, "DAY_OF_THE_WEEK" => false, "TIME" => 2), 70);
 
 		$ModulesArray = array();
 		$this->SetBuffer("ModulesArray", serialize($ModulesArray));
@@ -93,7 +69,7 @@ class GeCoS_IO_V2 extends IPSModule
 		$this->SetBuffer("OWSearch", $OWSearch);
 	}
 
-	public function GetConfigurationForm()
+	public function GetConfigurationForm(): string
 	{
 		$arrayStatus = array();
 		$arrayStatus[] = array("code" => 101, "icon" => "inactive", "caption" => "Instanz wird erstellt");
@@ -149,7 +125,7 @@ class GeCoS_IO_V2 extends IPSModule
 
 		$arrayActions = array();
 
-		if (($this->ConnectionTest()) and ($this->ReadPropertyBoolean("Open") == true)) {
+		if (($this->ReadPropertyBoolean("Open") == true) and ($this->ConnectionTest())) {
 			$arrayActions[] = array("type" => "Button", "caption" => "Setzen der Real-Time-Clock auf IPS-Zeit", "onClick" => 'GeCoSIOV2_SetRTC_Data($id);');
 			$arrayActions[] = array("type" => "Button", "caption" => "Server-Softwareupdate", "onClick" => 'GeCoSIOV2_GetUpdate($id);');
 			$arrayActions[] = array("type" => "Button", "caption" => "Restart Server-Software", "onClick" => 'GeCoSIOV2_ServerRestart($id);');
@@ -162,12 +138,12 @@ class GeCoS_IO_V2 extends IPSModule
 		return JSON_encode(array("status" => $arrayStatus, "elements" => $arrayElements, "actions" => $arrayActions));
 	}
 
-	public function ApplyChanges()
+	public function ApplyChanges(): void
 	{
 		//Never delete this line!
 		parent::ApplyChanges();
 
-		SetValueBoolean($this->GetIDForIdent("ServerStatus"), false);
+		$this->SetValue("ServerStatus", false);
 
 		// Nachrichten abonnieren
 		// Kernel
@@ -205,9 +181,11 @@ class GeCoS_IO_V2 extends IPSModule
 			$this->RegisterMessage($this->InstanceID, 11101); // Instanz wurde verbunden (InstanceID vom Parent)
 			$this->RegisterMessage($this->InstanceID, 11102); // Instanz wurde getrennt (InstanceID vom Parent)
 			// INSTANCEMESSAGE
-			$this->RegisterMessage($ParentID, 10505); // Status hat sich geändert
+			if ($ParentID > 0) {
+				$this->RegisterMessage($ParentID, 10505); // Status hat sich geändert
+			}
 
-			if (($this->ConnectionTest()) and ($this->ReadPropertyBoolean("Open") == true)) {
+			if (($this->ReadPropertyBoolean("Open") == true) and ($this->ConnectionTest())) {
 				$this->SetSummary($this->ReadPropertyString('IPAddress'));
 				$this->SendDebug("ApplyChanges", "Starte Vorbereitung", 0);
 				$this->CheckConfig();
@@ -243,14 +221,20 @@ class GeCoS_IO_V2 extends IPSModule
 		}
 	}
 
-	public function GetConfigurationForParent()
+	public function GetCompatibleParents(): string
+	{
+		// Eigener Client Socket je GeCoS-Server (ersetzt RequireParent)
+		return json_encode(array("type" => "require", "moduleIDs" => array("{3CFF0FD9-E306-41DB-9B5A-9D06D38576C3}")));
+	}
+
+	public function GetConfigurationForParent(): string
 	{
 		$JsonArray = array("Host" => $this->ReadPropertyString('IPAddress'), "Port" => 8000, "Open" => $this->ReadPropertyBoolean("Open"));
 		$Json = json_encode($JsonArray);
 		return $Json;
 	}
 
-	public function MessageSink($TimeStamp, $SenderID, $Message, $Data)
+	public function MessageSink(int $TimeStamp, int $SenderID, int $Message, array $Data): void
 	{
 		switch ($Message) {
 			case 10100:
@@ -295,7 +279,7 @@ class GeCoS_IO_V2 extends IPSModule
 		}
 	}
 
-	public function ForwardData($JSONString)
+	public function ForwardData(string $JSONString): string
 	{
 		// Empfangene Daten von der Device Instanz
 		$data = json_decode($JSONString);
@@ -471,22 +455,22 @@ class GeCoS_IO_V2 extends IPSModule
 					//IPS_LogMessage("IPS2GPIO SSH-Connect", $data->Command );
 					$Result = $this->SSH_Connect($data->Command);
 					//IPS_LogMessage("IPS2GPIO SSH-Connect", $Result );
-					$this->SendDataToChildren(json_encode(array("DataID" => "{573FFA75-2A0C-48AC-BF45-FCB01D6BF910}", "Function" => "set_RPi_connect", "InstanceID" => $data->InstanceID, "CommandNumber" => $data->CommandNumber, "Result" => utf8_encode($Result), "IsArray" => false)));
+					$this->SendDataToChildren(json_encode(array("DataID" => "{573FFA75-2A0C-48AC-BF45-FCB01D6BF910}", "Function" => "set_RPi_connect", "InstanceID" => $data->InstanceID, "CommandNumber" => $data->CommandNumber, "Result" => bin2hex($Result), "IsArray" => false)));
 				} else {
 					// wenn es sich um ein Array von Kommandos handelt
 					$Result = $this->SSH_Connect_Array($data->Command);
-					$this->SendDataToChildren(json_encode(array("DataID" => "{573FFA75-2A0C-48AC-BF45-FCB01D6BF910}", "Function" => "set_RPi_connect", "InstanceID" => $data->InstanceID, "CommandNumber" => $data->CommandNumber, "Result" => utf8_encode($Result), "IsArray" => true)));
+					$this->SendDataToChildren(json_encode(array("DataID" => "{573FFA75-2A0C-48AC-BF45-FCB01D6BF910}", "Function" => "set_RPi_connect", "InstanceID" => $data->InstanceID, "CommandNumber" => $data->CommandNumber, "Result" => bin2hex($Result), "IsArray" => true)));
 				}
 				break;
 		}
-		return $Result;
+		return is_scalar($Result) ? strval($Result) : json_encode($Result);
 	}
 
-	public function ReceiveData($JSONString)
+	public function ReceiveData(string $JSONString): string
 	{
 		// Empfangene Daten vom I/O
 		$Data = json_decode($JSONString);
-		$Message = utf8_decode($Data->Buffer);
+		$Message = hex2bin($Data->Buffer);
 		$this->SendDebug("ReceiveData", "Datenempfang: " . $Message, 0);
 
 		$DataArray = array();
@@ -495,12 +479,12 @@ class GeCoS_IO_V2 extends IPSModule
 
 		if (is_array($DataArray) == false) {
 			$this->SendDebug("ReceiveData", "Keine sinnvollen Daten erhalten", 0);
-			return;
+			return "";
 		}
 
 		if (count($DataArray, COUNT_RECURSIVE) <= 1) {
 			$this->SendDebug("ReceiveData", "Keine sinnvollen Daten erhalten", 0);
-			return;
+			return "";
 		}
 
 		//$this->SendDebug("ReceiveData", "Count($DataArray): ".Count($DataArray)." Count($DataArray, COUNT_RECURSIVE): ".Count($DataArray, COUNT_RECURSIVE), 0);
@@ -600,9 +584,9 @@ class GeCoS_IO_V2 extends IPSModule
 				case "RRTC":
 					//{RRTC;TT;MM;JJJJ;HH;MM;SS;OK}
 					$ServerTime = mktime(intval($ValueArray[4]), intval($ValueArray[5]), intval($ValueArray[6]), intval($ValueArray[2]), intval($ValueArray[1]), intval($ValueArray[3]));
-					SetValueInteger($this->GetIDForIdent("RTC_Timestamp"), $ServerTime);
+					$this->SetValue("RTC_Timestamp", $ServerTime);
 					$Temp = floatval($ValueArray[7]);
-					SetValueFloat($this->GetIDForIdent("RTC_Temperature"), $Temp);
+					$this->SetValue("RTC_Temperature", $Temp);
 					break;
 				case "PWM":
 					$InstanceID = $this->InstanceIDSearch($DeviceBus, $DeviceAddress);
@@ -650,21 +634,22 @@ class GeCoS_IO_V2 extends IPSModule
 					break;
 			}
 		}
-		SetValueInteger($this->GetIDForIdent("LastKeepAlive"), time());
+		$this->SetValue("LastKeepAlive", time());
+		return "";
 	}
 
 	private function ClientSocket(String $Message)
 	{
 		$Success = false;
 		if (($this->ReadPropertyBoolean("Open") == true) and ($this->GetParentStatus() == 102)) {
-			$Success = $this->SendDataToParent(json_encode(array("DataID" => "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}", "Buffer" => utf8_encode($Message))));
+			$Success = $this->SendDataToParent(json_encode(array("DataID" => "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}", "Buffer" => bin2hex($Message))));
 			$Success = true;
 			$this->SendDebug("ClientSocket", "Text: " . $Message . " Erfolg: " . $Success, 0);
 		}
 		return $Success;
 	}
 
-	public function GetRTC_Data()
+	public function GetRTC_Data(): void
 	{
 		$this->SendDebug("GetRTC_Data", "Ausfuehrung", 0);
 		if (($this->ReadPropertyBoolean("Open") == true) and ($this->GetParentStatus() == 102)) {
@@ -672,7 +657,7 @@ class GeCoS_IO_V2 extends IPSModule
 		}
 	}
 
-	public function SetRTC_Data()
+	public function SetRTC_Data(): void
 	{
 		if (($this->ReadPropertyBoolean("Open") == true) and ($this->GetParentStatus() == 102)) {
 			// Set RTC -> {SRTC;TT;MM;JJJJ;HH;MM;SS}
@@ -681,15 +666,15 @@ class GeCoS_IO_V2 extends IPSModule
 		}
 	}
 
-	public function GetSystemStatus()
+	public function GetSystemStatus(): void
 	{
 		$Result = $this->SSH_Connect("systemctl is-active gecos.service");
 		$Result = trim($Result, "\x00..\x1F");
 		$this->SendDebug("GetSystemStatus", $Result, 0);
 		if ($Result == "active") {
-			SetValueBoolean($this->GetIDForIdent("ServerStatus"), true);
+			$this->SetValue("ServerStatus", true);
 		} else {
-			SetValueBoolean($this->GetIDForIdent("ServerStatus"), false);
+			$this->SetValue("ServerStatus", false);
 		}
 	}
 
@@ -746,7 +731,7 @@ class GeCoS_IO_V2 extends IPSModule
 		return $Result;
 	}
 
-	public function GetUpdate()
+	public function GetUpdate(): void
 	{
 		$this->SendDebug("GetUpdate", "Ausfuehrung", 0);
 		$Result = $this->SSH_Connect("sudo wget -O /usr/local/bin/GeCoS-Server.py https://raw.githubusercontent.com/bgersmann/GeCoS-Server/master/GeCoS-Server.py");
@@ -756,19 +741,19 @@ class GeCoS_IO_V2 extends IPSModule
 
 	}
 
-	public function ServerRestart()
+	public function ServerRestart(): void
 	{
 		$this->SendDebug("ServerRestart", "Ausfuehrung", 0);
 		$Result = $this->SSH_Connect("sudo systemctl restart gecos.service");
 		$this->SendDebug("ServerRestart", "Ergebnis: " . $Result, 0);
 	}
-	public function RPiReboot()
+	public function RPiReboot(): void
 	{
 		$this->SendDebug("ServerRestart", "Ausfuehrung", 0);
 		$Result = $this->SSH_Connect("sudo reboot");
 		$this->SendDebug("ServerRestart", "Ergebnis: " . $Result, 0);
 	}
-	public function RPiShutdown()
+	public function RPiShutdown(): void
 	{
 		$this->SendDebug("ServerRestart", "Ausfuehrung", 0);
 		$Result = $this->SSH_Connect("sudo shutdown");
@@ -875,7 +860,7 @@ class GeCoS_IO_V2 extends IPSModule
 					$this->SetStatus(102);
 				}
 			} else {
-				SetValueBoolean($this->GetIDForIdent("ServerStatus"), false);
+				$this->SetValue("ServerStatus", false);
 				IPS_LogMessage("GeCoS_IO Netzanbindung", "Parent ist nicht verbunden!");
 				$this->SendDebug("Netzanbindung", "Parent ist nicht verbunden!", 0);
 				if ($this->GetStatus() <> 201) {
@@ -883,7 +868,7 @@ class GeCoS_IO_V2 extends IPSModule
 				}
 			}
 		} else {
-			SetValueBoolean($this->GetIDForIdent("ServerStatus"), false);
+			$this->SetValue("ServerStatus", false);
 			IPS_LogMessage("GeCoS_IO Netzanbindung", "IP " . $this->ReadPropertyString("IPAddress") . " reagiert nicht!");
 			$this->SendDebug("Netzanbindung", "IP " . $this->ReadPropertyString("IPAddress") . " reagiert nicht!", 0);
 			if ($this->GetStatus() <> 201) {
@@ -934,7 +919,12 @@ class GeCoS_IO_V2 extends IPSModule
 
 	private function GetParentStatus()
 	{
-		$Status = (IPS_GetInstance($this->GetParentID())['InstanceStatus']);
+		// Ohne verbundenen Parent (z.B. während der Erstellung) gibt es keinen Status
+		$ParentID = $this->GetParentID();
+		if (($ParentID == 0) or !IPS_InstanceExists($ParentID)) {
+			return 0;
+		}
+		$Status = (IPS_GetInstance($ParentID)['InstanceStatus']);
 		return $Status;
 	}
 
@@ -957,29 +947,5 @@ class GeCoS_IO_V2 extends IPSModule
 		return $OWHardwareText;
 	}
 
-	private function RegisterProfileInteger($Name, $Icon, $Prefix, $Suffix, $MinValue, $MaxValue, $StepSize)
-	{
-		if (!IPS_VariableProfileExists($Name)) {
-			IPS_CreateVariableProfile($Name, 1);
-		} else {
-			$profile = IPS_GetVariableProfile($Name);
-			if ($profile['ProfileType'] != 1)
-				throw new Exception("Variable profile type does not match for profile " . $Name);
-		}
-		IPS_SetVariableProfileIcon($Name, $Icon);
-		IPS_SetVariableProfileText($Name, $Prefix, $Suffix);
-		IPS_SetVariableProfileValues($Name, $MinValue, $MaxValue, $StepSize);
-	}
 
-	private function RegisterProfileBoolean($Name, $Icon)
-	{
-		if (!IPS_VariableProfileExists($Name)) {
-			IPS_CreateVariableProfile($Name, 0);
-		} else {
-			$profile = IPS_GetVariableProfile($Name);
-			if ($profile['ProfileType'] != 0)
-				throw new Exception("Variable profile type does not match for profile " . $Name);
-		}
-		IPS_SetVariableProfileIcon($Name, $Icon);
-	}
 }

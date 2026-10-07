@@ -1,14 +1,13 @@
 <?
     // Klassendefinition
-    class GeCoS_DS2413 extends IPSModule 
+    class GeCoS_DS2413 extends IPSModuleStrict 
     {
 	// Überschreibt die interne IPS_Create($id) Funktion
-        public function Create() 
+        public function Create(): void
         {
             	// Diese Zeile nicht löschen.
             	parent::Create();
  	    	$this->RegisterPropertyBoolean("Open", false);
-		$this->ConnectParent("{5F1C0403-4A74-4F14-829F-9A217CFB2D05}");
 		$this->RegisterPropertyString("DeviceAddress", "Sensor ID");
 		$this->RegisterPropertyInteger("DeviceFunction_0", 1);
 		$this->RegisterPropertyInteger("DeviceFunction_1", 1);
@@ -18,24 +17,10 @@
 		$this->RegisterTimer("Messzyklus", 0, 'GeCoSDS2413_Measurement($_IPS["TARGET"]);');
 		
 		//Status-Variablen anlegen
-		$this->RegisterVariableBoolean("Status_0", "Status (0)", "~Switch", 10);
-		If ($this->ReadPropertyInteger("DeviceFunction_0") == 0) {
-			$this->EnableAction("Status_0");
-		}
-		else {
-			$this->DisableAction("Status_0");
-		}
-		
-		$this->RegisterVariableBoolean("Status_1", "Status (1)", "~Switch", 20);
-		If ($this->ReadPropertyInteger("DeviceFunction_1") == 0) {
-			$this->EnableAction("Status_1");
-		}
-		else {
-			$this->DisableAction("Status_1");
-		}	
+		$this->RegisterPortVariables();
         }
  	
-	public function GetConfigurationForm() 
+	public function GetConfigurationForm(): string
 	{ 
 		$arrayStatus = array(); 
 		$arrayStatus[] = array("code" => 101, "icon" => "inactive", "caption" => "Instanz wird erstellt"); 
@@ -81,14 +66,17 @@
  	}           
 	  
         // Überschreibt die intere IPS_ApplyChanges($id) Funktion
-        public function ApplyChanges() 
+        public function ApplyChanges(): void
         {
             	// Diese Zeile nicht löschen
             	parent::ApplyChanges();
 		
 		// Summary setzen
 		$this->SetSummary("SC: ".$this->ReadPropertyString("DeviceAddress"));
-		
+
+		// Darstellung und Bedienbarkeit an die gewählte Port-Funktion anpassen
+		$this->RegisterPortVariables();
+
 		$OWDeviceArray = Array();
 		$this->SetBuffer("OWDeviceArray", serialize($OWDeviceArray));
 		
@@ -126,7 +114,7 @@
 		}	
 	}
 	
-	public function ReceiveData($JSONString) 
+	public function ReceiveData(string $JSONString): string
 	{
 	    	// Empfangene Daten vom Gateway/Splitter
 	    	$data = json_decode($JSONString);
@@ -149,16 +137,24 @@
 				break;
 			case "OWV":
 			   	If ($data->DeviceAddress == $this->ReadPropertyString("DeviceAddress")) {
-					//SetValueFloat($this->GetIDForIdent("Temperature"), $data->Value);
+					// Bit 0 = IOA (Port 0), Bit 1 = IOB (Port 1)
+					$State = intval($data->Value);
+					for ($Port = 0; $Port <= 1; $Port++) {
+						$Value = (bool)((($State >> $Port) & 1) ^ $this->ReadPropertyBoolean("Invert_".$Port));
+						If ($this->GetValue("Status_".$Port) <> $Value) {
+							$this->SetValue("Status_".$Port, $Value);
+						}
+					}
 			   		If ($this->GetStatus() <> 102) {
 						$this->SetStatus(102);
 					}
 				}
 			   	break;	
 	 	}
- 	}
+		return "";
+	}
 	 
-	public function RequestAction($Ident, $Value) 
+	public function RequestAction(string $Ident, mixed $Value): void
 	{
 		$Port = intval(substr($Ident, 7, 2));
 		$this->SetPortStatus($Port, $Value);
@@ -168,7 +164,17 @@
 	private function Setup()
 	{
 		If (($this->ReadPropertyBoolean("Open") == true) AND ($this->ReadPropertyString("DeviceAddress") <> "Sensorauswahl")) {
-			$Config = ($this->ReadPropertyInteger("DeviceFunction_1") << 1) | $this->ReadPropertyInteger("DeviceFunction_0");
+			// Eingänge High (freigegeben), Ausgänge mit dem aktuellen Zustand der Variablen
+			$Config = 0;
+			for ($i = 0; $i <= 1; $i++) {
+				If ($this->ReadPropertyInteger("DeviceFunction_".$i) <> 0) {
+					$Bit = 1;
+				}
+				else {
+					$Bit = (int)((bool)$this->GetValue("Status_".$i) ^ $this->ReadPropertyBoolean("Invert_".$i));
+				}
+				$Config |= ($Bit << $i);
+			}
 			$this->SendDebug("Setup", "Wert: ".$Config, 0);
 			
 			/* Value: 
@@ -182,7 +188,7 @@
 		}
 	}
 	    
-	public function Measurement()
+	public function Measurement(): void
 	{
 		If (($this->ReadPropertyBoolean("Open") == true) AND ($this->ReadPropertyString("DeviceAddress") <> "Sensorauswahl")) {
 			// Messung ausführen
@@ -190,26 +196,60 @@
 		}
 	}
 	
-	public function SetPortStatus(int $Port, bool $Value)
+	public function SetPortStatus(int $Port, bool $Value): bool
 	{
 		If (($this->ReadPropertyBoolean("Open") == true) AND ($this->ReadPropertyString("DeviceAddress") <> "")) {
 			$this->SendDebug("SetPortStatus", "Port: ".(int)$Port." Value: ".(int)$Value, 0);
 			// Eingabeparameter filtern
 			$Port = min(1, max(0, $Port));
-			$Value = min(1, max(0, $Value));
-			// zu sendenden Wert ggf. invertieren
-			$arrayValues = array(); 
-			$arrayValues[(int)$Port] = $Value ^ $this->ReadPropertyBoolean("Invert_".((int)$Port));
-			$arrayValues[(int)!$Port] = GetValueBoolean($this->GetIDForIdent("Status_".((int)!$Port))) ^ $this->ReadPropertyBoolean("Invert_".((int)$Port));
-			$Result = ($arrayValues[1] << 1) | $arrayValues[0]| 252;
-			//$this->SendDebug("SetPortStatus", "Port: ".(int)$Port." Value: ".(int)$Value, 0);
-			$this->SendDebug("SetPortStatus", "Wert: ".$Result, 0);
-			$this->SendDebug("SetPortStatus", "Port[0]: ".$arrayValues[0]." Port[1]: ".$arrayValues[1], 0);
-			//$this->SendDataToParent(json_encode(Array("DataID"=> "{47113C57-29FE-4A60-9D0E-840022883B89}", "Function" => "set_DS2413Setup", "Setup" => $Result, "InstanceID" => $this->InstanceID, "DeviceAddress_0" => $this->ReadPropertyInteger("DeviceAddress_0"), "DeviceAddress_1" => $this->ReadPropertyInteger("DeviceAddress_1"))));
-			// Messung ausführen
-			//$this->SendDataToParent(json_encode(Array("DataID"=> "{47113C57-29FE-4A60-9D0E-840022883B89}", "Function" => "get_DS2413State", "InstanceID" => $this->InstanceID, "DeviceAddress_0" => $this->ReadPropertyInteger("DeviceAddress_0"), "DeviceAddress_1" => $this->ReadPropertyInteger("DeviceAddress_1"))));
+			If ($this->ReadPropertyInteger("DeviceFunction_".$Port) <> 0) {
+				$this->SendDebug("SetPortStatus", "Port ".$Port." ist als Eingang konfiguriert!", 0);
+				return false;
+			}
+			// Zielzustand beider Ports ermitteln, Eingänge bleiben High (freigegeben)
+			$arrayValues = array();
+			for ($i = 0; $i <= 1; $i++) {
+				If ($this->ReadPropertyInteger("DeviceFunction_".$i) <> 0) {
+					$arrayValues[$i] = 1;
+				}
+				else {
+					$PortValue = ($i == $Port) ? $Value : $this->GetValue("Status_".$i);
+					$arrayValues[$i] = (int)((bool)$PortValue ^ $this->ReadPropertyBoolean("Invert_".$i));
+				}
+			}
+			/* Value:
+			0-> IOA+IOB = LOW,
+			1-> IOA = HIGH;IOB = LOW,
+			2-> IOA = LOW; IOB = High,
+			3-> IOA+IOB = High
+			*/
+			$Config = ($arrayValues[1] << 1) | $arrayValues[0];
+			$this->SendDebug("SetPortStatus", "Port[0]: ".$arrayValues[0]." Port[1]: ".$arrayValues[1]." Wert: ".$Config, 0);
+			$Result = $this->SendDataToParent(json_encode(Array("DataID"=> "{47113C57-29FE-4A60-9D0E-840022883B89}", "Function" => "OWC", "InstanceID" => $this->InstanceID, "DeviceAddress" => $this->ReadPropertyString("DeviceAddress"), "Configuration" => $Config )));
+			If ($Result) {
+				$this->SetValue("Status_".$Port, $Value);
+			}
+			return (bool)$Result;
 		}
-	}    
-	 
+		return false;
+	}
+
+	private function RegisterPortVariables()
+	{
+		for ($Port = 0; $Port <= 1; $Port++) {
+			$Ident = "Status_".$Port;
+			If ($this->ReadPropertyInteger("DeviceFunction_".$Port) == 0) {
+				// Ausgang: schaltbar
+				$this->RegisterVariableBoolean($Ident, "Status (".$Port.")", array("PRESENTATION" => VARIABLE_PRESENTATION_SWITCH), ($Port + 1) * 10);
+				$this->EnableAction($Ident);
+			}
+			else {
+				// Eingang: nur Anzeige
+				$this->RegisterVariableBoolean($Ident, "Status (".$Port.")", array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION), ($Port + 1) * 10);
+				$this->DisableAction($Ident);
+			}
+		}
+	}
+
 }
 ?>

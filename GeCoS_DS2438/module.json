@@ -3,6 +3,7 @@
   "name": "GeCoS_DS2438",
   "type": 3,
   "vendor": "GeCoS-Modules",
+  "url": "https://github.com/bgersmann/GeCoS-Modules",
   "aliases":
   [
     "GeCoS_DS2438"

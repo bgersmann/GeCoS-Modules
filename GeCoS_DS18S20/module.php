@@ -1,24 +1,23 @@
 <?
     // Klassendefinition
-    class GeCoS_DS18S20 extends IPSModule 
+    class GeCoS_DS18S20 extends IPSModuleStrict 
     {
 	// Überschreibt die interne IPS_Create($id) Funktion
-        public function Create() 
+        public function Create(): void
         {
             	// Diese Zeile nicht löschen.
             	parent::Create();
  	    	$this->RegisterPropertyBoolean("Open", false);
-		$this->ConnectParent("{5F1C0403-4A74-4F14-829F-9A217CFB2D05}");
 		$this->RegisterPropertyString("DeviceAddress", "Sensor ID");
 		$this->RegisterPropertyInteger("Messzyklus", 60);
 		$this->RegisterPropertyFloat("Offset", 0);
 		$this->RegisterTimer("Messzyklus", 0, 'GeCoSDS18S20_Measurement($_IPS["TARGET"]);');
 		
 		//Status-Variablen anlegen
-		$this->RegisterVariableFloat("Temperature", "Temperatur", "~Temperature", 10);
+		$this->RegisterVariableFloat("Temperature", "Temperatur", array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "SUFFIX" => " °C", "DIGITS" => 1, "ICON" => "temperature-half", "USAGE_TYPE" => 1, "MIN" => -55, "MAX" => 125), 10);
         }
  	
-	public function GetConfigurationForm() 
+	public function GetConfigurationForm(): string
 	{ 
 		$arrayStatus = array(); 
 		$arrayStatus[] = array("code" => 101, "icon" => "inactive", "caption" => "Instanz wird erstellt"); 
@@ -44,7 +43,7 @@
  	}           
 	  
         // Überschreibt die intere IPS_ApplyChanges($id) Funktion
-        public function ApplyChanges() 
+        public function ApplyChanges(): void
         {
             	// Diese Zeile nicht löschen
             	parent::ApplyChanges();
@@ -81,7 +80,7 @@
 		}	
 	}
 	
-	public function ReceiveData($JSONString) 
+	public function ReceiveData(string $JSONString): string
 	{
 	    	// Empfangene Daten vom Gateway/Splitter
 	    	$data = json_decode($JSONString);
@@ -103,26 +102,31 @@
 				break;
 			case "OWV":
 			   	If ($data->DeviceAddress == $this->ReadPropertyString("DeviceAddress")) {
-					If (floatval($data->Value) <> -85) {
-						$this->SetValue("Temperature", floatval($data->Value) + floatval($this->ReadPropertyFloat("Offset")));
-						If ($this->GetStatus() <> 102) {
-							$this->SetStatus(102);
-						}
-					}
-					else {
+					If (floatval($data->Value) == -85) {
 						$this->SendDebug("ReceiveData", "Device liefert Fehlerwert -85", 0);
 						If ($this->GetStatus() <> 202) {
 							$this->SetStatus(202);
+						}
+					}
+					// Messbereich laut Datenblatt: -55 °C bis +125 °C
+					elseIf ((floatval($data->Value) < -55) OR (floatval($data->Value) > 125)) {
+						$this->SendDebug("ReceiveData", "Wert ausserhalb des Messbereichs verworfen: ".$data->Value, 0);
+					}
+					else {
+						$this->SetValue("Temperature", floatval($data->Value) + floatval($this->ReadPropertyFloat("Offset")));
+						If ($this->GetStatus() <> 102) {
+							$this->SetStatus(102);
 						}
 					}
 					
 				}
 			   	break;	
 	 	}
- 	}
+		return "";
+	}
 	    
 	// Beginn der Funktionen    
-	public function Measurement()
+	public function Measurement(): void
 	{
 		If (($this->ReadPropertyBoolean("Open") == true) AND ($this->ReadPropertyString("DeviceAddress") <> "Sensorauswahl")) {
 			// Messung ausführen

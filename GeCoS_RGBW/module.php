@@ -1,56 +1,55 @@
 <?
     // Klassendefinition
-    class GeCoS_RGBW extends IPSModule 
+    class GeCoS_RGBW extends IPSModuleStrict 
     {
 	// PCA9685
 	    
 	// Überschreibt die interne IPS_Create($id) Funktion
-        public function Create() 
+        public function Create(): void
         {
             	// Diese Zeile nicht löschen.
             	parent::Create();
  	    	$this->RegisterPropertyBoolean("Open", false);
-		$this->ConnectParent("{5F1C0403-4A74-4F14-829F-9A217CFB2D05}");
  	    	$this->RegisterPropertyInteger("DeviceAddress", 88);
 		$this->RegisterPropertyInteger("DeviceBus", 0);
 		
 		// Profil anlegen
-		$this->RegisterProfileInteger("Intensity.4096", "Intensity", "", " %", 0, 4095, 1);
+		$Intensity = array("PRESENTATION" => VARIABLE_PRESENTATION_SLIDER, "MIN" => 0, "MAX" => 4095, "STEP_SIZE" => 1, "PERCENTAGE" => true, "SUFFIX" => " %", "DIGITS" => 0, "ICON" => "lightbulb");
 		
 		//Status-Variablen anlegen
 		for ($i = 0; $i <= 3; $i++) {
-			$this->RegisterVariableBoolean("Status_RGB_".($i + 1), "Status RGB ".($i + 1), "~Switch", 10 + ($i * 70));
+			$this->RegisterVariableBoolean("Status_RGB_".($i + 1), "Status RGB ".($i + 1), array("PRESENTATION" => VARIABLE_PRESENTATION_SWITCH), 10 + ($i * 70));
 			$this->EnableAction("Status_RGB_".($i + 1));
-			$this->RegisterVariableInteger("Color_RGB_".($i + 1), "Farbe ".($i + 1), "~HexColor", 20 + ($i * 70));
+			$this->RegisterVariableInteger("Color_RGB_".($i + 1), "Farbe ".($i + 1), array("PRESENTATION" => VARIABLE_PRESENTATION_COLOR), 20 + ($i * 70));
 			$this->EnableAction("Color_RGB_".($i + 1));
-			$this->RegisterVariableInteger("Intensity_R_".($i + 1), "Intensität Rot ".($i + 1), "Intensity.4096", 30 + ($i * 70) );
+			$this->RegisterVariableInteger("Intensity_R_".($i + 1), "Intensität Rot ".($i + 1), $Intensity, 30 + ($i * 70) );
 			$this->EnableAction("Intensity_R_".($i + 1));
-			$this->RegisterVariableInteger("Intensity_G_".($i + 1), "Intensität Grün ".($i + 1), "Intensity.4096", 40 + ($i * 70));
+			$this->RegisterVariableInteger("Intensity_G_".($i + 1), "Intensität Grün ".($i + 1), $Intensity, 40 + ($i * 70));
 			$this->EnableAction("Intensity_G_".($i + 1));
-			$this->RegisterVariableInteger("Intensity_B_".($i + 1), "Intensität Blau ".($i + 1), "Intensity.4096", 50 + ($i * 70));
+			$this->RegisterVariableInteger("Intensity_B_".($i + 1), "Intensität Blau ".($i + 1), $Intensity, 50 + ($i * 70));
 			$this->EnableAction("Intensity_B_".($i + 1));
-			$this->RegisterVariableBoolean("Status_W_".($i + 1), "Status Weiß ".($i + 1), "~Switch", 60 + ($i * 70));
+			$this->RegisterVariableBoolean("Status_W_".($i + 1), "Status Weiß ".($i + 1), array("PRESENTATION" => VARIABLE_PRESENTATION_SWITCH), 60 + ($i * 70));
 			$this->EnableAction("Status_W_".($i + 1));
-			$this->RegisterVariableInteger("Intensity_W_".($i + 1), "Intensität Weiß ".($i + 1), "Intensity.4096", 70 + ($i * 70));
+			$this->RegisterVariableInteger("Intensity_W_".($i + 1), "Intensität Weiß ".($i + 1), $Intensity, 70 + ($i * 70));
 			$this->EnableAction("Intensity_W_".($i + 1));			
 		}
-		$this->RegisterVariableBoolean("Status_RGB_5", "Status RGB Alle", "~Switch", 290);
+		$this->RegisterVariableBoolean("Status_RGB_5", "Status RGB Alle", array("PRESENTATION" => VARIABLE_PRESENTATION_SWITCH), 290);
 		$this->EnableAction("Status_RGB_5");
-		$this->RegisterVariableInteger("Color_RGB_5", "Farbe Alle", "~HexColor", 300);
+		$this->RegisterVariableInteger("Color_RGB_5", "Farbe Alle", array("PRESENTATION" => VARIABLE_PRESENTATION_COLOR), 300);
 		$this->EnableAction("Color_RGB_5");
-		$this->RegisterVariableInteger("Intensity_R_5", "Intensität Rot Alle", "Intensity.4096", 310);
+		$this->RegisterVariableInteger("Intensity_R_5", "Intensität Rot Alle", $Intensity, 310);
 		$this->EnableAction("Intensity_R_5");
-		$this->RegisterVariableInteger("Intensity_G_5", "Intensität Grün Alle", "Intensity.4096", 320);
+		$this->RegisterVariableInteger("Intensity_G_5", "Intensität Grün Alle", $Intensity, 320);
 		$this->EnableAction("Intensity_G_5");
-		$this->RegisterVariableInteger("Intensity_B_5", "Intensität Blau Alle", "Intensity.4096", 330);
+		$this->RegisterVariableInteger("Intensity_B_5", "Intensität Blau Alle", $Intensity, 330);
 		$this->EnableAction("Intensity_B_5");
-		$this->RegisterVariableBoolean("Status_W_5", "Status Weiß Alle", "~Switch", 340);
+		$this->RegisterVariableBoolean("Status_W_5", "Status Weiß Alle", array("PRESENTATION" => VARIABLE_PRESENTATION_SWITCH), 340);
 		$this->EnableAction("Status_W_5");
-		$this->RegisterVariableInteger("Intensity_W_5", "Intensität Weiß Alle", "Intensity.4096", 350);
+		$this->RegisterVariableInteger("Intensity_W_5", "Intensität Weiß Alle", $Intensity, 350);
 		$this->EnableAction("Intensity_W_5");	
         }
  	
-	public function GetConfigurationForm() 
+	public function GetConfigurationForm(): string
 	{ 
 		$arrayStatus = array(); 
 		$arrayStatus[] = array("code" => 101, "icon" => "inactive", "caption" => "Instanz wird erstellt"); 
@@ -83,7 +82,7 @@
  		return JSON_encode(array("status" => $arrayStatus, "elements" => $arrayElements)); 		 
  	}           
 	  
-        public function ApplyChanges() 
+        public function ApplyChanges(): void
         {
             	// Diese Zeile nicht löschen
             	parent::ApplyChanges();
@@ -111,7 +110,7 @@
 		}
 	}
 	
-	public function ReceiveData($JSONString) 
+	public function ReceiveData(string $JSONString): string
 	{
 	    	// Empfangene Daten vom Gateway/Splitter
 	    	$data = json_decode($JSONString);
@@ -127,29 +126,29 @@
 					$IntensityW = intval($data->IntensityW);
 					$this->SendDebug("ReceiveData", "SRGBW Group: ".$Group." StateRGB: ".$StateRGB." StateW: ".$StateW." IntensityR: ".$IntensityR." IntensityG: ".$IntensityG." IntensityB: ".$IntensityB." IntensityW: ".$IntensityW, 0);
 					// Statusvariablen setzen
-					If (GetValueBoolean($this->GetIDForIdent("Status_RGB_".$Group)) <> $StateRGB) {
-						SetValueBoolean($this->GetIDForIdent("Status_RGB_".$Group), $StateRGB);
+					If ($this->GetValue("Status_RGB_".$Group) <> $StateRGB) {
+						$this->SetValue("Status_RGB_".$Group, $StateRGB);
 					}
-					If (GetValueBoolean($this->GetIDForIdent("Status_W_".$Group)) <> $StateW) {
-						SetValueBoolean($this->GetIDForIdent("Status_W_".$Group), $StateW);
+					If ($this->GetValue("Status_W_".$Group) <> $StateW) {
+						$this->SetValue("Status_W_".$Group, $StateW);
 					}
-					If (GetValueInteger($this->GetIDForIdent("Intensity_R_".$Group)) <> $IntensityR) {
-						SetValueInteger($this->GetIDForIdent("Intensity_R_".$Group), $IntensityR);
+					If ($this->GetValue("Intensity_R_".$Group) <> $IntensityR) {
+						$this->SetValue("Intensity_R_".$Group, $IntensityR);
 					}
-					If (GetValueInteger($this->GetIDForIdent("Intensity_G_".$Group)) <> $IntensityG) {
-						SetValueInteger($this->GetIDForIdent("Intensity_G_".$Group), $IntensityG);
+					If ($this->GetValue("Intensity_G_".$Group) <> $IntensityG) {
+						$this->SetValue("Intensity_G_".$Group, $IntensityG);
 					}
-					If (GetValueInteger($this->GetIDForIdent("Intensity_B_".$Group)) <> $IntensityB) {
-						SetValueInteger($this->GetIDForIdent("Intensity_B_".$Group), $IntensityB);
+					If ($this->GetValue("Intensity_B_".$Group) <> $IntensityB) {
+						$this->SetValue("Intensity_B_".$Group, $IntensityB);
 					}
-					If (GetValueInteger($this->GetIDForIdent("Intensity_W_".$Group)) <> $IntensityW) {
-						SetValueInteger($this->GetIDForIdent("Intensity_W_".$Group), $IntensityW);
+					If ($this->GetValue("Intensity_W_".$Group) <> $IntensityW) {
+						$this->SetValue("Intensity_W_".$Group, $IntensityW);
 					}
 					// Werte skalieren
 					$Value_R = intval(255 / 4095 * $IntensityR);
 					$Value_G = intval(255 / 4095 * $IntensityG);
 					$Value_B = intval(255 / 4095 * $IntensityB);
-					SetValueInteger($this->GetIDForIdent("Color_RGB_".$Group), $this->RGB2Hex($Value_R, $Value_G, $Value_B));
+					$this->SetValue("Color_RGB_".$Group, $this->RGB2Hex($Value_R, $Value_G, $Value_B));
 				}
 				break;
 			case "RGBW":
@@ -163,29 +162,29 @@
 					$IntensityW = intval($data->IntensityW);
 					$this->SendDebug("ReceiveData", "RGBW Group: ".$Group." StateRGB: ".$StateRGB." StateW: ".$StateW." IntensityR: ".$IntensityR." IntensityG: ".$IntensityG." IntensityB: ".$IntensityB." IntensityW: ".$IntensityW, 0);
 					// Statusvariablen setzen
-					If (GetValueBoolean($this->GetIDForIdent("Status_RGB_".$Group)) <> $StateRGB) {
-						SetValueBoolean($this->GetIDForIdent("Status_RGB_".$Group), $StateRGB);
+					If ($this->GetValue("Status_RGB_".$Group) <> $StateRGB) {
+						$this->SetValue("Status_RGB_".$Group, $StateRGB);
 					}
-					If (GetValueBoolean($this->GetIDForIdent("Status_W_".$Group)) <> $StateW) {
-						SetValueBoolean($this->GetIDForIdent("Status_W_".$Group), $StateW);
+					If ($this->GetValue("Status_W_".$Group) <> $StateW) {
+						$this->SetValue("Status_W_".$Group, $StateW);
 					}
-					If (GetValueInteger($this->GetIDForIdent("Intensity_R_".$Group)) <> $IntensityR) {
-						SetValueInteger($this->GetIDForIdent("Intensity_R_".$Group), $IntensityR);
+					If ($this->GetValue("Intensity_R_".$Group) <> $IntensityR) {
+						$this->SetValue("Intensity_R_".$Group, $IntensityR);
 					}
-					If (GetValueInteger($this->GetIDForIdent("Intensity_G_".$Group)) <> $IntensityG) {
-						SetValueInteger($this->GetIDForIdent("Intensity_G_".$Group), $IntensityG);
+					If ($this->GetValue("Intensity_G_".$Group) <> $IntensityG) {
+						$this->SetValue("Intensity_G_".$Group, $IntensityG);
 					}
-					If (GetValueInteger($this->GetIDForIdent("Intensity_B_".$Group)) <> $IntensityB) {
-						SetValueInteger($this->GetIDForIdent("Intensity_B_".$Group), $IntensityB);
+					If ($this->GetValue("Intensity_B_".$Group) <> $IntensityB) {
+						$this->SetValue("Intensity_B_".$Group, $IntensityB);
 					}
-					If (GetValueInteger($this->GetIDForIdent("Intensity_W_".$Group)) <> $IntensityW) {
-						SetValueInteger($this->GetIDForIdent("Intensity_W_".$Group), $IntensityW);
+					If ($this->GetValue("Intensity_W_".$Group) <> $IntensityW) {
+						$this->SetValue("Intensity_W_".$Group, $IntensityW);
 					}
 					// Werte skalieren
 					$Value_R = intval(255 / 4095 * $IntensityR);
 					$Value_G = intval(255 / 4095 * $IntensityG);
 					$Value_B = intval(255 / 4095 * $IntensityB);
-					SetValueInteger($this->GetIDForIdent("Color_RGB_".$Group), $this->RGB2Hex($Value_R, $Value_G, $Value_B));
+					$this->SetValue("Color_RGB_".$Group, $this->RGB2Hex($Value_R, $Value_G, $Value_B));
 				}
 				break;
 			case "get_used_modules":
@@ -206,9 +205,10 @@
 			   	}
 			   	break;
 	 	}
- 	}
+		return "";
+	}
 	
-	public function RequestAction($Ident, $Value) 
+	public function RequestAction(string $Ident, mixed $Value): void
 	{
 		$Parts = explode("_", $Ident);
 		$Source = $Parts[0]."_".$Parts[1];
@@ -220,7 +220,7 @@
 				$this->SetOutputPinStateRGB($Group, $Value);
 			}
 			elseif ($Group == 5) {
-				SetValueBoolean($this->GetIDForIdent($Ident), $Value);
+				$this->SetValue($Ident, $Value);
 				for ($i = 1; $i <= 4; $i++) {
 					$this->SetOutputPinStateRGB($i, $Value);
 				}
@@ -231,7 +231,7 @@
 				$this->SetOutputPinStateW($Group, $Value);
 			}
 			elseif ($Group == 5) {
-				SetValueBoolean($this->GetIDForIdent($Ident), $Value);
+				$this->SetValue($Ident, $Value);
 				for ($i = 1; $i <= 4; $i++) {
 					$this->SetOutputPinStateW($i, $Value);					
 				}
@@ -243,7 +243,7 @@
 			}
 			elseif ($Group == 5) {
 				// ColorPicker und Slider setzen
-				SetValueInteger($this->GetIDForIdent($Ident), $Value);
+				$this->SetValue($Ident, $Value);
 				$this->SetAllColor();
 				for ($i = 1; $i <= 4; $i++) {
 					$this->SetOutputPinValueR($i, $Value);
@@ -256,7 +256,7 @@
 			}
 			elseif ($Group == 5) {
 				// ColorPicker und Slider setzen
-				SetValueInteger($this->GetIDForIdent($Ident), $Value);
+				$this->SetValue($Ident, $Value);
 				$this->SetAllColor();
 				for ($i = 1; $i <= 4; $i++) {
 					$this->SetOutputPinValueG($i, $Value);
@@ -269,7 +269,7 @@
 			}
 			elseif ($Group == 5) {
 				// ColorPicker und Slider setzen
-				SetValueInteger($this->GetIDForIdent($Ident), $Value);
+				$this->SetValue($Ident, $Value);
 				$this->SetAllColor();
 				for ($i = 1; $i <= 4; $i++) {
 					$this->SetOutputPinValueB($i, $Value);
@@ -282,7 +282,7 @@
 			}
 			elseif ($Group == 5) {
 				// ColorPicker und Slider setzen
-				SetValueInteger($this->GetIDForIdent($Ident), $Value);
+				$this->SetValue($Ident, $Value);
 				$this->SetAllColor();
 				for ($i = 1; $i <= 4; $i++) {
 					$this->SetOutputPinValueW($i, $Value);
@@ -294,7 +294,7 @@
 				$this->SetOutputColor($Group, $Value);
 			}
 			elseif ($Group == 5) {
-				SetValueInteger($this->GetIDForIdent($Ident), $Value);
+				$this->SetValue($Ident, $Value);
 				for ($i = 1; $i <= 4; $i++) {
 					$this->SetOutputColor($i, $Value);
 				}
@@ -307,7 +307,7 @@
 	}
 	    
 	// Beginn der Funktionen
-	public function SetOutput(Int $Group, Bool $StateRGB, Bool $StateW, Int $IntensityR, Int $IntensityG, Int $IntensityB, Int $IntensityW)  
+	public function SetOutput(int $Group, bool $StateRGB, bool $StateW, int $IntensityR, int $IntensityG, int $IntensityB, int $IntensityW): void
 	{
 		//{RGBW;I2C-Kanal;Adresse;RGBWKanal;StatusRGB;StatusW;R;G;B;W}
 		If ($this->ReadPropertyBoolean("Open") == true) {
@@ -317,112 +317,112 @@
 		}
 	}
 	    
-	public function SetOutputPinStateRGBW(Int $Group, Bool $StateRGBW)
+	public function SetOutputPinStateRGBW(int $Group, bool $StateRGBW): void
 	{ 
 		$this->SendDebug("SetOutputPinStateRGB", "Ausfuehrung", 0);
 		$Group = min(4, max(1, $Group));
 		$StateRGBW = min(1, max(0, $StateRGBW));
-		//$StateW = GetValueBoolean($this->GetIDForIdent("Status_W_".$Group));
-		//$StatusRGB = GetValueBoolean($this->GetIDForIdent("Status_RGB_".$Group));
-		$IntensityR = GetValueInteger($this->GetIDForIdent("Intensity_R_".$Group));
-		$IntensityG = GetValueInteger($this->GetIDForIdent("Intensity_G_".$Group));
-		$IntensityB = GetValueInteger($this->GetIDForIdent("Intensity_B_".$Group));
-		$IntensityW = GetValueInteger($this->GetIDForIdent("Intensity_W_".$Group));	
+		//$StateW = $this->GetValue("Status_W_".$Group);
+		//$StatusRGB = $this->GetValue("Status_RGB_".$Group);
+		$IntensityR = $this->GetValue("Intensity_R_".$Group);
+		$IntensityG = $this->GetValue("Intensity_G_".$Group);
+		$IntensityB = $this->GetValue("Intensity_B_".$Group);
+		$IntensityW = $this->GetValue("Intensity_W_".$Group);	
 		
 		$this->SetOutput($Group, $StateRGBW, $StateRGBW, $IntensityR, $IntensityG, $IntensityB, $IntensityW); 
 	}    	
 			
-	public function SetOutputPinStateRGB(Int $Group, Bool $StateRGB)
+	public function SetOutputPinStateRGB(int $Group, bool $StateRGB): void
 	{ 
 		$this->SendDebug("SetOutputPinStateRGB", "Ausfuehrung", 0);
 		$Group = min(4, max(1, $Group));
 		$StateRGB = min(1, max(0, $StateRGB));
-		$StateW = GetValueBoolean($this->GetIDForIdent("Status_W_".$Group));
-		//$StatusRGB = GetValueBoolean($this->GetIDForIdent("Status_RGB_".$Group));
-		$IntensityR = GetValueInteger($this->GetIDForIdent("Intensity_R_".$Group));
-		$IntensityG = GetValueInteger($this->GetIDForIdent("Intensity_G_".$Group));
-		$IntensityB = GetValueInteger($this->GetIDForIdent("Intensity_B_".$Group));
-		$IntensityW = GetValueInteger($this->GetIDForIdent("Intensity_W_".$Group));	
+		$StateW = $this->GetValue("Status_W_".$Group);
+		//$StatusRGB = $this->GetValue("Status_RGB_".$Group);
+		$IntensityR = $this->GetValue("Intensity_R_".$Group);
+		$IntensityG = $this->GetValue("Intensity_G_".$Group);
+		$IntensityB = $this->GetValue("Intensity_B_".$Group);
+		$IntensityW = $this->GetValue("Intensity_W_".$Group);	
 		
 		$this->SetOutput($Group, $StateRGB, $StateW, $IntensityR, $IntensityG, $IntensityB, $IntensityW); 
 	}    	    
 	
-	public function SetOutputPinStateW(Int $Group, Bool $StateW)
+	public function SetOutputPinStateW(int $Group, bool $StateW): void
 	{ 
 		$this->SendDebug("SetOutputPinStateW", "Ausfuehrung", 0);
 		$Group = min(4, max(1, $Group));
 		$StateW = min(1, max(0, $StateW));
-		//$StateW = GetValueBoolean($this->GetIDForIdent("Status_W_".$Group));
-		$StateRGB = GetValueBoolean($this->GetIDForIdent("Status_RGB_".$Group));
-		$IntensityR = GetValueInteger($this->GetIDForIdent("Intensity_R_".$Group));
-		$IntensityG = GetValueInteger($this->GetIDForIdent("Intensity_G_".$Group));
-		$IntensityB = GetValueInteger($this->GetIDForIdent("Intensity_B_".$Group));
-		$IntensityW = GetValueInteger($this->GetIDForIdent("Intensity_W_".$Group));	
+		//$StateW = $this->GetValue("Status_W_".$Group);
+		$StateRGB = $this->GetValue("Status_RGB_".$Group);
+		$IntensityR = $this->GetValue("Intensity_R_".$Group);
+		$IntensityG = $this->GetValue("Intensity_G_".$Group);
+		$IntensityB = $this->GetValue("Intensity_B_".$Group);
+		$IntensityW = $this->GetValue("Intensity_W_".$Group);	
 		
 		$this->SetOutput($Group, $StateRGB, $StateW, $IntensityR, $IntensityG, $IntensityB, $IntensityW); 
 	}      
 	 
-	public function SetOutputPinValueR(Int $Group, Int $IntensityR)
+	public function SetOutputPinValueR(int $Group, int $IntensityR): void
 	{ 
 		$this->SendDebug("SetOutputPinValueR", "Ausfuehrung", 0);
 		$Group = min(4, max(1, $Group));
 		$IntensityR = min(4095, max(0, $IntensityR));
-		$StateW = GetValueBoolean($this->GetIDForIdent("Status_W_".$Group));
-		$StateRGB = GetValueBoolean($this->GetIDForIdent("Status_RGB_".$Group));
-		//$IntensityR = GetValueInteger($this->GetIDForIdent("Intensity_R_".$Group));
-		$IntensityG = GetValueInteger($this->GetIDForIdent("Intensity_G_".$Group));
-		$IntensityB = GetValueInteger($this->GetIDForIdent("Intensity_B_".$Group));
-		$IntensityW = GetValueInteger($this->GetIDForIdent("Intensity_W_".$Group));	
+		$StateW = $this->GetValue("Status_W_".$Group);
+		$StateRGB = $this->GetValue("Status_RGB_".$Group);
+		//$IntensityR = $this->GetValue("Intensity_R_".$Group);
+		$IntensityG = $this->GetValue("Intensity_G_".$Group);
+		$IntensityB = $this->GetValue("Intensity_B_".$Group);
+		$IntensityW = $this->GetValue("Intensity_W_".$Group);	
 		
 		$this->SetOutput($Group, $StateRGB, $StateW, $IntensityR, $IntensityG, $IntensityB, $IntensityW); 
 	}         
 	
-	public function SetOutputPinValueG(Int $Group, Int $IntensityG)
+	public function SetOutputPinValueG(int $Group, int $IntensityG): void
 	{ 
 		$this->SendDebug("SetOutputPinValueG", "Ausfuehrung", 0);
 		$Group = min(4, max(1, $Group));
 		$IntensityG = min(4095, max(0, $IntensityG));
-		$StateW = GetValueBoolean($this->GetIDForIdent("Status_W_".$Group));
-		$StateRGB = GetValueBoolean($this->GetIDForIdent("Status_RGB_".$Group));
-		$IntensityR = GetValueInteger($this->GetIDForIdent("Intensity_R_".$Group));
-		//$IntensityG = GetValueInteger($this->GetIDForIdent("Intensity_G_".$Group));
-		$IntensityB = GetValueInteger($this->GetIDForIdent("Intensity_B_".$Group));
-		$IntensityW = GetValueInteger($this->GetIDForIdent("Intensity_W_".$Group));	
+		$StateW = $this->GetValue("Status_W_".$Group);
+		$StateRGB = $this->GetValue("Status_RGB_".$Group);
+		$IntensityR = $this->GetValue("Intensity_R_".$Group);
+		//$IntensityG = $this->GetValue("Intensity_G_".$Group);
+		$IntensityB = $this->GetValue("Intensity_B_".$Group);
+		$IntensityW = $this->GetValue("Intensity_W_".$Group);	
 		
 		$this->SetOutput($Group, $StateRGB, $StateW, $IntensityR, $IntensityG, $IntensityB, $IntensityW); 
 	}            
 	
-	public function SetOutputPinValueB(Int $Group, Int $IntensityB)
+	public function SetOutputPinValueB(int $Group, int $IntensityB): void
 	{ 
 		$this->SendDebug("SetOutputPinValueB", "Ausfuehrung", 0);
 		$Group = min(4, max(1, $Group));
 		$IntensityB = min(4095, max(0, $IntensityB));
-		$StateW = GetValueBoolean($this->GetIDForIdent("Status_W_".$Group));
-		$StateRGB = GetValueBoolean($this->GetIDForIdent("Status_RGB_".$Group));
-		$IntensityR = GetValueInteger($this->GetIDForIdent("Intensity_R_".$Group));
-		$IntensityG = GetValueInteger($this->GetIDForIdent("Intensity_G_".$Group));
-		//$IntensityB = GetValueInteger($this->GetIDForIdent("Intensity_B_".$Group));
-		$IntensityW = GetValueInteger($this->GetIDForIdent("Intensity_W_".$Group));	
+		$StateW = $this->GetValue("Status_W_".$Group);
+		$StateRGB = $this->GetValue("Status_RGB_".$Group);
+		$IntensityR = $this->GetValue("Intensity_R_".$Group);
+		$IntensityG = $this->GetValue("Intensity_G_".$Group);
+		//$IntensityB = $this->GetValue("Intensity_B_".$Group);
+		$IntensityW = $this->GetValue("Intensity_W_".$Group);	
 		
 		$this->SetOutput($Group, $StateRGB, $StateW, $IntensityR, $IntensityG, $IntensityB, $IntensityW); 
 	}            
 	
-	public function SetOutputPinValueW(Int $Group, Int $IntensityW)
+	public function SetOutputPinValueW(int $Group, int $IntensityW): void
 	{ 
 		$this->SendDebug("SetOutputPinValueR", "Ausfuehrung", 0);
 		$Group = min(4, max(1, $Group));
 		$IntensityW = min(4095, max(0, $IntensityW));
-		$StateW = GetValueBoolean($this->GetIDForIdent("Status_W_".$Group));
-		$StateRGB = GetValueBoolean($this->GetIDForIdent("Status_RGB_".$Group));
-		$IntensityR = GetValueInteger($this->GetIDForIdent("Intensity_R_".$Group));
-		$IntensityG = GetValueInteger($this->GetIDForIdent("Intensity_G_".$Group));
-		$IntensityB = GetValueInteger($this->GetIDForIdent("Intensity_B_".$Group));
-		//$IntensityW = GetValueInteger($this->GetIDForIdent("Intensity_W_".$Group));	
+		$StateW = $this->GetValue("Status_W_".$Group);
+		$StateRGB = $this->GetValue("Status_RGB_".$Group);
+		$IntensityR = $this->GetValue("Intensity_R_".$Group);
+		$IntensityG = $this->GetValue("Intensity_G_".$Group);
+		$IntensityB = $this->GetValue("Intensity_B_".$Group);
+		//$IntensityW = $this->GetValue("Intensity_W_".$Group);	
 		
 		$this->SetOutput($Group, $StateRGB, $StateW, $IntensityR, $IntensityG, $IntensityB, $IntensityW); 
 	}            
 	    
-	public function SetOutputColor(Int $Group, Int $Color)
+	public function SetOutputColor(int $Group, int $Color): void
 	{
 		$this->SendDebug("SetOutputColor", "Ausfuehrung", 0);
 		$Group = min(4, max(1, $Group));
@@ -434,12 +434,12 @@
 		$IntensityG = 4095 / 255 * $Value_G;
 		$IntensityB = 4095 / 255 * $Value_B;
 		
-		$StateW = GetValueBoolean($this->GetIDForIdent("Status_W_".$Group));
-		$StateRGB = GetValueBoolean($this->GetIDForIdent("Status_RGB_".$Group));
-		//$IntensityR = GetValueInteger($this->GetIDForIdent("Intensity_R_".$Group));
-		//$IntensityG = GetValueInteger($this->GetIDForIdent("Intensity_G_".$Group));
-		//$IntensityB = GetValueInteger($this->GetIDForIdent("Intensity_B_".$Group));
-		$IntensityW = GetValueInteger($this->GetIDForIdent("Intensity_W_".$Group));	
+		$StateW = $this->GetValue("Status_W_".$Group);
+		$StateRGB = $this->GetValue("Status_RGB_".$Group);
+		//$IntensityR = $this->GetValue("Intensity_R_".$Group);
+		//$IntensityG = $this->GetValue("Intensity_G_".$Group);
+		//$IntensityB = $this->GetValue("Intensity_B_".$Group);
+		$IntensityW = $this->GetValue("Intensity_W_".$Group);	
 		
 		$this->SetOutput($Group, $StateRGB, $StateW, $IntensityR, $IntensityG, $IntensityB, $IntensityW); 
 	}
@@ -447,10 +447,10 @@
 	private function SetAllColor()
 	{
 		// Werte skalieren
-		$Value_R = intval(255 / 4095 * GetValueInteger($this->GetIDForIdent("Intensity_R_5")));
-		$Value_G = intval(255 / 4095 * GetValueInteger($this->GetIDForIdent("Intensity_G_5")));
-		$Value_B = intval(255 / 4095 * GetValueInteger($this->GetIDForIdent("Intensity_B_5")));
-		SetValueInteger($this->GetIDForIdent("Color_RGB_5"), $this->RGB2Hex($Value_R, $Value_G, $Value_B));
+		$Value_R = intval(255 / 4095 * $this->GetValue("Intensity_R_5"));
+		$Value_G = intval(255 / 4095 * $this->GetValue("Intensity_G_5"));
+		$Value_B = intval(255 / 4095 * $this->GetValue("Intensity_B_5"));
+		$this->SetValue("Color_RGB_5", $this->RGB2Hex($Value_R, $Value_G, $Value_B));
 	}
 	    
 	private function GetOutput(Int $Register)
@@ -471,22 +471,6 @@
 		}
 	}
 	    
-	private function RegisterProfileInteger($Name, $Icon, $Prefix, $Suffix, $MinValue, $MaxValue, $StepSize)
-	{
-	        if (!IPS_VariableProfileExists($Name))
-	        {
-	            IPS_CreateVariableProfile($Name, 1);
-	        }
-	        else
-	        {
-	            $profile = IPS_GetVariableProfile($Name);
-	            if ($profile['ProfileType'] != 1)
-	                throw new Exception("Variable profile type does not match for profile " . $Name);
-	        }
-	        IPS_SetVariableProfileIcon($Name, $Icon);
-	        IPS_SetVariableProfileText($Name, $Prefix, $Suffix);
-	        IPS_SetVariableProfileValues($Name, $MinValue, $MaxValue, $StepSize);    
-	}
 	
 	private function setBit($byte, $significance) { 
  		// ein bestimmtes Bit auf 1 setzen
@@ -518,16 +502,5 @@
 	return $Result;
 	}
 	    
-	protected function HasActiveParent()
-    	{
-		$Instance = @IPS_GetInstance($this->InstanceID);
-		if ($Instance['ConnectionID'] > 0)
-		{
-			$Parent = IPS_GetInstance($Instance['ConnectionID']);
-			if ($Parent['InstanceStatus'] == 102)
-			return true;
-		}
-        return false;
-    	}  
 }
 ?>

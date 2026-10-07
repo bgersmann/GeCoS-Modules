@@ -1,32 +1,31 @@
 <?
     // Klassendefinition
-    class GeCoS_PWM16Out extends IPSModule 
+    class GeCoS_PWM16Out extends IPSModuleStrict 
     {
 	// PCA9685
 	    
 	// Überschreibt die interne IPS_Create($id) Funktion
-        public function Create() 
+        public function Create(): void
         {
             	// Diese Zeile nicht löschen.
             	parent::Create();
  	    	$this->RegisterPropertyBoolean("Open", false);
-		$this->ConnectParent("{5F1C0403-4A74-4F14-829F-9A217CFB2D05}");
  	    	$this->RegisterPropertyInteger("DeviceAddress", 80);
 		$this->RegisterPropertyInteger("DeviceBus", 0);
 		
 		// Profil anlegen
-		$this->RegisterProfileInteger("Intensity.4096", "Intensity", "", " %", 0, 4095, 1);
+		$Intensity = array("PRESENTATION" => VARIABLE_PRESENTATION_SLIDER, "MIN" => 0, "MAX" => 4095, "STEP_SIZE" => 1, "PERCENTAGE" => true, "SUFFIX" => " %", "DIGITS" => 0, "ICON" => "lightbulb");
 		
 		//Status-Variablen anlegen
 		for ($i = 0; $i <= 15; $i++) {
-			$this->RegisterVariableBoolean("Output_Bln_X".$i, "Ausgang X".$i, "~Switch", ($i + 1) * 10);
+			$this->RegisterVariableBoolean("Output_Bln_X".$i, "Ausgang X".$i, array("PRESENTATION" => VARIABLE_PRESENTATION_SWITCH), ($i + 1) * 10);
 			$this->EnableAction("Output_Bln_X".$i);	
-			$this->RegisterVariableInteger("Output_Int_X".$i, "Ausgang X".$i, "Intensity.4096", (($i + 1) * 10) + 5);
+			$this->RegisterVariableInteger("Output_Int_X".$i, "Ausgang X".$i, $Intensity, (($i + 1) * 10) + 5);
 			$this->EnableAction("Output_Int_X".$i);	
 		}
         }
  	
-	public function GetConfigurationForm() 
+	public function GetConfigurationForm(): string
 	{ 
 		$arrayStatus = array(); 
 		$arrayStatus[] = array("code" => 101, "icon" => "inactive", "caption" => "Instanz wird erstellt"); 
@@ -61,7 +60,7 @@
  		return JSON_encode(array("status" => $arrayStatus, "elements" => $arrayElements)); 		 
  	}           
 	  
-        public function ApplyChanges() 
+        public function ApplyChanges(): void
         {
             	// Diese Zeile nicht löschen
             	parent::ApplyChanges();
@@ -90,7 +89,7 @@
 		}
 	}
 	
-	public function ReceiveData($JSONString) 
+	public function ReceiveData(string $JSONString): string
 	{
 	    	// Empfangene Daten vom Gateway/Splitter
 	    	$data = json_decode($JSONString);
@@ -102,11 +101,11 @@
 					$Value = intval($data->Value); 
 					$this->SendDebug("ReceiveData", "SPWM Channel: ".$Channel." State: ".$State." Value: ".$Value, 0);
 					// Statusvariablen setzen
-					If (GetValueBoolean($this->GetIDForIdent("Output_Bln_X".$Channel)) <> $State) {
-						SetValueBoolean($this->GetIDForIdent("Output_Bln_X".$Channel), $State);
+					If ($this->GetValue("Output_Bln_X".$Channel) <> $State) {
+						$this->SetValue("Output_Bln_X".$Channel, $State);
 					}
-					If (GetValueInteger($this->GetIDForIdent("Output_Int_X".$Channel)) <> $Value) {
-						SetValueInteger($this->GetIDForIdent("Output_Int_X".$Channel), $Value);
+					If ($this->GetValue("Output_Int_X".$Channel) <> $Value) {
+						$this->SetValue("Output_Int_X".$Channel, $Value);
 					}	
 				}
 				break; 
@@ -117,11 +116,11 @@
 					$Value = intval($data->Value); 
 					$this->SendDebug("ReceiveData", "PWM Channel: ".$Channel." State: ".$State." Value: ".$Value, 0);
 					// Statusvariablen setzen
-					If (GetValueBoolean($this->GetIDForIdent("Output_Bln_X".$Channel)) <> $State) {
-						SetValueBoolean($this->GetIDForIdent("Output_Bln_X".$Channel), $State);
+					If ($this->GetValue("Output_Bln_X".$Channel) <> $State) {
+						$this->SetValue("Output_Bln_X".$Channel, $State);
 					}
-					If (GetValueInteger($this->GetIDForIdent("Output_Int_X".$Channel)) <> $Value) {
-						SetValueInteger($this->GetIDForIdent("Output_Int_X".$Channel), $Value);
+					If ($this->GetValue("Output_Int_X".$Channel) <> $Value) {
+						$this->SetValue("Output_Int_X".$Channel, $Value);
 					}					
 				}
 				break; 
@@ -143,9 +142,10 @@
 			   	}
 			   	break;
 	 	}
- 	}
+		return "";
+	}
 	
-	public function RequestAction($Ident, $Value) 
+	public function RequestAction(string $Ident, mixed $Value): void
 	{
 		$Source = substr($Ident, 7, 3);  
 		$Number = intval(substr($Ident, 12, 2));
@@ -163,30 +163,30 @@
 	}
 	    
 	// Beginn der Funktionen
-	public function SetOutputPinValue(Int $Channel, Int $Value)
+	public function SetOutputPinValue(int $Channel, int $Value): void
 	{ 
 		$this->SendDebug("SetOutputPinValue", "Ausfuehrung", 0);
 		$Channel = min(15, max(0, $Channel));
 		$Value = min(4095, max(0, $Value));
-		$State = GetValueBoolean($this->GetIDForIdent("Output_Bln_X".$Channel));
+		$State = $this->GetValue("Output_Bln_X".$Channel);
 		If ($this->ReadPropertyBoolean("Open") == true) {
 			// Ausgang setzen
 			$Result = $this->SendDataToParent(json_encode(Array("DataID"=> "{47113C57-29FE-4A60-9D0E-840022883B89}", "Function" => "PWM", "DeviceAddress" => $this->ReadPropertyInteger("DeviceAddress"), "DeviceBus" => $this->ReadPropertyInteger("DeviceBus"), "Channel" => $Channel, "State" => $State, "Value" => $Value )));
-			SetValueInteger($this->GetIDForIdent("Output_Int_X".$Channel), $Value);
+			$this->SetValue("Output_Int_X".$Channel, $Value);
 		}
 	}
 	
-	public function SetOutputPinStatus(Int $Channel, Bool $State)
+	public function SetOutputPinStatus(int $Channel, bool $State): void
 	{ 
 		$this->SendDebug("SetOutputPinStatus", "Ausfuehrung", 0);
 		$Channel = min(15, max(0, $Channel));
 		$State = min(1, max(0, $State));
-		$Value = GetValueInteger($this->GetIDForIdent("Output_Int_X".$Channel));
+		$Value = $this->GetValue("Output_Int_X".$Channel);
 		
 		If ($this->ReadPropertyBoolean("Open") == true) {
 			// Ausgang setzen
 			$Result = $this->SendDataToParent(json_encode(Array("DataID"=> "{47113C57-29FE-4A60-9D0E-840022883B89}", "Function" => "PWM", "DeviceAddress" => $this->ReadPropertyInteger("DeviceAddress"), "DeviceBus" => $this->ReadPropertyInteger("DeviceBus"), "Channel" => $Channel, "State" => $State, "Value" => $Value )));
-			SetValueBoolean($this->GetIDForIdent("Output_Bln_X".$Channel), $State);
+			$this->SetValue("Output_Bln_X".$Channel, $State);
 		}
 	}     
 	    
@@ -208,33 +208,6 @@
 		}
 	}
 	
-	private function RegisterProfileInteger($Name, $Icon, $Prefix, $Suffix, $MinValue, $MaxValue, $StepSize)
-	{
-	        if (!IPS_VariableProfileExists($Name))
-	        {
-	            IPS_CreateVariableProfile($Name, 1);
-	        }
-	        else
-	        {
-	            $profile = IPS_GetVariableProfile($Name);
-	            if ($profile['ProfileType'] != 1)
-	                throw new Exception("Variable profile type does not match for profile " . $Name);
-	        }
-	        IPS_SetVariableProfileIcon($Name, $Icon);
-	        IPS_SetVariableProfileText($Name, $Prefix, $Suffix);
-	        IPS_SetVariableProfileValues($Name, $MinValue, $MaxValue, $StepSize);    
-	}
 	    
-	protected function HasActiveParent()
-    	{
-		$Instance = @IPS_GetInstance($this->InstanceID);
-		if ($Instance['ConnectionID'] > 0)
-		{
-			$Parent = IPS_GetInstance($Instance['ConnectionID']);
-			if ($Parent['InstanceStatus'] == 102)
-			return true;
-		}
-        return false;
-    	}  
 }
 ?>

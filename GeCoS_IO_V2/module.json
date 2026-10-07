@@ -3,6 +3,7 @@
   "name": "GeCoS_IO_V2",
   "type": 2,
   "vendor": "GeCoS-Modules",
+  "url": "https://github.com/bgersmann/GeCoS-Modules",
   "aliases":
   [
     "GeCoS_IO_V2"

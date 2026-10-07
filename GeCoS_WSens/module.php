@@ -1,22 +1,16 @@
 <?
     // Klassendefinition
-    class GeCoS_WSens extends IPSModule 
+    class GeCoS_WSens extends IPSModuleStrict 
     {
-	public function Destroy() 
-	{
-		//Never delete this line!
-		parent::Destroy();
-		$this->SetTimerInterval("Timer_1", 0);
-	}
-	    
 	// Überschreibt die interne IPS_Create($id) Funktion
-        public function Create() 
+        public function Create(): void
         {
             	// Diese Zeile nicht löschen.
             	parent::Create();
  	    	$this->RegisterPropertyBoolean("Open", false);
 		$this->RegisterPropertyString("IPAddress", "127.0.0.1");
 		$this->RegisterPropertyInteger("Timer_1", 60);
+		$this->RegisterPropertyInteger("MaxErrors", 3);
 		$this->RegisterTimer("Timer_1", 0, 'GeCoSWSens_RequestData($_IPS["TARGET"]);');
 		$this->RegisterPropertyInteger("Altitude", 0);
  	   	$this->RegisterPropertyBoolean("LoggingTemp", false);
@@ -27,70 +21,55 @@
 		$this->RegisterPropertyInteger("Temperature_ID", 0);
 		$this->RegisterPropertyInteger("Humidity_ID", 0);
 		
-		// Profile erstellen		
-		$this->RegisterProfileFloat("GeCoS.gm3", "Drops", "", " g/m³", 0, 1000, 0.1, 1);
-		$this->RegisterProfileInteger("GeCoS.ppm", "Gauge", "", " ppm", 0, 6000, 1);
-		
-		$this->RegisterProfileInteger("GeCoS.AirQuality", "Information", "", "", 0, 6, 1);
-		IPS_SetVariableProfileAssociation("GeCoS.AirQuality", 0, "Kalibrierung", "Information", -1);
-		IPS_SetVariableProfileAssociation("GeCoS.AirQuality", 1, "gut", "Information", 0x58FA58);
-		IPS_SetVariableProfileAssociation("GeCoS.AirQuality", 2, "durchschnittlich", "Information", 0xF7FE2E);
-		IPS_SetVariableProfileAssociation("GeCoS.AirQuality", 3, "etwas schlecht", "Information", 0xFE9A2E);
-		IPS_SetVariableProfileAssociation("GeCoS.AirQuality", 4, "schlecht", "Information", 0xFF0000);
-		IPS_SetVariableProfileAssociation("GeCoS.AirQuality", 5, "schlechter", "Information", 0x61380B);
-		IPS_SetVariableProfileAssociation("GeCoS.AirQuality", 6, "sehr schlecht", "Information", 0x000000);
-		
-		$this->RegisterProfileInteger("GeCoS.Lux", "Bulb", "", " lx", 0, 65535, 1);
-		
 		//Status-Variablen anlegen
-		$this->RegisterVariableFloat("Hardware", "Hardware-Version", "", 10);
+		$this->RegisterVariableFloat("Hardware", "Hardware-Version", $this->ValuePresentation("", 1, "microchip"), 10);
 		
-		$this->RegisterVariableFloat("Firmware", "Firmware-Version", "", 20);
+		$this->RegisterVariableFloat("Firmware", "Firmware-Version", $this->ValuePresentation("", 1, "microchip"), 20);
 		
-		$this->RegisterVariableFloat("Temperature", "Temperatur", "~Temperature", 30);
+		$this->RegisterVariableFloat("Temperature", "Temperatur", $this->ValuePresentation(" °C", 1, "temperature-half", 1), 30);
 		
-		$this->RegisterVariableFloat("Pressure", "Luftdruck (abs)", "~AirPressure.F", 40);
+		$this->RegisterVariableFloat("Pressure", "Luftdruck (abs)", $this->ValuePresentation(" hPa", 1, "gauge"), 40);
 		
-		$this->RegisterVariableFloat("PressureRel", "Luftdruck (rel)", "~AirPressure.F", 50);
+		$this->RegisterVariableFloat("PressureRel", "Luftdruck (rel)", $this->ValuePresentation(" hPa", 1, "gauge"), 50);
 		
-		$this->RegisterVariableFloat("HumidityAbs", "Luftfeuchtigkeit (abs)", "GeCoS.gm3", 60);
+		$this->RegisterVariableFloat("HumidityAbs", "Luftfeuchtigkeit (abs)", $this->ValuePresentation(" g/m³", 1, "droplet"), 60);
 		
-		$this->RegisterVariableFloat("Humidity", "Luftfeuchtigkeit (rel)", "~Humidity.F", 70);
+		$this->RegisterVariableFloat("Humidity", "Luftfeuchtigkeit (rel)", $this->ValuePresentation(" %", 1, "droplet"), 70);
 		
-		$this->RegisterVariableFloat("DewPointTemperature", "Taupunkt Temperatur", "~Temperature", 80);
+		$this->RegisterVariableFloat("DewPointTemperature", "Taupunkt Temperatur", $this->ValuePresentation(" °C", 1, "temperature-half", 1), 80);
 		
-		$this->RegisterVariableFloat("PressureTrend1h", "Luftdruck 1h-Trend", "~AirPressure.F", 90);
+		$this->RegisterVariableFloat("PressureTrend1h", "Luftdruck 1h-Trend", $this->ValuePresentation(" hPa", 1, "gauge"), 90);
 		
-		$this->RegisterVariableFloat("PressureTrend3h", "Luftdruck 3h-Trend", "~AirPressure.F", 100);
+		$this->RegisterVariableFloat("PressureTrend3h", "Luftdruck 3h-Trend", $this->ValuePresentation(" hPa", 1, "gauge"), 100);
 		
-		$this->RegisterVariableFloat("PressureTrend12h", "Luftdruck 12h-Trend", "~AirPressure.F", 110);
+		$this->RegisterVariableFloat("PressureTrend12h", "Luftdruck 12h-Trend", $this->ValuePresentation(" hPa", 1, "gauge"), 110);
 		
-		$this->RegisterVariableFloat("PressureTrend24h", "Luftdruck 24h-Trend", "~AirPressure.F", 120);
+		$this->RegisterVariableFloat("PressureTrend24h", "Luftdruck 24h-Trend", $this->ValuePresentation(" hPa", 1, "gauge"), 120);
 		
-		$this->RegisterVariableInteger("AirQuality", "Luftqualität", "GeCoS.AirQuality", 130);
-		SetValueInteger($this->GetIDForIdent("AirQuality"), 0);
+		$this->RegisterVariableInteger("AirQuality", "Luftqualität", $this->AirQualityPresentation(), 130);
+		$this->SetValue("AirQuality", 0);
 		
-		$this->RegisterVariableInteger("AirQualityIndex", "Luftqualität Index", "", 140);
+		$this->RegisterVariableInteger("AirQualityIndex", "Luftqualität Index", $this->ValuePresentation("", 0, "wind"), 140);
 		
-		$this->RegisterVariableInteger("AirQualityGenauigkeit", "Luftqualität Genauigkeit", "", 142);
+		$this->RegisterVariableInteger("AirQualityGenauigkeit", "Luftqualität Genauigkeit", $this->ValuePresentation("", 0), 142);
 		
-		$this->RegisterVariableInteger("CO2", "CO 2", "GeCoS.ppm", 144);
+		$this->RegisterVariableInteger("CO2", "CO 2", $this->ValuePresentation(" ppm", 0, "gauge"), 144);
 		
-		$this->RegisterVariableInteger("CO2Genauigkeit", "CO 2 Genauigkeit", "", 146);
+		$this->RegisterVariableInteger("CO2Genauigkeit", "CO 2 Genauigkeit", $this->ValuePresentation("", 0), 146);
 		
-		$this->RegisterVariableInteger("Intensity_W", "Intensität Weiß", "GeCoS.Lux", 150);
+		$this->RegisterVariableInteger("Intensity_W", "Intensität Weiß", $this->ValuePresentation(" lx", 0, "lightbulb"), 150);
 		
-		$this->RegisterVariableInteger("Intensity_R", "Intensität Rot", "GeCoS.Lux", 160);
+		$this->RegisterVariableInteger("Intensity_R", "Intensität Rot", $this->ValuePresentation(" lx", 0, "lightbulb"), 160);
 		
-		$this->RegisterVariableInteger("Intensity_G", "Intensität Grün", "GeCoS.Lux", 170);
+		$this->RegisterVariableInteger("Intensity_G", "Intensität Grün", $this->ValuePresentation(" lx", 0, "lightbulb"), 170);
 		
-		$this->RegisterVariableInteger("Intensity_B", "Intensität Blau", "GeCoS.Lux", 180);
+		$this->RegisterVariableInteger("Intensity_B", "Intensität Blau", $this->ValuePresentation(" lx", 0, "lightbulb"), 180);
 		
-		$this->RegisterVariableInteger("FailureCode", "Fehlercode", "", 190);
-		SetValueInteger($this->GetIDForIdent("FailureCode"), 0);
+		$this->RegisterVariableInteger("FailureCode", "Fehlercode", $this->ValuePresentation("", 0), 190);
+		$this->SetValue("FailureCode", 0);
         }
  	
-	public function GetConfigurationForm() 
+	public function GetConfigurationForm(): string
 	{ 
 		$arrayStatus = array(); 
 		$arrayStatus[] = array("code" => 101, "icon" => "inactive", "caption" => "Instanz wird erstellt"); 
@@ -106,6 +85,8 @@
 		$arrayElements[] = array("type" => "ValidationTextBox", "name" => "IPAddress", "caption" => "IP");
 		$arrayElements[] = array("type" => "Label", "label" => "Miniumum 5 Sekunden, 0 => Aus");
 		$arrayElements[] = array("type" => "IntervalBox", "name" => "Timer_1", "caption" => "Sekunden");
+		$arrayElements[] = array("type" => "Label", "label" => "Anzahl Fehlversuche in Folge, bevor die Instanz auf Fehler geht");
+		$arrayElements[] = array("type" => "NumberSpinner", "name" => "MaxErrors", "caption" => "Fehlversuche", "minimum" => 1, "maximum" => 100);
  		$arrayElements[] = array("type" => "Label", "label" => "_____________________________________________________________________________________________________");
 		$arrayElements[] = array("type" => "Label", "label" => "Korrektur des Luftdrucks nach Hohenangabe");
 		$arrayElements[] = array("type" => "NumberSpinner", "name" => "Altitude", "caption" => "Höhe über NN (m)");
@@ -129,7 +110,7 @@
  	}           
 	  
         // Überschreibt die intere IPS_ApplyChanges($id) Funktion
-        public function ApplyChanges() 
+        public function ApplyChanges(): void
         {
             	// Diese Zeile nicht löschen
             	parent::ApplyChanges();
@@ -151,10 +132,11 @@
 				$Timer_1 = 5;
 			}
 			$this->SetTimerInterval("Timer_1", ($Timer_1 * 1000));
-			$this->RequestData();
+			$this->SetBuffer("ErrorCount", 0);
 			If ($this->GetStatus() <> 102) {
 				$this->SetStatus(102);
 			}
+			$this->RequestData();
 		}
 		else {
 			$this->SetTimerInterval("Timer_1", 0);
@@ -165,25 +147,14 @@
 	}
 	
 	// Beginn der Funktionen
-	public function RequestData()
+	public function RequestData(): bool
 	{
 		If ($this->ReadPropertyBoolean("Open") == true)  {
 			// Datenermittlung über JSON
-			$IP = $this->ReadPropertyString("IPAddress");
-			$contents = @file_get_contents('http://'.$IP.'/json');
-			If ($contents === false) {
-				$this->SendDebug("RequestData", "Fehler bei der Datenermittlung!", 0);		
-				If ($this->GetStatus() <> 202) {
-					$this->SetStatus(202);
-				}
+			$data = $this->FetchData(array("Temperatur", "Luftdruck", "Luftfeuchtigkeit", "Luftqualitaet-Index", "Hardware-Version", "Firmware-Version", "Intensitaet-Weiss", "Intensitaet-Rot", "Intensitaet-Gruen", "Intensitaet-Blau"));
+			If ($data === false) {
 				return false;
 			}
-			
-			If ($this->GetStatus() <> 102) {
-				$this->SetStatus(102);
-			}
-			$contents = utf8_encode($contents); 
-			$data = json_decode($contents);
 			$Temp = floatval($data->Temperatur);
 			$Pressure = floatval($data->Luftdruck); 
 			$Humidity = floatval($data->Luftfeuchtigkeit); 
@@ -191,12 +162,12 @@
 			
 			$Hardware = floatval($data->{'Hardware-Version'});
 			$Firmware = floatval($data->{'Firmware-Version'});
-			If (GetValueFloat($this->GetIDForIdent("Hardware")) <> $Hardware) {
-				SetValueFloat($this->GetIDForIdent("Hardware"), ($Hardware));
+			If ($this->GetValue("Hardware") <> $Hardware) {
+				$this->SetValue("Hardware", ($Hardware));
 				$this->SetSummary("HW-Version: ".$Hardware." SW-Version: ".$Firmware);
 			}
-			If (GetValueFloat($this->GetIDForIdent("Firmware")) <> $Firmware) {
-				SetValueFloat($this->GetIDForIdent("Firmware"), ($Firmware));
+			If ($this->GetValue("Firmware") <> $Firmware) {
+				$this->SetValue("Firmware", ($Firmware));
 				$this->SetSummary("HW-Version: ".$Hardware." SW-Version: ".$Firmware);
 			}
 			if (isset($data->{'BME-Error'})) {
@@ -205,21 +176,21 @@
 			else {
 				$FailureCode = 0;
 			}
-			If (GetValueInteger($this->GetIDForIdent("FailureCode")) <> $FailureCode) {
-				SetValueInteger($this->GetIDForIdent("FailureCode"), ($FailureCode));
+			If ($this->GetValue("FailureCode") <> $FailureCode) {
+				$this->SetValue("FailureCode", ($FailureCode));
 				
 			}
 			
 			If (property_exists($data, "Luftqualitaet-Genauigkeit")) {
-				SetValueInteger($this->GetIDForIdent("AirQualityGenauigkeit"), intval($data->{'Luftqualitaet-Genauigkeit'}));
+				$this->SetValue("AirQualityGenauigkeit", intval($data->{'Luftqualitaet-Genauigkeit'}));
         		}  
 			
 			If (property_exists($data, "CO2")) {
-				SetValueInteger($this->GetIDForIdent("CO2"), intval($data->CO2));
+				$this->SetValue("CO2", intval($data->CO2));
         		}  
 			
 			If (property_exists($data, "CO2-Genauigkeit")) {
-				SetValueInteger($this->GetIDForIdent("CO2Genauigkeit"), intval($data->{'CO2-Genauigkeit'}));
+				$this->SetValue("CO2Genauigkeit", intval($data->{'CO2-Genauigkeit'}));
         		}  
 			
 			$Ambient = intval($data->{'Intensitaet-Weiss'});
@@ -230,19 +201,19 @@
 			$this->SendDebug("RequestData", "BME680 - iAQ: ".$IAQ." Temp: ".$Temp." C Luftfeuchte: ".$Humidity."% Luftdruck: ".$Pressure." hPa", 0);		
 			$this->SendDebug("RequestData", "APDS9960 - Weiss: ".$Ambient." lx Rot: ".$Red." lx Gruen: ".$Green." lx Blau: ".$Blue." lx", 0);
 			
-			SetValueInteger($this->GetIDForIdent("Intensity_W"), $Ambient);
-			SetValueInteger($this->GetIDForIdent("Intensity_R"), $Red);
-			SetValueInteger($this->GetIDForIdent("Intensity_G"), $Green);
-			SetValueInteger($this->GetIDForIdent("Intensity_B"), $Blue);
+			$this->SetValue("Intensity_W", $Ambient);
+			$this->SetValue("Intensity_R", $Red);
+			$this->SetValue("Intensity_G", $Green);
+			$this->SetValue("Intensity_B", $Blue);
 			
-			SetValueFloat($this->GetIDForIdent("Temperature"), round($Temp, 2));
+			$this->SetValue("Temperature", round($Temp, 2));
 			
 			If (($Pressure > 800) AND ($Pressure < 1200)) {
-				SetValueFloat($this->GetIDForIdent("Pressure"), round($Pressure, 2));
+				$this->SetValue("Pressure", round($Pressure, 2));
 			}
 			
-			SetValueFloat($this->GetIDForIdent("Humidity"), round($Humidity, 2));
-			SetValueInteger($this->GetIDForIdent("AirQualityIndex"), $IAQ);
+			$this->SetValue("Humidity", round($Humidity, 2));
+			$this->SetValue("AirQualityIndex", $IAQ);
 			
 			
 			
@@ -261,9 +232,9 @@
 			$td = $b * $v / ($a - $v);
 			$af = pow(10,5) * 18.016 / 8314.3 * $dd / ($Temp + 273.15);
 			// Taupunkttemperatur
-			SetValueFloat($this->GetIDForIdent("DewPointTemperature"), round($td, 2));
+			$this->SetValue("DewPointTemperature", round($td, 2));
 			// Absolute Feuchtigkeit
-			SetValueFloat($this->GetIDForIdent("HumidityAbs"), round($af, 2));
+			$this->SetValue("HumidityAbs", round($af, 2));
 			
 			// Relativen Luftdruck
 			$Altitude = $this->ReadPropertyInteger("Altitude");
@@ -311,13 +282,13 @@
 			// momentaner Stationsdampfdruck (hPa)
 			$e_d = $f_rel * $E_0 * exp((17.5043 * $Temperature) / (241.2 + $Temperature));
 			$PressureRel = $Pressure * exp(($g_n * $Altitude) / ($R * ($Temperature + $T_0 + $C * $e_d + (($gam * $Altitude) / 2))));
-			SetValueFloat($this->GetIDForIdent("PressureRel"), round($PressureRel, 2));
+			$this->SetValue("PressureRel", round($PressureRel, 2));
 			// Luftdruck Trends
 			If ($this->ReadPropertyBoolean("LoggingPres") == true) {
-				SetValueFloat($this->GetIDForIdent("PressureTrend1h"), $this->PressureTrend(1));
-				SetValueFloat($this->GetIDForIdent("PressureTrend3h"), $this->PressureTrend(3));
-				SetValueFloat($this->GetIDForIdent("PressureTrend12h"), $this->PressureTrend(12));
-				SetValueFloat($this->GetIDForIdent("PressureTrend24h"), $this->PressureTrend(24));
+				$this->SetValue("PressureTrend1h", $this->PressureTrend(1));
+				$this->SetValue("PressureTrend3h", $this->PressureTrend(3));
+				$this->SetValue("PressureTrend12h", $this->PressureTrend(12));
+				$this->SetValue("PressureTrend24h", $this->PressureTrend(24));
 			}
 			
 			// Umrechnung für die Air-Qualität-Anzeige
@@ -327,7 +298,7 @@
 			while ($air_quality_score > $IAQ_Index[$i]) {
 			    $i++;  
 			}
-			SetValueInteger($this->GetIDForIdent("AirQuality"), ($i + 1));
+			$this->SetValue("AirQuality", ($i + 1));
 			return true;
 		}
 		else {
@@ -335,6 +306,63 @@
 		}
 	}
 	    
+	private function FetchData(array $RequiredKeys)
+	{
+		// Datenermittlung über JSON, liefert bei Fehler false
+		$IP = $this->ReadPropertyString("IPAddress");
+		$Context = stream_context_create(array("http" => array("timeout" => 5)));
+		$contents = @file_get_contents('http://'.$IP.'/json', false, $Context);
+		If ($contents === false) {
+			$this->HandleFailure("Keine Antwort von ".$IP);
+			return false;
+		}
+		If (!mb_check_encoding($contents, "UTF-8")) {
+			$contents = mb_convert_encoding($contents, "UTF-8", "ISO-8859-1");
+		}
+		$data = json_decode($contents);
+		If (!is_object($data)) {
+			$this->HandleFailure("Ungültige JSON-Daten von ".$IP." (".json_last_error_msg().")");
+			return false;
+		}
+		foreach ($RequiredKeys as $Key) {
+			If (!property_exists($data, $Key)) {
+				$this->HandleFailure("Unvollständige Daten von ".$IP." (fehlt: ".$Key.")");
+				return false;
+			}
+		}
+
+		// Erfolgreich - Fehlerzähler zurücksetzen
+		$ErrorCount = intval($this->GetBuffer("ErrorCount"));
+		If ($ErrorCount >= $this->GetMaxErrors()) {
+			$this->LogMessage("Verbindung zu ".$IP." wiederhergestellt (nach ".$ErrorCount." Fehlversuchen)", KL_MESSAGE);
+		}
+		$this->SetBuffer("ErrorCount", 0);
+		If ($this->GetStatus() <> 102) {
+			$this->SetStatus(102);
+		}
+		return $data;
+	}
+
+	private function HandleFailure(string $Message)
+	{
+		// Erst nach mehreren Fehlversuchen in Folge auf Fehler gehen und ins Log schreiben
+		$ErrorCount = intval($this->GetBuffer("ErrorCount")) + 1;
+		$this->SetBuffer("ErrorCount", $ErrorCount);
+		$MaxErrors = $this->GetMaxErrors();
+		$this->SendDebug("RequestData", $Message." (Fehlversuch ".$ErrorCount."/".$MaxErrors.")", 0);
+		If ($ErrorCount == $MaxErrors) {
+			$this->LogMessage($Message." - ".$ErrorCount." Fehlversuche in Folge", KL_ERROR);
+		}
+		If (($ErrorCount >= $MaxErrors) AND ($this->GetStatus() <> 202)) {
+			$this->SetStatus(202);
+		}
+	}
+
+	private function GetMaxErrors()
+	{
+		return max(1, $this->ReadPropertyInteger("MaxErrors"));
+	}
+
 	private function PressureTrend(int $interval)
 	{
 		$Result = 0;
@@ -343,39 +371,28 @@
 	return $Result;
 	}   
 	 
-	private function RegisterProfileInteger($Name, $Icon, $Prefix, $Suffix, $MinValue, $MaxValue, $StepSize)
+	private function ValuePresentation(string $Suffix, int $Digits, string $Icon = "", int $UsageType = 0)
 	{
-	        if (!IPS_VariableProfileExists($Name))
-	        {
-	            IPS_CreateVariableProfile($Name, 1);
-	        }
-	        else
-	        {
-	            $profile = IPS_GetVariableProfile($Name);
-	            if ($profile['ProfileType'] != 1)
-	                throw new Exception("Variable profile type does not match for profile " . $Name);
-	        }
-	        IPS_SetVariableProfileIcon($Name, $Icon);
-	        IPS_SetVariableProfileText($Name, $Prefix, $Suffix);
-	        IPS_SetVariableProfileValues($Name, $MinValue, $MaxValue, $StepSize);        
+		return array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "SUFFIX" => $Suffix, "DIGITS" => $Digits, "ICON" => $Icon, "USAGE_TYPE" => $UsageType);
 	}
-	
-	private function RegisterProfileFloat($Name, $Icon, $Prefix, $Suffix, $MinValue, $MaxValue, $StepSize, $Digits)
+
+	private function AirQualityPresentation()
 	{
-	        if (!IPS_VariableProfileExists($Name))
-	        {
-	            IPS_CreateVariableProfile($Name, 2);
-	        }
-	        else
-	        {
-	            $profile = IPS_GetVariableProfile($Name);
-	            if ($profile['ProfileType'] != 2)
-	                throw new Exception("Variable profile type does not match for profile " . $Name);
-	        }
-	        IPS_SetVariableProfileIcon($Name, $Icon);
-	        IPS_SetVariableProfileText($Name, $Prefix, $Suffix);
-	        IPS_SetVariableProfileValues($Name, $MinValue, $MaxValue, $StepSize);
-	        IPS_SetVariableProfileDigits($Name, $Digits);
+		// Wertanzeige mit Text und Farbe je Luftqualitätsstufe
+		$Levels = array(
+			0 => array("Kalibrierung", -1),
+			1 => array("gut", 0x58FA58),
+			2 => array("durchschnittlich", 0xF7FE2E),
+			3 => array("etwas schlecht", 0xFE9A2E),
+			4 => array("schlecht", 0xFF0000),
+			5 => array("schlechter", 0x61380B),
+			6 => array("sehr schlecht", 0x000000)
+		);
+		$Intervals = array();
+		foreach ($Levels as $Value => $Level) {
+			$Intervals[] = array("IntervalMinValue" => $Value, "IntervalMaxValue" => $Value, "ConstantActive" => true, "ConstantValue" => $Level[0], "ColorActive" => ($Level[1] >= 0), "ColorValue" => $Level[1]);
+		}
+		return array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "ICON" => "wind", "DIGITS" => 0, "INTERVALS_ACTIVE" => true, "INTERVALS" => json_encode($Intervals));
 	}
 }
 ?>

@@ -1,9 +1,12 @@
 {
   "id": "{F813F709-083A-4771-88BC-9216D34E9683}",
-  "author": "Joachim Päper",
+  "author": "Joachim Päper/Benedikt Gersmann",
   "name": "GeCoS-Modules",
-  "url": "www.ip-symcon.de",
-  "version": "2.0",
+  "url": "https://github.com/bgersmann/GeCoS-Modules",
+  "compatibility": {
+    "version": "8.1"
+  },
+  "version": "3.0",
   "build": 0,
   "date": 0
 }

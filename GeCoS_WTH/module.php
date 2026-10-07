@@ -1,22 +1,16 @@
 <?
     // Klassendefinition
-    class GeCoS_WTH extends IPSModule 
+    class GeCoS_WTH extends IPSModuleStrict 
     {
-	public function Destroy() 
-	{
-		//Never delete this line!
-		parent::Destroy();
-		$this->SetTimerInterval("Timer_1", 0);
-	}
-	    
 	// Überschreibt die interne IPS_Create($id) Funktion
-        public function Create() 
+        public function Create(): void
         {
             	// Diese Zeile nicht löschen.
             	parent::Create();
  	    	$this->RegisterPropertyBoolean("Open", false);
 		$this->RegisterPropertyString("IPAddress", "127.0.0.1");
 		$this->RegisterPropertyInteger("Timer_1", 60);
+		$this->RegisterPropertyInteger("MaxErrors", 3);
 		$this->RegisterTimer("Timer_1", 0, 'GeCoSWTH_RequestData($_IPS["TARGET"]);');
 		$this->RegisterPropertyInteger("Altitude", 0);
 		$this->RegisterPropertyFloat("TempOffset", 0);
@@ -27,51 +21,48 @@
 		$this->RegisterPropertyInteger("Temperature_ID", 0);
 		$this->RegisterPropertyInteger("Humidity_ID", 0);
 		
-		// Profile erstellen		
-		$this->RegisterProfileFloat("GeCoS.gm3", "Drops", "", " g/m³", 0, 1000, 0.1, 1);
-		
 		//Status-Variablen anlegen
-		$this->RegisterVariableFloat("Hardware", "Hardware-Version", "", 10);
+		$this->RegisterVariableFloat("Hardware", "Hardware-Version", $this->ValuePresentation("", 1, "microchip"), 10);
 		$this->DisableAction("Hardware");
 		
-		$this->RegisterVariableFloat("Firmware", "Firmware-Version", "", 20);
+		$this->RegisterVariableFloat("Firmware", "Firmware-Version", $this->ValuePresentation("", 1, "microchip"), 20);
 		$this->DisableAction("Firmware");
 		
-		$this->RegisterVariableFloat("Temperature", "Temperatur", "~Temperature", 30);
+		$this->RegisterVariableFloat("Temperature", "Temperatur", $this->ValuePresentation(" °C", 1, "temperature-half", 1), 30);
 		$this->DisableAction("Temperature");
 		
-		$this->RegisterVariableFloat("TemperatureOW", "1-Wire Temperatur", "~Temperature", 35);
+		$this->RegisterVariableFloat("TemperatureOW", "1-Wire Temperatur", $this->ValuePresentation(" °C", 1, "temperature-half", 1), 35);
 		$this->DisableAction("Temperature");
 		
-		$this->RegisterVariableFloat("Pressure", "Luftdruck (abs)", "~AirPressure.F", 40);
+		$this->RegisterVariableFloat("Pressure", "Luftdruck (abs)", $this->ValuePresentation(" hPa", 1, "gauge"), 40);
 		$this->DisableAction("Pressure");
 		
-		$this->RegisterVariableFloat("PressureRel", "Luftdruck (rel)", "~AirPressure.F", 50);
+		$this->RegisterVariableFloat("PressureRel", "Luftdruck (rel)", $this->ValuePresentation(" hPa", 1, "gauge"), 50);
 		$this->DisableAction("PressureRel");
 		
-		$this->RegisterVariableFloat("HumidityAbs", "Luftfeuchtigkeit (abs)", "GeCoS.gm3", 60);
+		$this->RegisterVariableFloat("HumidityAbs", "Luftfeuchtigkeit (abs)", $this->ValuePresentation(" g/m³", 1, "droplet"), 60);
 		$this->DisableAction("HumidityAbs");
 		
-		$this->RegisterVariableFloat("Humidity", "Luftfeuchtigkeit (rel)", "~Humidity.F", 70);
+		$this->RegisterVariableFloat("Humidity", "Luftfeuchtigkeit (rel)", $this->ValuePresentation(" %", 1, "droplet"), 70);
 		$this->DisableAction("Humidity");
 		
-		$this->RegisterVariableFloat("DewPointTemperature", "Taupunkt Temperatur", "~Temperature", 80);
+		$this->RegisterVariableFloat("DewPointTemperature", "Taupunkt Temperatur", $this->ValuePresentation(" °C", 1, "temperature-half", 1), 80);
 		$this->DisableAction("DewPointTemperature");
 		
-		$this->RegisterVariableFloat("PressureTrend1h", "Luftdruck 1h-Trend", "~AirPressure.F", 90);
+		$this->RegisterVariableFloat("PressureTrend1h", "Luftdruck 1h-Trend", $this->ValuePresentation(" hPa", 1, "gauge"), 90);
 		$this->DisableAction("PressureTrend1h");
 		
-		$this->RegisterVariableFloat("PressureTrend3h", "Luftdruck 3h-Trend", "~AirPressure.F", 100);
+		$this->RegisterVariableFloat("PressureTrend3h", "Luftdruck 3h-Trend", $this->ValuePresentation(" hPa", 1, "gauge"), 100);
 		$this->DisableAction("PressureTrend3h");
 		
-		$this->RegisterVariableFloat("PressureTrend12h", "Luftdruck 12h-Trend", "~AirPressure.F", 110);
+		$this->RegisterVariableFloat("PressureTrend12h", "Luftdruck 12h-Trend", $this->ValuePresentation(" hPa", 1, "gauge"), 110);
 		$this->DisableAction("PressureTrend12h");
 		
-		$this->RegisterVariableFloat("PressureTrend24h", "Luftdruck 24h-Trend", "~AirPressure.F", 120);
+		$this->RegisterVariableFloat("PressureTrend24h", "Luftdruck 24h-Trend", $this->ValuePresentation(" hPa", 1, "gauge"), 120);
 		$this->DisableAction("PressureTrend24h");
         }
  	
-	public function GetConfigurationForm() 
+	public function GetConfigurationForm(): string
 	{ 
 		$arrayStatus = array(); 
 		$arrayStatus[] = array("code" => 101, "icon" => "inactive", "caption" => "Instanz wird erstellt"); 
@@ -87,6 +78,8 @@
 		$arrayElements[] = array("type" => "ValidationTextBox", "name" => "IPAddress", "caption" => "IP");
 		$arrayElements[] = array("type" => "Label", "label" => "Miniumum 5 Sekunden, 0 => Aus");
 		$arrayElements[] = array("type" => "IntervalBox", "name" => "Timer_1", "caption" => "Sekunden");
+		$arrayElements[] = array("type" => "Label", "label" => "Anzahl Fehlversuche in Folge, bevor die Instanz auf Fehler geht");
+		$arrayElements[] = array("type" => "NumberSpinner", "name" => "MaxErrors", "caption" => "Fehlversuche", "minimum" => 1, "maximum" => 100);
  		$arrayElements[] = array("type" => "Label", "label" => "_____________________________________________________________________________________________________");
 		$arrayElements[] = array("type" => "Label", "label" => "Korrektur des Luftdrucks nach Hohenangabe");
 		$arrayElements[] = array("type" => "NumberSpinner", "name" => "Altitude", "caption" => "Höhe über NN (m)");
@@ -108,7 +101,7 @@
  	}           
 	  
         // Überschreibt die intere IPS_ApplyChanges($id) Funktion
-        public function ApplyChanges() 
+        public function ApplyChanges(): void
         {
             	// Diese Zeile nicht löschen
             	parent::ApplyChanges();
@@ -128,10 +121,11 @@
 				$Timer_1 = 5;
 			}
 			$this->SetTimerInterval("Timer_1", ($Timer_1 * 1000));
-			$this->RequestData();
+			$this->SetBuffer("ErrorCount", 0);
 			If ($this->GetStatus() <> 102) {
 				$this->SetStatus(102);
 			}
+			$this->RequestData();
 		}
 		else {
 			$this->SetTimerInterval("Timer_1", 0);
@@ -142,29 +136,18 @@
 	}
 	
 	// Beginn der Funktionen
-	public function RequestData()
+	public function RequestData(): bool
 	{
 		If ($this->ReadPropertyBoolean("Open") == true)  {
 			// Datenermittlung über JSON
-			$IP = $this->ReadPropertyString("IPAddress");
-			$contents = @file_get_contents('http://'.$IP.'/json');
-			If ($contents === false) {
-				$this->SendDebug("RequestData", "Fehler bei der Datenermittlung!", 0);		
-				If ($this->GetStatus() <> 202) {
-					$this->SetStatus(202);
-				}
+			$data = $this->FetchData(array("Temperatur", "Luftdruck", "Luftfeuchtigkeit", "Hardware-Version", "Firmware-Version"));
+			If ($data === false) {
 				return false;
 			}
-			
-			If ($this->GetStatus() <> 102) {
-				$this->SetStatus(102);
-			}
-			$contents = utf8_encode($contents); 
-			$data = json_decode($contents);
 			$Temp = floatval($data->Temperatur);
 			If (property_exists($data, "TemperaturOW")) {
             			If (floatval($data->TemperaturOW) > -127.0) {
-					SetValueFloat($this->GetIDForIdent("TemperatureOW"), floatval($data->TemperaturOW));
+					$this->SetValue("TemperatureOW", floatval($data->TemperaturOW));
 				}
         		}        		
 			$Pressure = floatval($data->Luftdruck); 
@@ -172,25 +155,25 @@
 			
 			$Hardware = floatval($data->{'Hardware-Version'});
 			$Firmware = floatval($data->{'Firmware-Version'});
-			If (GetValueFloat($this->GetIDForIdent("Hardware")) <> $Hardware) {
-				SetValueFloat($this->GetIDForIdent("Hardware"), ($Hardware));
+			If ($this->GetValue("Hardware") <> $Hardware) {
+				$this->SetValue("Hardware", ($Hardware));
 				$this->SetSummary("HW-Version: ".$Hardware." SW-Version: ".$Firmware);
 			}
-			If (GetValueFloat($this->GetIDForIdent("Firmware")) <> $Firmware) {
-				SetValueFloat($this->GetIDForIdent("Firmware"), ($Firmware));
+			If ($this->GetValue("Firmware") <> $Firmware) {
+				$this->SetValue("Firmware", ($Firmware));
 				$this->SetSummary("HW-Version: ".$Hardware." SW-Version: ".$Firmware);
 			}
 			
 			
 			$this->SendDebug("RequestData", "BME280 - Temp: ".$Temp." C Luftfeuchte: ".$Humidity."% Luftdruck: ".$Pressure." hPa", 0);		
 			
-			SetValueFloat($this->GetIDForIdent("Temperature"), round($Temp, 2));
+			$this->SetValue("Temperature", round($Temp, 2));
 			
 			If (($Pressure > 800) AND ($Pressure < 1200)) {
-				SetValueFloat($this->GetIDForIdent("Pressure"), round($Pressure, 2));
+				$this->SetValue("Pressure", round($Pressure, 2));
 			}
 			
-			SetValueFloat($this->GetIDForIdent("Humidity"), round($Humidity, 2));
+			$this->SetValue("Humidity", round($Humidity, 2));
 			
 			// Berechnung von Taupunkt und absoluter Luftfeuchtigkeit
 			if ($Temp < 0) {
@@ -208,18 +191,18 @@
 			$af = pow(10,5) * 18.016 / 8314.3 * $dd / ($Temp + 273.15);
 			If (is_infinite($td) == false) {
 				// Taupunkttemperatur
-				SetValueFloat($this->GetIDForIdent("DewPointTemperature"), round($td, 2));
+				$this->SetValue("DewPointTemperature", round($td, 2));
 			} else {
 				// Taupunkttemperatur
-				SetValueFloat($this->GetIDForIdent("DewPointTemperature"), round(0, 2));
+				$this->SetValue("DewPointTemperature", round(0, 2));
 				$this->SendDebug("RequestData", "Fehlerhafte Werte! - BME280 - Temp: ".$Temp." C Luftfeuchte: ".$Humidity."% Luftdruck: ".$Pressure." hPa", 0);		
 			}
 			If (is_infinite($af) == false) {
 				// Absolute Feuchtigkeit
-				SetValueFloat($this->GetIDForIdent("HumidityAbs"), round($af, 2));
+				$this->SetValue("HumidityAbs", round($af, 2));
 			} else {
 				// Absolute Feuchtigkeit
-				SetValueFloat($this->GetIDForIdent("HumidityAbs"), round(0, 2));
+				$this->SetValue("HumidityAbs", round(0, 2));
 				$this->SendDebug("RequestData", "Fehlerhafte Werte! - BME280 - Temp: ".$Temp." C Luftfeuchte: ".$Humidity."% Luftdruck: ".$Pressure." hPa", 0);		
 			}
 			
@@ -269,13 +252,13 @@
 			// momentaner Stationsdampfdruck (hPa)
 			$e_d = $f_rel * $E_0 * exp((17.5043 * $Temperature) / (241.2 + $Temperature));
 			$PressureRel = $Pressure * exp(($g_n * $Altitude) / ($R * ($Temperature + $T_0 + $C * $e_d + (($gam * $Altitude) / 2))));
-			SetValueFloat($this->GetIDForIdent("PressureRel"), round($PressureRel, 2));
+			$this->SetValue("PressureRel", round($PressureRel, 2));
 			// Luftdruck Trends
 			If ($this->ReadPropertyBoolean("LoggingPres") == true) {
-				SetValueFloat($this->GetIDForIdent("PressureTrend1h"), $this->PressureTrend(1));
-				SetValueFloat($this->GetIDForIdent("PressureTrend3h"), $this->PressureTrend(3));
-				SetValueFloat($this->GetIDForIdent("PressureTrend12h"), $this->PressureTrend(12));
-				SetValueFloat($this->GetIDForIdent("PressureTrend24h"), $this->PressureTrend(24));
+				$this->SetValue("PressureTrend1h", $this->PressureTrend(1));
+				$this->SetValue("PressureTrend3h", $this->PressureTrend(3));
+				$this->SetValue("PressureTrend12h", $this->PressureTrend(12));
+				$this->SetValue("PressureTrend24h", $this->PressureTrend(24));
 			}
 			return true;
 		}
@@ -284,6 +267,63 @@
 		}
 	}
 	    
+	private function FetchData(array $RequiredKeys)
+	{
+		// Datenermittlung über JSON, liefert bei Fehler false
+		$IP = $this->ReadPropertyString("IPAddress");
+		$Context = stream_context_create(array("http" => array("timeout" => 5)));
+		$contents = @file_get_contents('http://'.$IP.'/json', false, $Context);
+		If ($contents === false) {
+			$this->HandleFailure("Keine Antwort von ".$IP);
+			return false;
+		}
+		If (!mb_check_encoding($contents, "UTF-8")) {
+			$contents = mb_convert_encoding($contents, "UTF-8", "ISO-8859-1");
+		}
+		$data = json_decode($contents);
+		If (!is_object($data)) {
+			$this->HandleFailure("Ungültige JSON-Daten von ".$IP." (".json_last_error_msg().")");
+			return false;
+		}
+		foreach ($RequiredKeys as $Key) {
+			If (!property_exists($data, $Key)) {
+				$this->HandleFailure("Unvollständige Daten von ".$IP." (fehlt: ".$Key.")");
+				return false;
+			}
+		}
+
+		// Erfolgreich - Fehlerzähler zurücksetzen
+		$ErrorCount = intval($this->GetBuffer("ErrorCount"));
+		If ($ErrorCount >= $this->GetMaxErrors()) {
+			$this->LogMessage("Verbindung zu ".$IP." wiederhergestellt (nach ".$ErrorCount." Fehlversuchen)", KL_MESSAGE);
+		}
+		$this->SetBuffer("ErrorCount", 0);
+		If ($this->GetStatus() <> 102) {
+			$this->SetStatus(102);
+		}
+		return $data;
+	}
+
+	private function HandleFailure(string $Message)
+	{
+		// Erst nach mehreren Fehlversuchen in Folge auf Fehler gehen und ins Log schreiben
+		$ErrorCount = intval($this->GetBuffer("ErrorCount")) + 1;
+		$this->SetBuffer("ErrorCount", $ErrorCount);
+		$MaxErrors = $this->GetMaxErrors();
+		$this->SendDebug("RequestData", $Message." (Fehlversuch ".$ErrorCount."/".$MaxErrors.")", 0);
+		If ($ErrorCount == $MaxErrors) {
+			$this->LogMessage($Message." - ".$ErrorCount." Fehlversuche in Folge", KL_ERROR);
+		}
+		If (($ErrorCount >= $MaxErrors) AND ($this->GetStatus() <> 202)) {
+			$this->SetStatus(202);
+		}
+	}
+
+	private function GetMaxErrors()
+	{
+		return max(1, $this->ReadPropertyInteger("MaxErrors"));
+	}
+
 	private function PressureTrend(int $interval)
 	{
 		$Result = 0;
@@ -292,39 +332,9 @@
 	return $Result;
 	}   
 	 
-	private function RegisterProfileInteger($Name, $Icon, $Prefix, $Suffix, $MinValue, $MaxValue, $StepSize)
+	private function ValuePresentation(string $Suffix, int $Digits, string $Icon = "", int $UsageType = 0)
 	{
-	        if (!IPS_VariableProfileExists($Name))
-	        {
-	            IPS_CreateVariableProfile($Name, 1);
-	        }
-	        else
-	        {
-	            $profile = IPS_GetVariableProfile($Name);
-	            if ($profile['ProfileType'] != 1)
-	                throw new Exception("Variable profile type does not match for profile " . $Name);
-	        }
-	        IPS_SetVariableProfileIcon($Name, $Icon);
-	        IPS_SetVariableProfileText($Name, $Prefix, $Suffix);
-	        IPS_SetVariableProfileValues($Name, $MinValue, $MaxValue, $StepSize);        
-	}
-	
-	private function RegisterProfileFloat($Name, $Icon, $Prefix, $Suffix, $MinValue, $MaxValue, $StepSize, $Digits)
-	{
-	        if (!IPS_VariableProfileExists($Name))
-	        {
-	            IPS_CreateVariableProfile($Name, 2);
-	        }
-	        else
-	        {
-	            $profile = IPS_GetVariableProfile($Name);
-	            if ($profile['ProfileType'] != 2)
-	                throw new Exception("Variable profile type does not match for profile " . $Name);
-	        }
-	        IPS_SetVariableProfileIcon($Name, $Icon);
-	        IPS_SetVariableProfileText($Name, $Prefix, $Suffix);
-	        IPS_SetVariableProfileValues($Name, $MinValue, $MaxValue, $StepSize);
-	        IPS_SetVariableProfileDigits($Name, $Digits);
+		return array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "SUFFIX" => $Suffix, "DIGITS" => $Digits, "ICON" => $Icon, "USAGE_TYPE" => $UsageType);
 	}
 }
 ?>

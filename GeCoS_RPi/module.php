@@ -1,73 +1,72 @@
 <?
     // Klassendefinition
-    class GeCoS_RPi extends IPSModule 
+    class GeCoS_RPi extends IPSModuleStrict 
     {
 	// Überschreibt die interne IPS_Create($id) Funktion
-        public function Create() 
+        public function Create(): void
         {
 		// Diese Zeile nicht löschen.
 		parent::Create();
-		$this->ConnectParent("{5F1C0403-4A74-4F14-829F-9A217CFB2D05}");
 		$this->RegisterPropertyBoolean("Open", false);
 		$this->RegisterPropertyInteger("Messzyklus", 60);
 		$this->RegisterTimer("Messzyklus", 0, 'GeCoSRPi_Measurement_1($_IPS["TARGET"]);');
 		
-		// Profil anlegen
-		$this->RegisterProfileFloat("GeCoS.MB", "Information", "", " MB", 0, 1000000, 0.1, 1);
-		$this->RegisterProfileFloat("GeCoS.Mhz", "Speedo", "", " MHz", 0, 10000, 0.1, 1);
+		// Darstellungen
+		$MB = array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "SUFFIX" => " MB", "DIGITS" => 1, "ICON" => "memory");
+		$MHz = array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "SUFFIX" => " MHz", "DIGITS" => 1, "ICON" => "gauge-high");
 		
 		//Status-Variablen anlegen
-		$this->RegisterVariableString("Board", "Board", "", 10);
+		$this->RegisterVariableString("Board", "Board", array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION), 10);
 		$this->DisableAction("Board");
-		$this->RegisterVariableString("Revision", "Revision", "", 20);
+		$this->RegisterVariableString("Revision", "Revision", array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION), 20);
 		$this->DisableAction("Revision");
-		$this->RegisterVariableString("Hardware", "Hardware", "", 30);
+		$this->RegisterVariableString("Hardware", "Hardware", array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION), 30);
 		$this->DisableAction("Hardware");
-		$this->RegisterVariableString("Serial", "Serial", "", 40);
+		$this->RegisterVariableString("Serial", "Serial", array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION), 40);
 		$this->DisableAction("Serial");
-		$this->RegisterVariableString("Software", "Software", "", 50);
+		$this->RegisterVariableString("Software", "Software", array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION), 50);
 		$this->DisableAction("Software");
-		$this->RegisterVariableFloat("MemoryCPU", "Memory CPU", "GeCoS.MB", 60);
+		$this->RegisterVariableFloat("MemoryCPU", "Memory CPU", $MB, 60);
 		$this->DisableAction("MemoryCPU");
-		$this->RegisterVariableFloat("MemoryGPU", "Memory GPU", "GeCoS.MB", 70);
+		$this->RegisterVariableFloat("MemoryGPU", "Memory GPU", $MB, 70);
 		$this->DisableAction("MemoryGPU");
-		$this->RegisterVariableString("Hostname", "Hostname", "", 80);
+		$this->RegisterVariableString("Hostname", "Hostname", array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION), 80);
 		$this->DisableAction("Hostname");
-		$this->RegisterVariableString("Uptime", "Uptime", "", 90);
+		$this->RegisterVariableString("Uptime", "Uptime", array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION), 90);
 		$this->DisableAction("Uptime");
 		// CPU/GPU
-		$this->RegisterVariableFloat("TemperaturCPU", "Temperature CPU", "~Temperature", 100);
+		$this->RegisterVariableFloat("TemperaturCPU", "Temperature CPU", array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "SUFFIX" => " °C", "DIGITS" => 1, "ICON" => "temperature-half", "USAGE_TYPE" => 1), 100);
 		$this->DisableAction("TemperaturCPU");
-		$this->RegisterVariableFloat("TemperaturGPU", "Temperature GPU", "~Temperature", 110);
+		$this->RegisterVariableFloat("TemperaturGPU", "Temperature GPU", array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "SUFFIX" => " °C", "DIGITS" => 1, "ICON" => "temperature-half", "USAGE_TYPE" => 1), 110);
 		$this->DisableAction("TemperaturGPU");
-		$this->RegisterVariableFloat("VoltageCPU", "Voltage CPU", "~Volt", 120);
+		$this->RegisterVariableFloat("VoltageCPU", "Voltage CPU", array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "SUFFIX" => " V", "DIGITS" => 2, "ICON" => "bolt"), 120);
 		$this->DisableAction("VoltageCPU");
-		$this->RegisterVariableFloat("ARM_Frequenzy", "ARM Frequenzy", "GeCoS.Mhz", 130);
+		$this->RegisterVariableFloat("ARM_Frequenzy", "ARM Frequenzy", $MHz, 130);
 		$this->DisableAction("ARM_Frequenzy");
 		// CPU Auslastung
-		$this->RegisterVariableFloat("AverageLoad", "CPU AverageLoad", "~Intensity.1", 140);
+		$this->RegisterVariableFloat("AverageLoad", "CPU AverageLoad", array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "PERCENTAGE" => true, "MIN" => 0, "MAX" => 1, "SUFFIX" => " %", "DIGITS" => 1, "ICON" => "gauge"), 140);
 		$this->DisableAction("AverageLoad");
 		$this->SetBuffer("PrevTotal", 0);
 		$this->SetBuffer("PrevIdle", 0);
 		// Arbeitsspeicher
-		$this->RegisterVariableFloat("MemoryTotal", "Memory Total", "GeCoS.MB", 200);
+		$this->RegisterVariableFloat("MemoryTotal", "Memory Total", $MB, 200);
 		$this->DisableAction("MemoryTotal");
-		$this->RegisterVariableFloat("MemoryFree", "Memory Free", "GeCoS.MB", 210);
+		$this->RegisterVariableFloat("MemoryFree", "Memory Free", $MB, 210);
 		$this->DisableAction("MemoryFree");
-		$this->RegisterVariableFloat("MemoryAvailable", "Memory Available", "GeCoS.MB", 220);
+		$this->RegisterVariableFloat("MemoryAvailable", "Memory Available", $MB, 220);
 		$this->DisableAction("MemoryAvailable");
 		// SD-Card
-		$this->RegisterVariableFloat("SD_Card_Total", "SD-Card Total", "GeCoS.MB", 300);
+		$this->RegisterVariableFloat("SD_Card_Total", "SD-Card Total", $MB, 300);
 		$this->DisableAction("SD_Card_Total");
-		$this->RegisterVariableFloat("SD_Card_Used", "SD-Card Used", "GeCoS.MB", 310);
+		$this->RegisterVariableFloat("SD_Card_Used", "SD-Card Used", $MB, 310);
 		$this->DisableAction("SD_Card_Used");
-		$this->RegisterVariableFloat("SD_Card_Available", "SD-Card Available", "GeCoS.MB", 320);
+		$this->RegisterVariableFloat("SD_Card_Available", "SD-Card Available", $MB, 320);
 		$this->DisableAction("SD_Card_Available");
-		$this->RegisterVariableFloat("SD_Card_Used_rel", "SD-Card Used (rel)", "~Intensity.1", 330);
+		$this->RegisterVariableFloat("SD_Card_Used_rel", "SD-Card Used (rel)", array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "PERCENTAGE" => true, "MIN" => 0, "MAX" => 1, "SUFFIX" => " %", "DIGITS" => 1, "ICON" => "gauge"), 330);
 		$this->DisableAction("SD_Card_Used_rel");
       }
 
-	public function GetConfigurationForm() 
+	public function GetConfigurationForm(): string
 	{ 
 		$arrayStatus = array(); 
 		$arrayStatus[] = array("code" => 101, "icon" => "inactive", "caption" => "Instanz wird erstellt"); 
@@ -91,7 +90,7 @@
  	}           
 	    
 	// Überschreibt die intere IPS_ApplyChanges($id) Funktion
-        public function ApplyChanges() 
+        public function ApplyChanges(): void
         {
                  // Diese Zeile nicht löschen
                  parent::ApplyChanges();
@@ -121,20 +120,20 @@
 		}
 	}
 	
-	public function ReceiveData($JSONString) 
+	public function ReceiveData(string $JSONString): string
 	{
 	    	// Empfangene Daten vom Gateway/Splitter
 	    	$data = json_decode($JSONString);
 	 	switch ($data->Function) {
 			case "set_RPi_connect":
-				$ResultArray = unserialize(utf8_decode($data->Result));
+				$ResultArray = unserialize(hex2bin($data->Result));
 				If ($data->CommandNumber == 0) {
 					for ($i = 0; $i < Count($ResultArray); $i++) {
 						switch(key($ResultArray)) {
 							case "0":
 								// Betriebssystem
 								$Result = $ResultArray[key($ResultArray)];
-								SetValueString($this->GetIDForIdent("Software"), $Result);
+								$this->SetValue("Software", $Result);
 								break;
 							case "1":
 								// Hardware-Daten
@@ -142,33 +141,33 @@
 								for ($j = 0; $j <= Count($HardwareArray) - 1; $j++) {
 								    	If (Substr($HardwareArray[$j], 0, 8) == "Hardware") {
 										$PartArray = explode(":", $HardwareArray[$j]);
-										SetValueString($this->GetIDForIdent("Hardware"), trim($PartArray[1]));
+										$this->SetValue("Hardware", trim($PartArray[1]));
 									}
 									If (Substr($HardwareArray[$j], 0, 8) == "Revision") {
 										$PartArray = explode(":", $HardwareArray[$j]);
-										SetValueString($this->GetIDForIdent("Revision"), trim($PartArray[1]));
-										SetValueString($this->GetIDForIdent("Board"), $this->GetHardware(hexdec($PartArray[1])) );
+										$this->SetValue("Revision", trim($PartArray[1]));
+										$this->SetValue("Board", $this->GetHardware(hexdec($PartArray[1])) );
 									}
 									If (Substr($HardwareArray[$j], 0, 6) == "Serial") {
 										$PartArray = explode(":", $HardwareArray[$j]);
-										SetValueString($this->GetIDForIdent("Serial"), trim($PartArray[1]));
+										$this->SetValue("Serial", trim($PartArray[1]));
 									}
 								}
 								break;
 							case "2":
 								// CPU Speicher
 								$Result = intval(substr($ResultArray[key($ResultArray)], 4, -1));
-								SetValueFloat($this->GetIDForIdent("MemoryCPU"), $Result);
+								$this->SetValue("MemoryCPU", $Result);
 								break;
 							case "3":
 								// GPU Speicher
 								$Result = intval(substr($ResultArray[key($ResultArray)], 4, -1));
-								SetValueFloat($this->GetIDForIdent("MemoryGPU"), $Result);
+								$this->SetValue("MemoryGPU", $Result);
 								break;
 							case "4":
 								// Hostname
 								$Result = trim($ResultArray[key($ResultArray)]);
-								SetValueString($this->GetIDForIdent("Hostname"), $Result);
+								$this->SetValue("Hostname", $Result);
 								$this->SetSummary($Result);
 								break;
 							
@@ -182,22 +181,22 @@
 							case "0":
 								// GPU Temperatur
 								$Result = floatval(substr($ResultArray[key($ResultArray)], 5, -2));
-								SetValueFloat($this->GetIDForIdent("TemperaturGPU"), $Result);
+								$this->SetValue("TemperaturGPU", $Result);
 								break;
 							case "1":
 								// CPU Temperatur
 								$Result = floatval(intval($ResultArray[key($ResultArray)]) / 1000);
-								SetValueFloat($this->GetIDForIdent("TemperaturCPU"), $Result);
+								$this->SetValue("TemperaturCPU", $Result);
 								break;
 							case "2":
 								// CPU Spannung
 								$Result = floatval(substr($ResultArray[key($ResultArray)], 5, -1));
-								SetValueFloat($this->GetIDForIdent("VoltageCPU"), $Result);
+								$this->SetValue("VoltageCPU", $Result);
 								break;
 							case "3":
 								// ARM Frequenz
 								$Result = intval(substr($ResultArray[key($ResultArray)], 14))/1000000;
-								SetValueFloat($this->GetIDForIdent("ARM_Frequenzy"), $Result);
+								$this->SetValue("ARM_Frequenzy", $Result);
 								break;
 							case "4":
 								// CPU Auslastung über proc/stat
@@ -224,26 +223,26 @@
 									// Wert nur ausgeben, wenn der Buffer schon einmal mit den aktuellen Werten beschrieben wurde
 									If (intval($this->GetBuffer("PrevTotal")) + intval($this->GetBuffer("PrevIdle")) > 0) {
 										//IPS_LogMessage("IPS2GPIO RPi", "CPU-Auslastung bei ".$CPU_Usage."%");
-										SetValueFloat($this->GetIDForIdent("AverageLoad"), $CPU_Usage);
+										$this->SetValue("AverageLoad", $CPU_Usage);
 									}
 									else {
-										SetValueFloat($this->GetIDForIdent("AverageLoad"), 0);
+										$this->SetValue("AverageLoad", 0);
 									}
 									// Aktuelle Werte für die nächste Berechnung in den Buffer schreiben
 									$this->SetBuffer("PrevTotal", $Total);
 									$this->SetBuffer("PrevIdle", $Idle);
 								}
 								else {
-									SetValueFloat($this->GetIDForIdent("AverageLoad"), 0);
+									$this->SetValue("AverageLoad", 0);
 									IPS_LogMessage("IPS2GPIO RPi", "Es ist ein unbekannter Fehler bei der CPU-Usage-Berechnung aufgetreten!");
 								}
 								break;
 							case "5":
 								// Speicher
 								$MemArray = explode("\n", $ResultArray[key($ResultArray)]);
-								SetValueFloat($this->GetIDForIdent("MemoryTotal"), intval(substr($MemArray[0], 16, -3)) / 1000);
-								SetValueFloat($this->GetIDForIdent("MemoryFree"), intval(substr($MemArray[1], 16, -3)) / 1000);
-								SetValueFloat($this->GetIDForIdent("MemoryAvailable"), intval(substr($MemArray[2], 16, -3)) / 1000);
+								$this->SetValue("MemoryTotal", intval(substr($MemArray[0], 16, -3)) / 1000);
+								$this->SetValue("MemoryFree", intval(substr($MemArray[1], 16, -3)) / 1000);
+								$this->SetValue("MemoryAvailable", intval(substr($MemArray[2], 16, -3)) / 1000);
 								break;
 							case "6":
 								// SD-Card
@@ -255,19 +254,19 @@
 								// Array neu durchnummerieren
 								$MemArray = array_merge($MemArray);
 								//IPS_LogMessage("IPS2GPIO RPi", serialize($MemArray));
-								SetValueFloat($this->GetIDForIdent("SD_Card_Total"), intval($MemArray[0]) / 1000);
-								SetValueFloat($this->GetIDForIdent("SD_Card_Used"), intval($MemArray[1]) / 1000);
-								SetValueFloat($this->GetIDForIdent("SD_Card_Available"), intval($MemArray[2]) / 1000);
-								SetValueFloat($this->GetIDForIdent("SD_Card_Used_rel"), intval($MemArray[3]) / 100 );
+								$this->SetValue("SD_Card_Total", intval($MemArray[0]) / 1000);
+								$this->SetValue("SD_Card_Used", intval($MemArray[1]) / 1000);
+								$this->SetValue("SD_Card_Available", intval($MemArray[2]) / 1000);
+								$this->SetValue("SD_Card_Used_rel", intval($MemArray[3]) / 100 );
 								break;
 							case "7":
 								// Uptime
 								$UptimeArray = explode(",", $ResultArray[key($ResultArray)]);
 								$pos = strpos($UptimeArray[0], "days");
 								if ($pos !== false) {
-								    SetValueString($this->GetIDForIdent("Uptime"), trim(substr($UptimeArray[0].$UptimeArray[1], 12)));
+								    $this->SetValue("Uptime", trim(substr($UptimeArray[0].$UptimeArray[1], 12)));
 								} else {
-								    SetValueString($this->GetIDForIdent("Uptime"), trim(substr($UptimeArray[0], 12)));
+								    $this->SetValue("Uptime", trim(substr($UptimeArray[0], 12)));
 								}
 								//IPS_LogMessage("IPS2GPIO RPi", $ResultArray[key($ResultArray)]);
 								break;
@@ -280,10 +279,11 @@
 			   	$this->ApplyChanges();
 				break;
 	 	}
- 	}
+		return "";
+	}
 	
 	// Beginn der Funktionen
-	public function Measurement()
+	public function Measurement(): void
 	{
 		If (($this->ReadPropertyBoolean("Open") == true) AND (IPS_GetKernelRunlevel() == 10103)) {
 			// Daten werden nur einmalig nach Start oder bei Änderung eingelesen
@@ -304,7 +304,7 @@
 	    
 	    
 	 // Führt eine Messung aus
-	public function Measurement_1()
+	public function Measurement_1(): void
 	{
 		If (($this->ReadPropertyBoolean("Open") == true) AND (IPS_GetKernelRunlevel() == 10103)) {
 			$CommandArray = Array();
@@ -328,19 +328,19 @@
 		}
 	}
  	
-	public function PiReboot()
+	public function PiReboot(): void
 	{
 		$Command = "sudo reboot";
 		$this->SendDataToParent(json_encode(Array("DataID"=> "{47113C57-29FE-4A60-9D0E-840022883B89}", "Function" => "get_RPi_connect", "InstanceID" => $this->InstanceID,  "Command" => $Command, "CommandNumber" => 3, "IsArray" => false )));
 	}    
 	
-	public function PiShutdown()
+	public function PiShutdown(): void
 	{
 		$Command = "sudo shutdown –h 0";
 		$this->SendDataToParent(json_encode(Array("DataID"=> "{47113C57-29FE-4A60-9D0E-840022883B89}", "Function" => "get_RPi_connect", "InstanceID" => $this->InstanceID,  "Command" => $Command, "CommandNumber" => 3, "IsArray" => false )));
 	}       
 	    
-	public function SetDisplayPower(bool $Value)
+	public function SetDisplayPower(bool $Value): void
 	{
 		If ($Value == true) {
 			$Status = 1;
@@ -352,53 +352,8 @@
 		$this->SendDataToParent(json_encode(Array("DataID"=> "{47113C57-29FE-4A60-9D0E-840022883B89}", "Function" => "get_RPi_connect", "InstanceID" => $this->InstanceID,  "Command" => $Command, "CommandNumber" => 3, "IsArray" => false )));
 	}       
 	    
-	private function RegisterProfileInteger($Name, $Icon, $Prefix, $Suffix, $MinValue, $MaxValue, $StepSize)
-	{
-	        if (!IPS_VariableProfileExists($Name))
-	        {
-	            IPS_CreateVariableProfile($Name, 1);
-	        }
-	        else
-	        {
-	            $profile = IPS_GetVariableProfile($Name);
-	            if ($profile['ProfileType'] != 1)
-	                throw new Exception("Variable profile type does not match for profile " . $Name);
-	        }
-	        IPS_SetVariableProfileIcon($Name, $Icon);
-	        IPS_SetVariableProfileText($Name, $Prefix, $Suffix);
-	        IPS_SetVariableProfileValues($Name, $MinValue, $MaxValue, $StepSize);        
-	}
 	
-	private function RegisterProfileFloat($Name, $Icon, $Prefix, $Suffix, $MinValue, $MaxValue, $StepSize, $Digits)
-	{
-	        if (!IPS_VariableProfileExists($Name))
-	        {
-	            IPS_CreateVariableProfile($Name, 2);
-	        }
-	        else
-	        {
-	            $profile = IPS_GetVariableProfile($Name);
-	            if ($profile['ProfileType'] != 2)
-	                throw new Exception("Variable profile type does not match for profile " . $Name);
-	        }
-	        IPS_SetVariableProfileIcon($Name, $Icon);
-	        IPS_SetVariableProfileText($Name, $Prefix, $Suffix);
-	        IPS_SetVariableProfileValues($Name, $MinValue, $MaxValue, $StepSize);
-	        IPS_SetVariableProfileDigits($Name, $Digits);
-	}
 	
-	protected function HasActiveParent()
-    	{
-		$this->SendDebug("HasActiveParent", "Ausfuehrung", 0);
-		$Instance = @IPS_GetInstance($this->InstanceID);
-		if ($Instance['ConnectionID'] > 0)
-		{
-			$Parent = IPS_GetInstance($Instance['ConnectionID']);
-			if ($Parent['InstanceStatus'] == 102)
-			return true;
-		}
-        return false;
-    	}  
 	
 	private function GetHardware(Int $RevNumber)
 	{

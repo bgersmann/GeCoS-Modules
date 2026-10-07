@@ -1,18 +1,17 @@
 <?
     // Klassendefinition
-    class GeCoS_Configurator extends IPSModule 
+    class GeCoS_Configurator extends IPSModuleStrict 
     {
 	    
 	// Überschreibt die interne IPS_Create($id) Funktion
-        public function Create() 
+        public function Create(): void
         {
             	// Diese Zeile nicht löschen.
             	parent::Create();
-		$this->ConnectParent("{5F1C0403-4A74-4F14-829F-9A217CFB2D05}");
 		
         }
  	
-	public function GetConfigurationForm() 
+	public function GetConfigurationForm(): string
 	{ 
 		$arrayStatus = array(); 
 		$arrayStatus[] = array("code" => 101, "icon" => "inactive", "caption" => "Instanz wird erstellt"); 
@@ -60,7 +59,7 @@
  	}       
 	   
         // Überschreibt die intere IPS_ApplyChanges($id) Funktion
-        public function ApplyChanges() 
+        public function ApplyChanges(): void
         {
             	// Diese Zeile nicht löschen
             	parent::ApplyChanges();

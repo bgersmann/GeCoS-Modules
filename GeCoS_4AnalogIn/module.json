@@ -3,6 +3,7 @@
   "name": "GeCoS_4AnalogIn",
   "type": 3,
   "vendor": "GeCoS-Modules",
+  "url": "https://github.com/bgersmann/GeCoS-Modules",
   "aliases":
   [
     "GeCoS_4AnalogIn"

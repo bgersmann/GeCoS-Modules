@@ -1,14 +1,13 @@
 <?
     // Klassendefinition
-    class GeCoS_4AnalogIn extends IPSModule 
+    class GeCoS_4AnalogIn extends IPSModuleStrict 
     {
 	// Überschreibt die interne IPS_Create($id) Funktion
-        public function Create() 
+        public function Create(): void
         {
             	// Diese Zeile nicht löschen.
             	parent::Create();
  	    	$this->RegisterPropertyBoolean("Open", false);
-		$this->ConnectParent("{5F1C0403-4A74-4F14-829F-9A217CFB2D05}");
  	    	$this->RegisterPropertyInteger("DeviceAddress", 105);
 		$this->RegisterPropertyInteger("DeviceBus", 0);
 		$this->RegisterPropertyInteger("Messzyklus", 60);
@@ -27,16 +26,16 @@
 		$this->RegisterTimer("Messzyklus", 0, 'GeCoS4AnalogIn_GetInput($_IPS["TARGET"]);');
 		
 		// Profil anlegen
-	    	$this->RegisterProfileFloat("GeCoS.V", "Electricity", "", " V", -100000, +100000, 0.1, 3);
+	    	$Volt = array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "SUFFIX" => " V", "DIGITS" => 3, "ICON" => "bolt");
 		
 		//Status-Variablen anlegen
 		for ($i = 0; $i <= 3; $i++) {
-			$this->RegisterVariableFloat("Input_X".$i, "Eingang X".$i, "GeCoS.V", ($i + 1) * 10);
+			$this->RegisterVariableFloat("Input_X".$i, "Eingang X".$i, $Volt, ($i + 1) * 10);
 			$this->DisableAction("Input_X".$i);
 		}
         }
  	
-	public function GetConfigurationForm() 
+	public function GetConfigurationForm(): string
 	{ 
 		$arrayStatus = array(); 
 		$arrayStatus[] = array("code" => 101, "icon" => "inactive", "caption" => "Instanz wird erstellt"); 
@@ -95,7 +94,7 @@
  	}           
 	  
         // Überschreibt die intere IPS_ApplyChanges($id) Funktion
-        public function ApplyChanges() 
+        public function ApplyChanges(): void
         {
             	// Diese Zeile nicht löschen
             	parent::ApplyChanges();
@@ -132,7 +131,7 @@
 		}	
 	}
 	
-	public function ReceiveData($JSONString) 
+	public function ReceiveData(string $JSONString): string
 	{
 	    	// Empfangene Daten vom Gateway/Splitter
 	    	$data = json_decode($JSONString);
@@ -144,8 +143,8 @@
 					$Amplifier = intval($data->Amplifier);
 					$Value = floatval($data->Value); 
 					$this->SendDebug("ReceiveData", "SAM Channel: ".$Channel." Resolution: ".$Resolution." Amplifier: ".$Amplifier." Value: ".$Value, 0);
-					If (GetValueFloat($this->GetIDForIdent("Input_X".$Channel)) <> $Value) {
-						SetValueFloat($this->GetIDForIdent("Input_X".$Channel), $Value);
+					If ($this->GetValue("Input_X".$Channel) <> $Value) {
+						$this->SetValue("Input_X".$Channel, $Value);
 					}
 					
 				}
@@ -168,10 +167,11 @@
 			   	}
 			   	break;			
 	 	}
- 	}
+		return "";
+	}
 	    
 	// Beginn der Funktionen
-	public function GetInput()
+	public function GetInput(): void
 	{
 		$this->SendDebug("GetInput", "Ausfuehrung", 0);
 		If ($this->ReadPropertyBoolean("Open") == true) {
@@ -202,35 +202,6 @@
 	return bindec($not);
 	}
 	    
-	protected function HasActiveParent()
-    	{
-		$this->SendDebug("HasActiveParent", "Ausfuehrung", 0);
-		$Instance = @IPS_GetInstance($this->InstanceID);
-		if ($Instance['ConnectionID'] > 0)
-		{
-			$Parent = IPS_GetInstance($Instance['ConnectionID']);
-			if ($Parent['InstanceStatus'] == 102)
-			return true;
-		}
-        return false;
-    	}  
 	    
-	private function RegisterProfileFloat($Name, $Icon, $Prefix, $Suffix, $MinValue, $MaxValue, $StepSize, $Digits)
-	{
-	        if (!IPS_VariableProfileExists($Name))
-	        {
-	            IPS_CreateVariableProfile($Name, 2);
-	        }
-	        else
-	        {
-	            $profile = IPS_GetVariableProfile($Name);
-	            if ($profile['ProfileType'] != 2)
-	                throw new Exception("Variable profile type does not match for profile " . $Name);
-	        }
-	        IPS_SetVariableProfileIcon($Name, $Icon);
-	        IPS_SetVariableProfileText($Name, $Prefix, $Suffix);
-	        IPS_SetVariableProfileValues($Name, $MinValue, $MaxValue, $StepSize);
-	        IPS_SetVariableProfileDigits($Name, $Digits);
-	}
 }
 ?>
