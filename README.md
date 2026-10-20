@@ -135,6 +135,21 @@ Listet die am GeCoS-Server gefundenen 1-Wire-Sensoren (DS18S20, DS18B20, DS2413,
 
 Beim Wechsel der Dimmkurve bleibt die Variable mit ihrer ID erhalten, nur ihre Darstellung wird angepasst. Der aktuelle Wert wird umgerechnet, sodass sich die Helligkeit nicht ändert. 0 % schaltet den PWM-Wert auf 0.
 
+**Taster (kurz = Ein/Aus, lang = Dimmen):** Unter „Taster“ können jedem Ausgang ein oder mehrere Taster-Variablen (Boolean, z. B. Eingänge eines GeCoS 16In) zugeordnet werden.
+
+- Kurzer Tastendruck schaltet den Ausgang ein bzw. aus. Beim Einschalten wird mindestens die Mindesthelligkeit gesetzt.
+- Langer Tastendruck (länger als die Drück-Dauer) dimmt in Schritten von 1 %. Die Richtung wechselt bei jedem Dimmvorgang; bei 100 % bzw. Mindesthelligkeit wird immer in die mögliche Richtung gedimmt.
+- Optional: Nacht-Variable (Boolean, Nacht wenn `false`) – nachts wird beim Einschalten die Nacht-Helligkeit gesetzt.
+
+| Eigenschaft | Standard |
+|---|---|
+| Drück-Dauer bis zum Dimmen | 250 ms |
+| Dauer je Dimmschritt (1 %) | 75 ms |
+| Mindesthelligkeit | 5 % |
+| Helligkeit beim Einschalten in der Nacht | 30 % |
+
+Die Taster arbeiten in Prozent über die Dimmkurve des Ausgangs; ohne Dimmkurve wird linear auf 0–4095 umgerechnet.
+
 | Funktion | Beschreibung |
 |---|---|
 | `GeCoSPWM16Out_SetOutputPinStatus(int $InstanzID, int $Kanal, bool $Status)` | Kanal (0–15) ein-/ausschalten |
@@ -257,6 +272,7 @@ Aus den Messwerten werden Taupunkt, absolute Luftfeuchtigkeit und der relative L
 ### 3.0
 - Option „Legacy-Icons“ für das klassische WebFront
 - PWM16Out: Dimmkurve je Ausgang wählbar (Keine, Linear, Logarithmisch, CIE 1931)
+- PWM16Out: Taster-Steuerung je Ausgang (kurz = Ein/Aus, lang = Dimmen, Nachtwert)
 - Lokalisierung Englisch (Konfigurationsformulare, Variablennamen, Logmeldungen)
 - Umstellung auf `IPSModuleStrict`, Mindestversion Symcon 8.2
 - Darstellungen statt Variablenprofilen

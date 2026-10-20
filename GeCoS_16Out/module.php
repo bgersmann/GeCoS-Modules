@@ -71,9 +71,10 @@ require_once __DIR__ . '/../libs/GeCoSLegacyIcons.php';
 		$arrayElements[] = array("type" => "Label", "label" => "_____________________________________________________________________________________________________");
 	
 		$arrayElements[] = array("type" => "Button", "caption" => "Manufacturer information", "onClick" => "echo 'https://www.gedad.de/projekte/projekte-f%C3%BCr-privat/gedad-control/';");
-		$arrayElements[] = array("type" => "Label", "label" => "_____________________________________________________________________________________________________");
-		$arrayElements[] = array("type" => "Label", "label" => "Test Center"); 
-		$arrayElements[] = array("type" => "TestCenter", "name" => "TestCenter");
+		// Testcenter eingeklappt, damit es im Formular keinen Platz wegnimmt
+		$arrayElements[] = array("type" => "ExpansionPanel", "caption" => "Test Center", "expanded" => false, "items" => array(
+			array("type" => "TestCenter", "name" => "TestCenter")
+		));
 			
 		return JSON_encode(array("status" => $arrayStatus, "elements" => $arrayElements)); 		 
  	}           

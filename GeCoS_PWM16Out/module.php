@@ -27,6 +27,15 @@ require_once __DIR__ . '/../libs/GeCoSLegacyIcons.php';
 		}
 		// Zuletzt angewendete Dimmkurve je Ausgang, um Werte beim Wechsel umzurechnen
 		$this->RegisterAttributeString("AppliedCurves", "[]");
+		// Taster-Steuerung (kurz = Ein/Aus, lang = Dimmen)
+		$this->RegisterPropertyString("Buttons", "[]");
+		$this->RegisterPropertyInteger("PressDuration", 250);
+		$this->RegisterPropertyInteger("StepDuration", 75);
+		$this->RegisterPropertyInteger("MinIntensity", 5);
+		$this->RegisterPropertyInteger("NightVariable", 0);
+		$this->RegisterPropertyInteger("NightIntensity", 30);
+		// Letzte Dimmrichtung je Ausgang (true = hoch), die nächste geht in die Gegenrichtung
+		$this->RegisterAttributeString("DimDirections", "[]");
 
 		$this->RegisterVariables();
 	}
@@ -84,11 +93,31 @@ require_once __DIR__ . '/../libs/GeCoSLegacyIcons.php';
 		}
 		$arrayElements[] = array("type" => "ExpansionPanel", "caption" => "Dimming curves", "items" => $CurveItems);
 
+		// Taster-Steuerung
+		$ChannelOptions = array();
+		for ($i = 0; $i <= 15; $i++) {
+			$ChannelOptions[] = array("caption" => sprintf($this->Translate("Output X%d"), $i), "value" => $i);
+		}
+		$ButtonItems = array();
+		$ButtonItems[] = array("type" => "Label", "caption" => "Short press switches the output on/off, long press dims it. The dimming direction changes with every long press.");
+		$ButtonItems[] = array("type" => "List", "name" => "Buttons", "caption" => "Buttons", "rowCount" => 5, "add" => true, "delete" => true,
+			"columns" => array(
+				array("caption" => "Output", "name" => "Channel", "width" => "200px", "add" => 0, "edit" => array("type" => "Select", "options" => $ChannelOptions)),
+				array("caption" => "Button variable", "name" => "VariableID", "width" => "auto", "add" => 0, "edit" => array("type" => "SelectVariable", "validVariableTypes" => array(0)))
+			));
+		$ButtonItems[] = array("type" => "NumberSpinner", "name" => "PressDuration", "caption" => "Press duration until dimming", "suffix" => "ms", "minimum" => 50);
+		$ButtonItems[] = array("type" => "NumberSpinner", "name" => "StepDuration", "caption" => "Duration per dimming step (1 %)", "suffix" => "ms", "minimum" => 10);
+		$ButtonItems[] = array("type" => "NumberSpinner", "name" => "MinIntensity", "caption" => "Minimum intensity", "suffix" => "%", "minimum" => 1, "maximum" => 100);
+		$ButtonItems[] = array("type" => "SelectVariable", "name" => "NightVariable", "caption" => "Night variable (night when false, optional)", "validVariableTypes" => array(0));
+		$ButtonItems[] = array("type" => "NumberSpinner", "name" => "NightIntensity", "caption" => "Intensity when switched on at night", "suffix" => "%", "minimum" => 1, "maximum" => 100);
+		$arrayElements[] = array("type" => "ExpansionPanel", "caption" => "Buttons (short = on/off, long = dim)", "items" => $ButtonItems);
+
 		$arrayElements[] = array("type" => "Label", "label" => "_____________________________________________________________________________________________________");
 		$arrayElements[] = array("type" => "Button", "label" => "Manufacturer information", "onClick" => "echo 'https://www.gedad.de/projekte/projekte-f%C3%BCr-privat/gedad-control/'");
-		$arrayElements[] = array("type" => "Label", "label" => "_____________________________________________________________________________________________________");
-		$arrayElements[] = array("type" => "Label", "label" => "Test Center");
-		$arrayElements[] = array("type" => "TestCenter", "name" => "TestCenter");
+		// Testcenter eingeklappt, damit es im Formular keinen Platz wegnimmt
+		$arrayElements[] = array("type" => "ExpansionPanel", "caption" => "Test Center", "expanded" => false, "items" => array(
+			array("type" => "TestCenter", "name" => "TestCenter")
+		));
 
 		// Dimmkurve für alle Ausgänge vorbelegen, wirksam erst nach "Änderungen übernehmen"
 		$arrayActions = array();
@@ -114,6 +143,9 @@ require_once __DIR__ . '/../libs/GeCoSLegacyIcons.php';
 
 		// Darstellung der Intensitäts-Variablen an die Dimmkurve anpassen
 		$this->ApplyCurves();
+
+		// Taster und Nacht-Variable überwachen
+		$this->RegisterButtons();
 
 		If ((IPS_GetKernelRunlevel() == 10103) AND ($this->HasActiveParent() == true)) {
 			If ($this->ReadPropertyBoolean("Open") == true) {
@@ -266,6 +298,162 @@ require_once __DIR__ . '/../libs/GeCoSLegacyIcons.php';
 				}
 			}
 		}
+	}
+
+	public function MessageSink(int $TimeStamp, int $SenderID, int $Message, array $Data): void
+	{
+		If (($Message <> VM_UPDATE) OR !$Data[0]) {
+			return;
+		}
+		foreach ($this->GetButtons() as $Button) {
+			If ($Button["VariableID"] == $SenderID) {
+				// In eigenem Thread auswerten, damit Wartezeiten beim Dimmen nichts blockieren
+				$this->RegisterOnceTimer("Button_X".$Button["Channel"], 'GeCoSPWM16Out_HandleButton($_IPS["TARGET"], '.$Button["Channel"].', '.$SenderID.');');
+			}
+		}
+	}
+
+	public function HandleButton(int $Channel, int $ButtonID): void
+	{
+		// Wird über die Taster-Steuerung aufgerufen: kurz = Ein/Aus, lang = Dimmen
+		$Channel = min(15, max(0, $Channel));
+		If (!IPS_VariableExists($ButtonID)) {
+			return;
+		}
+		$Semaphore = "GeCoSPWM16Out_".$this->InstanceID."_".$Channel;
+		If (!IPS_SemaphoreEnter($Semaphore, 0)) {
+			// Für diesen Ausgang läuft bereits eine Auswertung
+			return;
+		}
+		$PressDuration = $this->ReadPropertyInteger("PressDuration");
+		$Min = $this->ReadPropertyInteger("MinIntensity");
+		If ($this->GetValue("Output_Bln_X".$Channel)) {
+			IPS_Sleep($PressDuration);
+			If (!GetValueBoolean($ButtonID)) {
+				// Kurz gedrückt: ausschalten
+				$this->SendDebug("HandleButton", "Channel ".$Channel.": aus", 0);
+				$this->SetOutputPinStatus($Channel, false);
+			}
+			else {
+				$this->DimLoop($Channel, $ButtonID, $this->GetIntensityPercent($Channel));
+			}
+		}
+		else {
+			$Intensity = max($this->GetIntensityPercent($Channel), $Min);
+			If ($this->IsNight()) {
+				$Intensity = $this->ReadPropertyInteger("NightIntensity");
+				// Nach dem Nachtwert wird zuerst hochgedimmt
+				$this->SetDimDirection($Channel, false);
+			}
+			$this->SendDebug("HandleButton", "Channel ".$Channel.": ein mit ".$Intensity." %", 0);
+			$this->SetOutputPinIntensity($Channel, $Intensity);
+			$this->SetOutputPinStatus($Channel, true);
+			IPS_Sleep($PressDuration);
+			If (GetValueBoolean($ButtonID) AND $this->GetValue("Output_Bln_X".$Channel)) {
+				$this->DimLoop($Channel, $ButtonID, $Intensity);
+			}
+		}
+		IPS_SemaphoreLeave($Semaphore);
+	}
+
+	private function DimLoop(int $Channel, int $ButtonID, int $Intensity)
+	{
+		$Min = $this->ReadPropertyInteger("MinIntensity");
+		$StepDuration = $this->ReadPropertyInteger("StepDuration");
+		// Richtung wechselt bei jedem Dimmvorgang, an den Grenzen immer in die mögliche Richtung
+		$Up = !$this->GetDimDirection($Channel);
+		If ($Intensity >= 100) {
+			$Up = false;
+		}
+		elseIf ($Intensity <= $Min) {
+			$Up = true;
+		}
+		$this->SendDebug("DimLoop", "Channel ".$Channel.": dimmen ".($Up ? "hoch" : "runter")." ab ".$Intensity." %", 0);
+		$Dimmed = false;
+		while (GetValueBoolean($ButtonID)) {
+			$Intensity = min(100, max($Min, $Intensity + ($Up ? 1 : -1)));
+			$this->SetOutputPinIntensity($Channel, $Intensity);
+			$Dimmed = true;
+			If (($Up AND ($Intensity >= 100)) OR (!$Up AND ($Intensity <= $Min))) {
+				break;
+			}
+			IPS_Sleep($StepDuration);
+		}
+		If ($Dimmed) {
+			$this->SetDimDirection($Channel, $Up);
+		}
+	}
+
+	private function GetButtons()
+	{
+		// Gültige Taster aus der Liste: array(array("Channel" => int, "VariableID" => int), ...)
+		$Buttons = array();
+		$List = json_decode($this->ReadPropertyString("Buttons"), true);
+		If (!is_array($List)) {
+			return $Buttons;
+		}
+		foreach ($List as $Row) {
+			$VariableID = intval($Row["VariableID"] ?? 0);
+			If (($VariableID > 0) AND IPS_VariableExists($VariableID)) {
+				$Buttons[] = array("Channel" => min(15, max(0, intval($Row["Channel"] ?? 0))), "VariableID" => $VariableID);
+			}
+		}
+		return $Buttons;
+	}
+
+	private function RegisterButtons()
+	{
+		// Alte Registrierungen entfernen
+		foreach ($this->GetMessageList() as $SenderID => $Messages) {
+			foreach ($Messages as $Message) {
+				If ($Message == VM_UPDATE) {
+					$this->UnregisterMessage($SenderID, $Message);
+				}
+			}
+		}
+		foreach ($this->GetReferenceList() as $ReferenceID) {
+			$this->UnregisterReference($ReferenceID);
+		}
+		foreach ($this->GetButtons() as $Button) {
+			$this->RegisterMessage($Button["VariableID"], VM_UPDATE);
+			$this->RegisterReference($Button["VariableID"]);
+		}
+		$NightID = $this->ReadPropertyInteger("NightVariable");
+		If (($NightID > 0) AND IPS_VariableExists($NightID)) {
+			$this->RegisterReference($NightID);
+		}
+	}
+
+	private function IsNight()
+	{
+		$NightID = $this->ReadPropertyInteger("NightVariable");
+		return (($NightID > 0) AND IPS_VariableExists($NightID) AND !GetValueBoolean($NightID));
+	}
+
+	private function GetIntensityPercent(int $Channel)
+	{
+		// Aktuelle Helligkeit in %, ohne Dimmkurve aus dem Rohwert umgerechnet
+		$Value = intval($this->GetValue("Output_Int_X".$Channel));
+		If ($this->GetCurve($Channel) == self::CURVE_NONE) {
+			return (int)round($Value * 100 / self::PWM_MAX);
+		}
+		return $Value;
+	}
+
+	private function GetDimDirection(int $Channel)
+	{
+		$Directions = json_decode($this->ReadAttributeString("DimDirections"), true);
+		return (bool)($Directions[$Channel] ?? true);
+	}
+
+	private function SetDimDirection(int $Channel, bool $Up)
+	{
+		$Directions = json_decode($this->ReadAttributeString("DimDirections"), true);
+		If (!is_array($Directions)) {
+			$Directions = array();
+		}
+		$Directions[$Channel] = $Up;
+		$this->WriteAttributeString("DimDirections", json_encode($Directions));
 	}
 
 	// Dimmkurven
