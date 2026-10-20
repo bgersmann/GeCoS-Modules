@@ -100,16 +100,20 @@ require_once __DIR__ . '/../libs/GeCoSLegacyIcons.php';
 		}
 		$ButtonItems = array();
 		$ButtonItems[] = array("type" => "Label", "caption" => "Short press switches the output on/off, long press dims it. The dimming direction changes with every long press.");
-		$ButtonItems[] = array("type" => "List", "name" => "Buttons", "caption" => "Buttons", "rowCount" => 5, "add" => true, "delete" => true,
+		$ButtonItems[] = array("type" => "List", "name" => "Buttons", "caption" => "Buttons", "rowCount" => 10, "add" => true, "delete" => true,
+			"sort" => array("column" => "Channel", "direction" => "ascending"),
 			"columns" => array(
-				array("caption" => "Output", "name" => "Channel", "width" => "200px", "add" => 0, "edit" => array("type" => "Select", "options" => $ChannelOptions)),
-				array("caption" => "Button variable", "name" => "VariableID", "width" => "auto", "add" => 0, "edit" => array("type" => "SelectVariable", "validVariableTypes" => array(0)))
+				array("caption" => "Output", "name" => "Channel", "width" => "150px", "add" => 0, "edit" => array("type" => "Select", "options" => $ChannelOptions)),
+				array("caption" => "Button variable", "name" => "VariableID", "width" => "auto", "add" => 0, "edit" => array("type" => "SelectVariable", "validVariableTypes" => array(0))),
+				array("caption" => "Night mode", "name" => "Night", "width" => "110px", "add" => false, "edit" => array("type" => "CheckBox")),
+				array("caption" => "At night", "name" => "NightIntensity", "width" => "100px", "add" => 30, "edit" => array("type" => "NumberSpinner", "suffix" => "%", "minimum" => 1, "maximum" => 100)),
+				array("caption" => "By day at least", "name" => "DayIntensity", "width" => "130px", "add" => 0, "edit" => array("type" => "NumberSpinner", "suffix" => "%", "minimum" => 0, "maximum" => 100))
 			));
+		$ButtonItems[] = array("type" => "Label", "caption" => "Night mode: when switching on, the output is set to \"At night\" at night and to at least \"By day at least\" by day (0 = off). Requires the night variable.");
 		$ButtonItems[] = array("type" => "NumberSpinner", "name" => "PressDuration", "caption" => "Press duration until dimming", "suffix" => "ms", "minimum" => 50);
 		$ButtonItems[] = array("type" => "NumberSpinner", "name" => "StepDuration", "caption" => "Duration per dimming step (1 %)", "suffix" => "ms", "minimum" => 10);
 		$ButtonItems[] = array("type" => "NumberSpinner", "name" => "MinIntensity", "caption" => "Minimum intensity", "suffix" => "%", "minimum" => 1, "maximum" => 100);
 		$ButtonItems[] = array("type" => "SelectVariable", "name" => "NightVariable", "caption" => "Night variable (night when false, optional)", "validVariableTypes" => array(0));
-		$ButtonItems[] = array("type" => "NumberSpinner", "name" => "NightIntensity", "caption" => "Intensity when switched on at night", "suffix" => "%", "minimum" => 1, "maximum" => 100);
 		$arrayElements[] = array("type" => "ExpansionPanel", "caption" => "Buttons (short = on/off, long = dim)", "items" => $ButtonItems);
 
 		$arrayElements[] = array("type" => "Label", "label" => "_____________________________________________________________________________________________________");
@@ -340,10 +344,16 @@ require_once __DIR__ . '/../libs/GeCoSLegacyIcons.php';
 		}
 		else {
 			$Intensity = max($this->GetIntensityPercent($Channel), $Min);
-			If ($this->IsNight()) {
-				$Intensity = $this->ReadPropertyInteger("NightIntensity");
-				// Nach dem Nachtwert wird zuerst hochgedimmt
-				$this->SetDimDirection($Channel, false);
+			$Button = $this->GetButton($Channel, $ButtonID);
+			If (($Button !== null) AND $Button["Night"]) {
+				If ($this->IsNight()) {
+					$Intensity = $Button["NightIntensity"];
+					// Nach dem Nachtwert wird zuerst hochgedimmt
+					$this->SetDimDirection($Channel, false);
+				}
+				elseIf ($Intensity < $Button["DayIntensity"]) {
+					$Intensity = $Button["DayIntensity"];
+				}
 			}
 			$this->SendDebug("HandleButton", "Channel ".$Channel.": ein mit ".$Intensity." %", 0);
 			$this->SetOutputPinIntensity($Channel, $Intensity);
@@ -395,10 +405,27 @@ require_once __DIR__ . '/../libs/GeCoSLegacyIcons.php';
 		foreach ($List as $Row) {
 			$VariableID = intval($Row["VariableID"] ?? 0);
 			If (($VariableID > 0) AND IPS_VariableExists($VariableID)) {
-				$Buttons[] = array("Channel" => min(15, max(0, intval($Row["Channel"] ?? 0))), "VariableID" => $VariableID);
+				// Zeilen aus älteren Versionen ohne Nacht-Spalten: Nachtmodus mit der früheren globalen Nacht-Helligkeit
+				$Buttons[] = array(
+					"Channel"        => min(15, max(0, intval($Row["Channel"] ?? 0))),
+					"VariableID"     => $VariableID,
+					"Night"          => (bool)($Row["Night"] ?? true),
+					"NightIntensity" => min(100, max(1, intval($Row["NightIntensity"] ?? $this->ReadPropertyInteger("NightIntensity")))),
+					"DayIntensity"   => min(100, max(0, intval($Row["DayIntensity"] ?? 0)))
+				);
 			}
 		}
 		return $Buttons;
+	}
+
+	private function GetButton(int $Channel, int $ButtonID)
+	{
+		foreach ($this->GetButtons() as $Button) {
+			If (($Button["Channel"] == $Channel) AND ($Button["VariableID"] == $ButtonID)) {
+				return $Button;
+			}
+		}
+		return null;
 	}
 
 	private function RegisterButtons()

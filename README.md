@@ -139,14 +139,15 @@ Beim Wechsel der Dimmkurve bleibt die Variable mit ihrer ID erhalten, nur ihre D
 
 - Kurzer Tastendruck schaltet den Ausgang ein bzw. aus. Beim Einschalten wird mindestens die Mindesthelligkeit gesetzt.
 - Langer Tastendruck (länger als die Drück-Dauer) dimmt in Schritten von 1 %. Die Richtung wechselt bei jedem Dimmvorgang; bei 100 % bzw. Mindesthelligkeit wird immer in die mögliche Richtung gedimmt.
-- Optional: Nacht-Variable (Boolean, Nacht wenn `false`) – nachts wird beim Einschalten die Nacht-Helligkeit gesetzt.
+- Nachtmodus je Taster (benötigt die Nacht-Variable, Boolean, Nacht wenn `false`): Beim Einschalten wird nachts die Helligkeit „Nachts“ gesetzt, tagsüber mindestens „Tags mindestens“ (0 = aus).
 
 | Eigenschaft | Standard |
 |---|---|
 | Drück-Dauer bis zum Dimmen | 250 ms |
 | Dauer je Dimmschritt (1 %) | 75 ms |
 | Mindesthelligkeit | 5 % |
-| Helligkeit beim Einschalten in der Nacht | 30 % |
+| Nachts (je Taster) | 30 % |
+| Tags mindestens (je Taster) | 0 % (aus) |
 
 Die Taster arbeiten in Prozent über die Dimmkurve des Ausgangs; ohne Dimmkurve wird linear auf 0–4095 umgerechnet.
 
