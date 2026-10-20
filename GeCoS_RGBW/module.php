@@ -30,32 +30,32 @@ require_once __DIR__ . '/../libs/GeCoSLegacyIcons.php';
 		for ($i = 0; $i <= 3; $i++) {
 			$this->RegisterVariableBoolean("Status_RGB_".($i + 1), sprintf($this->Translate("Status RGB %d"), $i + 1), $this->SwitchPresentation(), 10 + ($i * 70));
 			$this->EnableAction("Status_RGB_".($i + 1));
-			$this->RegisterVariableInteger("Color_RGB_".($i + 1), sprintf($this->Translate("Color %d"), $i + 1), array("PRESENTATION" => VARIABLE_PRESENTATION_COLOR), 20 + ($i * 70));
+			$this->RegisterVariableInteger("Color_RGB_".($i + 1), sprintf($this->Translate("Color %d"), $i + 1), $this->Presentation(array("PRESENTATION" => VARIABLE_PRESENTATION_COLOR), "~HexColor"), 20 + ($i * 70));
 			$this->EnableAction("Color_RGB_".($i + 1));
-			$this->RegisterVariableInteger("Intensity_R_".($i + 1), sprintf($this->Translate("Intensity red %d"), $i + 1), $Intensity, 30 + ($i * 70) );
+			$this->RegisterVariableInteger("Intensity_R_".($i + 1), sprintf($this->Translate("Intensity red %d"), $i + 1), $this->Presentation($Intensity, "Intensity.4096"), 30 + ($i * 70) );
 			$this->EnableAction("Intensity_R_".($i + 1));
-			$this->RegisterVariableInteger("Intensity_G_".($i + 1), sprintf($this->Translate("Intensity green %d"), $i + 1), $Intensity, 40 + ($i * 70));
+			$this->RegisterVariableInteger("Intensity_G_".($i + 1), sprintf($this->Translate("Intensity green %d"), $i + 1), $this->Presentation($Intensity, "Intensity.4096"), 40 + ($i * 70));
 			$this->EnableAction("Intensity_G_".($i + 1));
-			$this->RegisterVariableInteger("Intensity_B_".($i + 1), sprintf($this->Translate("Intensity blue %d"), $i + 1), $Intensity, 50 + ($i * 70));
+			$this->RegisterVariableInteger("Intensity_B_".($i + 1), sprintf($this->Translate("Intensity blue %d"), $i + 1), $this->Presentation($Intensity, "Intensity.4096"), 50 + ($i * 70));
 			$this->EnableAction("Intensity_B_".($i + 1));
 			$this->RegisterVariableBoolean("Status_W_".($i + 1), sprintf($this->Translate("Status white %d"), $i + 1), $this->SwitchPresentation(), 60 + ($i * 70));
 			$this->EnableAction("Status_W_".($i + 1));
-			$this->RegisterVariableInteger("Intensity_W_".($i + 1), sprintf($this->Translate("Intensity white %d"), $i + 1), $Intensity, 70 + ($i * 70));
+			$this->RegisterVariableInteger("Intensity_W_".($i + 1), sprintf($this->Translate("Intensity white %d"), $i + 1), $this->Presentation($Intensity, "Intensity.4096"), 70 + ($i * 70));
 			$this->EnableAction("Intensity_W_".($i + 1));			
 		}
 		$this->RegisterVariableBoolean("Status_RGB_5", $this->Translate("Status RGB all"), $this->SwitchPresentation(), 290);
 		$this->EnableAction("Status_RGB_5");
-		$this->RegisterVariableInteger("Color_RGB_5", $this->Translate("Color all"), array("PRESENTATION" => VARIABLE_PRESENTATION_COLOR), 300);
+		$this->RegisterVariableInteger("Color_RGB_5", $this->Translate("Color all"), $this->Presentation(array("PRESENTATION" => VARIABLE_PRESENTATION_COLOR), "~HexColor"), 300);
 		$this->EnableAction("Color_RGB_5");
-		$this->RegisterVariableInteger("Intensity_R_5", $this->Translate("Intensity red all"), $Intensity, 310);
+		$this->RegisterVariableInteger("Intensity_R_5", $this->Translate("Intensity red all"), $this->Presentation($Intensity, "Intensity.4096"), 310);
 		$this->EnableAction("Intensity_R_5");
-		$this->RegisterVariableInteger("Intensity_G_5", $this->Translate("Intensity green all"), $Intensity, 320);
+		$this->RegisterVariableInteger("Intensity_G_5", $this->Translate("Intensity green all"), $this->Presentation($Intensity, "Intensity.4096"), 320);
 		$this->EnableAction("Intensity_G_5");
-		$this->RegisterVariableInteger("Intensity_B_5", $this->Translate("Intensity blue all"), $Intensity, 330);
+		$this->RegisterVariableInteger("Intensity_B_5", $this->Translate("Intensity blue all"), $this->Presentation($Intensity, "Intensity.4096"), 330);
 		$this->EnableAction("Intensity_B_5");
 		$this->RegisterVariableBoolean("Status_W_5", $this->Translate("Status white all"), $this->SwitchPresentation(), 340);
 		$this->EnableAction("Status_W_5");
-		$this->RegisterVariableInteger("Intensity_W_5", $this->Translate("Intensity white all"), $Intensity, 350);
+		$this->RegisterVariableInteger("Intensity_W_5", $this->Translate("Intensity white all"), $this->Presentation($Intensity, "Intensity.4096"), 350);
 		$this->EnableAction("Intensity_W_5");
 	}
  	
@@ -70,7 +70,7 @@ require_once __DIR__ . '/../libs/GeCoSLegacyIcons.php';
 				
 		$arrayElements = array(); 
 		$arrayElements[] = array("name" => "Open", "type" => "CheckBox",  "caption" => "Active"); 
-		$arrayElements[] = array("type" => "CheckBox", "name" => "LegacyIcons", "caption" => "Legacy icons (classic WebFront)");
+		$arrayElements[] = array("type" => "CheckBox", "name" => "LegacyIcons", "caption" => "Legacy mode (variable profiles and icons for classic WebFront/app)");
  		
 		$arrayOptions = array();
 		for ($i = 88; $i <= 95; $i++) {

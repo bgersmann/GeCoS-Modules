@@ -34,7 +34,7 @@ require_once __DIR__ . '/../libs/GeCoSLegacyIcons.php';
 		
 		$arrayElements = array(); 
 		$arrayElements[] = array("name" => "Open", "type" => "CheckBox",  "caption" => "Active"); 
-		$arrayElements[] = array("type" => "CheckBox", "name" => "LegacyIcons", "caption" => "Legacy icons (classic WebFront)");
+		$arrayElements[] = array("type" => "CheckBox", "name" => "LegacyIcons", "caption" => "Legacy mode (variable profiles and icons for classic WebFront/app)");
  		
 		$arrayOptions = array();
 		
@@ -249,7 +249,7 @@ require_once __DIR__ . '/../libs/GeCoSLegacyIcons.php';
 			}
 			else {
 				// Eingang: nur Anzeige
-				$this->RegisterVariableBoolean($Ident, sprintf($this->Translate("Status (%d)"), $Port), array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "ICON" => $this->Icon("", "Power")), ($Port + 1) * 10);
+				$this->RegisterVariableBoolean($Ident, sprintf($this->Translate("Status (%d)"), $Port), $this->Presentation(array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "ICON" => $this->Icon("", "Power")), "~Switch"), ($Port + 1) * 10);
 				$this->DisableAction($Ident);
 			}
 		}

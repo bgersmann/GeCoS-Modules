@@ -38,41 +38,41 @@ require_once __DIR__ . '/../libs/GeCoSLegacyIcons.php';
 		$this->DisableAction("Serial");
 		$this->RegisterVariableString("Software", $this->Translate("Software"), array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION), 50);
 		$this->DisableAction("Software");
-		$this->RegisterVariableFloat("MemoryCPU", $this->Translate("Memory CPU"), $MB, 60);
+		$this->RegisterVariableFloat("MemoryCPU", $this->Translate("Memory CPU"), $this->Presentation($MB, "GeCoS.MB"), 60);
 		$this->DisableAction("MemoryCPU");
-		$this->RegisterVariableFloat("MemoryGPU", $this->Translate("Memory GPU"), $MB, 70);
+		$this->RegisterVariableFloat("MemoryGPU", $this->Translate("Memory GPU"), $this->Presentation($MB, "GeCoS.MB"), 70);
 		$this->DisableAction("MemoryGPU");
 		$this->RegisterVariableString("Hostname", $this->Translate("Hostname"), array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION), 80);
 		$this->DisableAction("Hostname");
 		$this->RegisterVariableString("Uptime", $this->Translate("Uptime"), array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION), 90);
 		$this->DisableAction("Uptime");
 		// CPU/GPU
-		$this->RegisterVariableFloat("TemperaturCPU", $this->Translate("Temperature CPU"), array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "SUFFIX" => " °C", "DIGITS" => 1, "ICON" => $this->Icon("temperature-half"), "USAGE_TYPE" => 1), 100);
+		$this->RegisterVariableFloat("TemperaturCPU", $this->Translate("Temperature CPU"), $this->Presentation(array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "SUFFIX" => " °C", "DIGITS" => 1, "ICON" => $this->Icon("temperature-half"), "USAGE_TYPE" => 1), "~Temperature"), 100);
 		$this->DisableAction("TemperaturCPU");
-		$this->RegisterVariableFloat("TemperaturGPU", $this->Translate("Temperature GPU"), array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "SUFFIX" => " °C", "DIGITS" => 1, "ICON" => $this->Icon("temperature-half"), "USAGE_TYPE" => 1), 110);
+		$this->RegisterVariableFloat("TemperaturGPU", $this->Translate("Temperature GPU"), $this->Presentation(array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "SUFFIX" => " °C", "DIGITS" => 1, "ICON" => $this->Icon("temperature-half"), "USAGE_TYPE" => 1), "~Temperature"), 110);
 		$this->DisableAction("TemperaturGPU");
-		$this->RegisterVariableFloat("VoltageCPU", $this->Translate("Voltage CPU"), array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "SUFFIX" => " V", "DIGITS" => 2, "ICON" => $this->Icon("bolt")), 120);
+		$this->RegisterVariableFloat("VoltageCPU", $this->Translate("Voltage CPU"), $this->Presentation(array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "SUFFIX" => " V", "DIGITS" => 2, "ICON" => $this->Icon("bolt")), "~Volt"), 120);
 		$this->DisableAction("VoltageCPU");
-		$this->RegisterVariableFloat("ARM_Frequenzy", $this->Translate("ARM Frequenzy"), $MHz, 130);
+		$this->RegisterVariableFloat("ARM_Frequenzy", $this->Translate("ARM Frequenzy"), $this->Presentation($MHz, "GeCoS.Mhz"), 130);
 		$this->DisableAction("ARM_Frequenzy");
 		// CPU Auslastung
-		$this->RegisterVariableFloat("AverageLoad", $this->Translate("CPU AverageLoad"), array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "PERCENTAGE" => true, "MIN" => 0, "MAX" => 1, "SUFFIX" => " %", "DIGITS" => 1, "ICON" => $this->Icon("gauge")), 140);
+		$this->RegisterVariableFloat("AverageLoad", $this->Translate("CPU AverageLoad"), $this->Presentation(array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "PERCENTAGE" => true, "MIN" => 0, "MAX" => 1, "SUFFIX" => " %", "DIGITS" => 1, "ICON" => $this->Icon("gauge")), "~Intensity.1"), 140);
 		$this->DisableAction("AverageLoad");
 		// Arbeitsspeicher
-		$this->RegisterVariableFloat("MemoryTotal", $this->Translate("Memory Total"), $MB, 200);
+		$this->RegisterVariableFloat("MemoryTotal", $this->Translate("Memory Total"), $this->Presentation($MB, "GeCoS.MB"), 200);
 		$this->DisableAction("MemoryTotal");
-		$this->RegisterVariableFloat("MemoryFree", $this->Translate("Memory Free"), $MB, 210);
+		$this->RegisterVariableFloat("MemoryFree", $this->Translate("Memory Free"), $this->Presentation($MB, "GeCoS.MB"), 210);
 		$this->DisableAction("MemoryFree");
-		$this->RegisterVariableFloat("MemoryAvailable", $this->Translate("Memory Available"), $MB, 220);
+		$this->RegisterVariableFloat("MemoryAvailable", $this->Translate("Memory Available"), $this->Presentation($MB, "GeCoS.MB"), 220);
 		$this->DisableAction("MemoryAvailable");
 		// SD-Card
-		$this->RegisterVariableFloat("SD_Card_Total", $this->Translate("SD-Card Total"), $MB, 300);
+		$this->RegisterVariableFloat("SD_Card_Total", $this->Translate("SD-Card Total"), $this->Presentation($MB, "GeCoS.MB"), 300);
 		$this->DisableAction("SD_Card_Total");
-		$this->RegisterVariableFloat("SD_Card_Used", $this->Translate("SD-Card Used"), $MB, 310);
+		$this->RegisterVariableFloat("SD_Card_Used", $this->Translate("SD-Card Used"), $this->Presentation($MB, "GeCoS.MB"), 310);
 		$this->DisableAction("SD_Card_Used");
-		$this->RegisterVariableFloat("SD_Card_Available", $this->Translate("SD-Card Available"), $MB, 320);
+		$this->RegisterVariableFloat("SD_Card_Available", $this->Translate("SD-Card Available"), $this->Presentation($MB, "GeCoS.MB"), 320);
 		$this->DisableAction("SD_Card_Available");
-		$this->RegisterVariableFloat("SD_Card_Used_rel", $this->Translate("SD-Card Used (rel)"), array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "PERCENTAGE" => true, "MIN" => 0, "MAX" => 1, "SUFFIX" => " %", "DIGITS" => 1, "ICON" => $this->Icon("gauge")), 330);
+		$this->RegisterVariableFloat("SD_Card_Used_rel", $this->Translate("SD-Card Used (rel)"), $this->Presentation(array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "PERCENTAGE" => true, "MIN" => 0, "MAX" => 1, "SUFFIX" => " %", "DIGITS" => 1, "ICON" => $this->Icon("gauge")), "~Intensity.1"), 330);
 		$this->DisableAction("SD_Card_Used_rel");
 	}
 
@@ -86,7 +86,7 @@ require_once __DIR__ . '/../libs/GeCoSLegacyIcons.php';
 		
 		$arrayElements = array(); 
 		$arrayElements[] = array("name" => "Open", "type" => "CheckBox",  "caption" => "Active"); 
-		$arrayElements[] = array("type" => "CheckBox", "name" => "LegacyIcons", "caption" => "Legacy icons (classic WebFront)");
+		$arrayElements[] = array("type" => "CheckBox", "name" => "LegacyIcons", "caption" => "Legacy mode (variable profiles and icons for classic WebFront/app)");
  			
 		$arrayElements[] = array("type" => "IntervalBox", "name" => "Messzyklus", "caption" => "Seconds");
 		$arrayElements[] = array("type" => "Label", "label" => "_____________________________________________________________________________________________________");

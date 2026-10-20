@@ -47,7 +47,7 @@ Bei mehreren GeCoS-Servern wird je Server ein eigener IO mit eigenen Konfigurato
 
 WTH, WTHQ und WSens benötigen keinen IO und werden direkt angelegt.
 
-**Legacy-Icons:** Jede Geräte-Instanz hat die Option „Legacy-Icons (klassisches WebFront)“. Ist sie aktiv, werden in den Darstellungen die klassischen WebFront-Icons hinterlegt (z. B. Temperature, Gauge, Drops, Electricity, Intensity, Power) statt der neuen Icons der Kachel-Visualisierung. Die Variablen bleiben dabei erhalten, es wird nur ihre Darstellung angepasst.
+**Legacy-Modus:** Jede Geräte-Instanz hat die Option „Legacy-Modus (Variablenprofile und Icons für klassisches WebFront/App)“. Ist sie aktiv, erhalten die Variablen statt der neuen Darstellungen die Darstellung „Legacy Profil“ mit den klassischen Variablenprofilen (z. B. `~Temperature`, `~Humidity.F`, `~AirPressure.F`, `~Switch`, `~HexColor` mit Farbrad, `~Intensity.100`). So muss das klassische WebFront bzw. die App keine Darstellung umrechnen. Variablen ohne passendes Profil behalten ihre Darstellung mit klassischem Icon. Fehlende eigene Profile (`GeCoS.gm3`, `GeCoS.ppm`, `GeCoS.ppb`, `GeCoS.Lux`, `GeCoS.MB`, `GeCoS.Mhz`, `GeCoS.V`, `GeCoS.AirQuality`, `Intensity.4096`, `IPS2CeCoSIO.ActiveInactive`) werden dabei angelegt, vorhandene nicht verändert. Die Variablen bleiben erhalten, es wird nur ihre Darstellung angepasst.
 
 ## 4. Module
 
@@ -251,7 +251,7 @@ Netzwerk-Klimasensoren, die ihre Messwerte per HTTP/JSON bereitstellen.
 - **WTHQ:** wie WTH, zusätzlich CO2 und TVOC
 - **WSens:** wie WTH, zusätzlich Luftqualität (IAQ), CO2 und Lichtintensität (Weiß, Rot, Grün, Blau)
 
-Aus den Messwerten werden Taupunkt, absolute Luftfeuchtigkeit und der relative Luftdruck (auf Meereshöhe) berechnet.
+Aus den Messwerten werden Taupunkt, absolute Luftfeuchtigkeit und der relative Luftdruck (auf Meereshöhe) berechnet. Messwerte außerhalb des Messbereichs der Sensoren (−40 bis +85 °C, 0 bis 100 % rel. Feuchte, 800 bis 1200 hPa) werden verworfen und fließen nicht in die Berechnungen ein.
 
 | Eigenschaft | Beschreibung |
 |---|---|
@@ -271,7 +271,7 @@ Aus den Messwerten werden Taupunkt, absolute Luftfeuchtigkeit und der relative L
 ## 5. Versionshistorie
 
 ### 3.0
-- Option „Legacy-Icons“ für das klassische WebFront
+- Option „Legacy-Modus“ (klassische Variablenprofile und Icons) für das klassische WebFront und die App
 - PWM16Out: Dimmkurve je Ausgang wählbar (Keine, Linear, Logarithmisch, CIE 1931)
 - PWM16Out: Taster-Steuerung je Ausgang (kurz = Ein/Aus, lang = Dimmen, Nachtwert)
 - Lokalisierung Englisch (Konfigurationsformulare, Variablennamen, Logmeldungen)

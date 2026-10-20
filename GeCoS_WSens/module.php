@@ -33,43 +33,43 @@ require_once __DIR__ . '/../libs/GeCoSLegacyIcons.php';
 		
 		$this->RegisterVariableFloat("Firmware", $this->Translate("Firmware version"), $this->ValuePresentation("", 1, "microchip"), 20);
 		
-		$this->RegisterVariableFloat("Temperature", $this->Translate("Temperature"), $this->ValuePresentation(" °C", 1, "temperature-half", 1), 30);
+		$this->RegisterVariableFloat("Temperature", $this->Translate("Temperature"), $this->Presentation($this->ValuePresentation(" °C", 1, "temperature-half", 1), "~Temperature"), 30);
 		
-		$this->RegisterVariableFloat("Pressure", $this->Translate("Air pressure (abs)"), $this->ValuePresentation(" hPa", 1, "gauge"), 40);
+		$this->RegisterVariableFloat("Pressure", $this->Translate("Air pressure (abs)"), $this->Presentation($this->ValuePresentation(" hPa", 1, "gauge"), "~AirPressure.F"), 40);
 		
-		$this->RegisterVariableFloat("PressureRel", $this->Translate("Air pressure (rel)"), $this->ValuePresentation(" hPa", 1, "gauge"), 50);
+		$this->RegisterVariableFloat("PressureRel", $this->Translate("Air pressure (rel)"), $this->Presentation($this->ValuePresentation(" hPa", 1, "gauge"), "~AirPressure.F"), 50);
 		
-		$this->RegisterVariableFloat("HumidityAbs", $this->Translate("Humidity (abs)"), $this->ValuePresentation(" g/m³", 1, "droplet"), 60);
+		$this->RegisterVariableFloat("HumidityAbs", $this->Translate("Humidity (abs)"), $this->Presentation($this->ValuePresentation(" g/m³", 1, "droplet"), "GeCoS.gm3"), 60);
 		
-		$this->RegisterVariableFloat("Humidity", $this->Translate("Humidity (rel)"), $this->ValuePresentation(" %", 1, "droplet"), 70);
+		$this->RegisterVariableFloat("Humidity", $this->Translate("Humidity (rel)"), $this->Presentation($this->ValuePresentation(" %", 1, "droplet"), "~Humidity.F"), 70);
 		
-		$this->RegisterVariableFloat("DewPointTemperature", $this->Translate("Dew point temperature"), $this->ValuePresentation(" °C", 1, "temperature-half", 1), 80);
+		$this->RegisterVariableFloat("DewPointTemperature", $this->Translate("Dew point temperature"), $this->Presentation($this->ValuePresentation(" °C", 1, "temperature-half", 1), "~Temperature"), 80);
 		
-		$this->RegisterVariableFloat("PressureTrend1h", $this->Translate("Air pressure 1h trend"), $this->ValuePresentation(" hPa", 1, "gauge"), 90);
+		$this->RegisterVariableFloat("PressureTrend1h", $this->Translate("Air pressure 1h trend"), $this->Presentation($this->ValuePresentation(" hPa", 1, "gauge"), "~AirPressure.F"), 90);
 		
-		$this->RegisterVariableFloat("PressureTrend3h", $this->Translate("Air pressure 3h trend"), $this->ValuePresentation(" hPa", 1, "gauge"), 100);
+		$this->RegisterVariableFloat("PressureTrend3h", $this->Translate("Air pressure 3h trend"), $this->Presentation($this->ValuePresentation(" hPa", 1, "gauge"), "~AirPressure.F"), 100);
 		
-		$this->RegisterVariableFloat("PressureTrend12h", $this->Translate("Air pressure 12h trend"), $this->ValuePresentation(" hPa", 1, "gauge"), 110);
+		$this->RegisterVariableFloat("PressureTrend12h", $this->Translate("Air pressure 12h trend"), $this->Presentation($this->ValuePresentation(" hPa", 1, "gauge"), "~AirPressure.F"), 110);
 		
-		$this->RegisterVariableFloat("PressureTrend24h", $this->Translate("Air pressure 24h trend"), $this->ValuePresentation(" hPa", 1, "gauge"), 120);
+		$this->RegisterVariableFloat("PressureTrend24h", $this->Translate("Air pressure 24h trend"), $this->Presentation($this->ValuePresentation(" hPa", 1, "gauge"), "~AirPressure.F"), 120);
 		
-		$this->RegisterVariableInteger("AirQuality", $this->Translate("Air quality"), $this->AirQualityPresentation(), 130);
+		$this->RegisterVariableInteger("AirQuality", $this->Translate("Air quality"), $this->Presentation($this->AirQualityPresentation(), "GeCoS.AirQuality"), 130);
 		
 		$this->RegisterVariableInteger("AirQualityIndex", $this->Translate("Air quality index"), $this->ValuePresentation("", 0, "wind"), 140);
 		
 		$this->RegisterVariableInteger("AirQualityGenauigkeit", $this->Translate("Air quality accuracy"), $this->ValuePresentation("", 0), 142);
 		
-		$this->RegisterVariableInteger("CO2", $this->Translate("CO2"), $this->ValuePresentation(" ppm", 0, "gauge"), 144);
+		$this->RegisterVariableInteger("CO2", $this->Translate("CO2"), $this->Presentation($this->ValuePresentation(" ppm", 0, "gauge"), "GeCoS.ppm"), 144);
 		
 		$this->RegisterVariableInteger("CO2Genauigkeit", $this->Translate("CO2 accuracy"), $this->ValuePresentation("", 0), 146);
 		
-		$this->RegisterVariableInteger("Intensity_W", $this->Translate("Intensity white"), $this->ValuePresentation(" lx", 0, "lightbulb"), 150);
+		$this->RegisterVariableInteger("Intensity_W", $this->Translate("Intensity white"), $this->Presentation($this->ValuePresentation(" lx", 0, "lightbulb"), "GeCoS.Lux"), 150);
 		
-		$this->RegisterVariableInteger("Intensity_R", $this->Translate("Intensity red"), $this->ValuePresentation(" lx", 0, "lightbulb"), 160);
+		$this->RegisterVariableInteger("Intensity_R", $this->Translate("Intensity red"), $this->Presentation($this->ValuePresentation(" lx", 0, "lightbulb"), "GeCoS.Lux"), 160);
 		
-		$this->RegisterVariableInteger("Intensity_G", $this->Translate("Intensity green"), $this->ValuePresentation(" lx", 0, "lightbulb"), 170);
+		$this->RegisterVariableInteger("Intensity_G", $this->Translate("Intensity green"), $this->Presentation($this->ValuePresentation(" lx", 0, "lightbulb"), "GeCoS.Lux"), 170);
 		
-		$this->RegisterVariableInteger("Intensity_B", $this->Translate("Intensity blue"), $this->ValuePresentation(" lx", 0, "lightbulb"), 180);
+		$this->RegisterVariableInteger("Intensity_B", $this->Translate("Intensity blue"), $this->Presentation($this->ValuePresentation(" lx", 0, "lightbulb"), "GeCoS.Lux"), 180);
 		
 		$this->RegisterVariableInteger("FailureCode", $this->Translate("Error code"), $this->ValuePresentation("", 0), 190);
 	}
@@ -86,7 +86,7 @@ require_once __DIR__ . '/../libs/GeCoSLegacyIcons.php';
 		
 		$arrayElements = array(); 
 		$arrayElements[] = array("name" => "Open", "type" => "CheckBox",  "caption" => "Active"); 
-		$arrayElements[] = array("type" => "CheckBox", "name" => "LegacyIcons", "caption" => "Legacy icons (classic WebFront)");
+		$arrayElements[] = array("type" => "CheckBox", "name" => "LegacyIcons", "caption" => "Legacy mode (variable profiles and icons for classic WebFront/app)");
 		$arrayElements[] = array("type" => "Label", "label" => "IP or hostname");
 		$arrayElements[] = array("type" => "ValidationTextBox", "name" => "IPAddress", "caption" => "IP");
 		$arrayElements[] = array("type" => "Label", "label" => "Minimum 5 seconds, 0 => off");
@@ -203,36 +203,55 @@ require_once __DIR__ . '/../libs/GeCoSLegacyIcons.php';
 			$this->SetValue("Intensity_G", $Green);
 			$this->SetValue("Intensity_B", $Blue);
 			
-			$this->SetValue("Temperature", round($Temp, 2));
-			
-			If (($Pressure > 800) AND ($Pressure < 1200)) {
+			// Plausibilitätsprüfung (Messbereich BME280/BME680: -40 bis +85 °C, 0 bis 100 % rel. Feuchte)
+			$TempValid = is_finite($Temp) AND ($Temp >= -40) AND ($Temp <= 85);
+			$HumidityValid = is_finite($Humidity) AND ($Humidity > 0) AND ($Humidity <= 100);
+			$PressureValid = is_finite($Pressure) AND ($Pressure > 800) AND ($Pressure < 1200);
+
+			If ($TempValid) {
+				$this->SetValue("Temperature", round($Temp, 2));
+			}
+			else {
+				$this->SendDebug("RequestData", "Ungueltige Temperatur verworfen: ".$Temp, 0);
+			}
+
+			If ($PressureValid) {
 				$this->SetValue("Pressure", round($Pressure, 2));
 			}
-			
-			$this->SetValue("Humidity", round($Humidity, 2));
-			$this->SetValue("AirQualityIndex", $IAQ);
-			
-			
-			
-			// Berechnung von Taupunkt und absoluter Luftfeuchtigkeit
-			if ($Temp < 0) {
-				$a = 7.6; 
-				$b = 240.7;
-			}  
-			elseif ($Temp >= 0) {
-				$a = 7.5;
-				$b = 237.3;
+
+			If ($HumidityValid) {
+				$this->SetValue("Humidity", round($Humidity, 2));
 			}
-			$sdd = 6.1078 * pow(10.0, (($a * $Temp) / ($b + $Temp)));
-			$dd = $Humidity / 100 * $sdd;
-			$v = log10($dd/6.1078);
-			$td = $b * $v / ($a - $v);
-			$af = pow(10,5) * 18.016 / 8314.3 * $dd / ($Temp + 273.15);
-			// Taupunkttemperatur
-			$this->SetValue("DewPointTemperature", round($td, 2));
-			// Absolute Feuchtigkeit
-			$this->SetValue("HumidityAbs", round($af, 2));
-			
+			else {
+				$this->SendDebug("RequestData", "Ungueltige Luftfeuchtigkeit verworfen: ".$Humidity, 0);
+			}
+			$this->SetValue("AirQualityIndex", $IAQ);
+
+			// Berechnung von Taupunkt und absoluter Luftfeuchtigkeit (nur mit gültigen Messwerten)
+			If ($TempValid AND $HumidityValid) {
+				if ($Temp < 0) {
+					$a = 7.6;
+					$b = 240.7;
+				}
+				else {
+					$a = 7.5;
+					$b = 237.3;
+				}
+				$sdd = 6.1078 * pow(10.0, (($a * $Temp) / ($b + $Temp)));
+				$dd = $Humidity / 100 * $sdd;
+				$v = log10($dd/6.1078);
+				$td = $b * $v / ($a - $v);
+				$af = pow(10,5) * 18.016 / 8314.3 * $dd / ($Temp + 273.15);
+				If (is_finite($td)) {
+					// Taupunkttemperatur
+					$this->SetValue("DewPointTemperature", round($td, 2));
+				}
+				If (is_finite($af)) {
+					// Absolute Feuchtigkeit
+					$this->SetValue("HumidityAbs", round($af, 2));
+				}
+			}
+
 			// Relativen Luftdruck
 			$Altitude = $this->ReadPropertyInteger("Altitude");
 			If ($this->ReadPropertyInteger("Temperature_ID") > 0) {
@@ -279,7 +298,10 @@ require_once __DIR__ . '/../libs/GeCoSLegacyIcons.php';
 			// momentaner Stationsdampfdruck (hPa)
 			$e_d = $f_rel * $E_0 * exp((17.5043 * $Temperature) / (241.2 + $Temperature));
 			$PressureRel = $Pressure * exp(($g_n * $Altitude) / ($R * ($Temperature + $T_0 + $C * $e_d + (($gam * $Altitude) / 2))));
-			$this->SetValue("PressureRel", round($PressureRel, 2));
+			// Nur mit gültigem Luftdruck und gültiger (eigener oder externer) Temperatur
+			If ($PressureValid AND ($TempValid OR ($this->ReadPropertyInteger("Temperature_ID") > 0)) AND is_finite($PressureRel)) {
+				$this->SetValue("PressureRel", round($PressureRel, 2));
+			}
 			// Luftdruck Trends
 			If ($this->IsPressureLogged()) {
 				$this->SetValue("PressureTrend1h", $this->PressureTrend(1));

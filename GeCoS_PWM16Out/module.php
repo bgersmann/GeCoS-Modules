@@ -64,7 +64,7 @@ require_once __DIR__ . '/../libs/GeCoSLegacyIcons.php';
 
 		$arrayElements = array();
 		$arrayElements[] = array("name" => "Open", "type" => "CheckBox",  "caption" => "Active");
-		$arrayElements[] = array("type" => "CheckBox", "name" => "LegacyIcons", "caption" => "Legacy icons (classic WebFront)");
+		$arrayElements[] = array("type" => "CheckBox", "name" => "LegacyIcons", "caption" => "Legacy mode (variable profiles and icons for classic WebFront/app)");
 
 		$arrayOptions = array();
 		for ($i = 80; $i <= 87; $i++) {
@@ -533,9 +533,9 @@ require_once __DIR__ . '/../libs/GeCoSLegacyIcons.php';
 	private function IntensityPresentation(int $Curve)
 	{
 		If ($Curve == self::CURVE_NONE) {
-			return array("PRESENTATION" => VARIABLE_PRESENTATION_SLIDER, "MIN" => 0, "MAX" => self::PWM_MAX, "STEP_SIZE" => 1, "PERCENTAGE" => true, "SUFFIX" => " %", "DIGITS" => 0, "ICON" => $this->Icon("lightbulb", "Intensity"));
+			return $this->Presentation(array("PRESENTATION" => VARIABLE_PRESENTATION_SLIDER, "MIN" => 0, "MAX" => self::PWM_MAX, "STEP_SIZE" => 1, "PERCENTAGE" => true, "SUFFIX" => " %", "DIGITS" => 0, "ICON" => $this->Icon("lightbulb", "Intensity")), "Intensity.4096");
 		}
-		return array("PRESENTATION" => VARIABLE_PRESENTATION_SLIDER, "MIN" => 0, "MAX" => 100, "STEP_SIZE" => 1, "SUFFIX" => " %", "DIGITS" => 0, "ICON" => $this->Icon("lightbulb", "Intensity"), "USAGE_TYPE" => 2);
+		return $this->Presentation(array("PRESENTATION" => VARIABLE_PRESENTATION_SLIDER, "MIN" => 0, "MAX" => 100, "STEP_SIZE" => 1, "SUFFIX" => " %", "DIGITS" => 0, "ICON" => $this->Icon("lightbulb", "Intensity"), "USAGE_TYPE" => 2), "~Intensity.100");
 	}
 
 	private function PercentToPWM(int $Curve, int $Value)

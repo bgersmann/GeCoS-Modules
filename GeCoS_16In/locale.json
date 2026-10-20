@@ -15,7 +15,7 @@
             "Instance is faulty": "Instanz ist fehlerhaft",
             "Instance is inactive": "Instanz ist inaktiv",
             "I²C communication error!": "I²C-Kommunikationfehler!",
-            "Legacy icons (classic WebFront)": "Legacy-Icons (klassisches WebFront)",
+            "Legacy mode (variable profiles and icons for classic WebFront/app)": "Legacy-Modus (Variablenprofile und Icons für klassisches WebFront/App)",
             "Manufacturer information": "Herstellerinformationen",
             "These functions are only available after the required data has been entered and applied!": "Diese Funktionen stehen erst nach Eingabe und Übernahme der erforderlichen Daten zur Verfügung!"
         }

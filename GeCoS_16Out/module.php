@@ -44,7 +44,7 @@ require_once __DIR__ . '/../libs/GeCoSLegacyIcons.php';
 				
 		$arrayElements = array(); 
 		$arrayElements[] = array("name" => "Open", "type" => "CheckBox",  "caption" => "Active"); 
-		$arrayElements[] = array("type" => "CheckBox", "name" => "LegacyIcons", "caption" => "Legacy icons (classic WebFront)");
+		$arrayElements[] = array("type" => "CheckBox", "name" => "LegacyIcons", "caption" => "Legacy mode (variable profiles and icons for classic WebFront/app)");
  		
 		$arrayOptions = array();
 		for ($i = 36; $i <= 39; $i++) {

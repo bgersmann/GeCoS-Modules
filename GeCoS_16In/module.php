@@ -25,7 +25,7 @@ require_once __DIR__ . '/../libs/GeCoSLegacyIcons.php';
 		// Name und Position, es wird nur die Darstellung aktualisiert
 		//Status-Variablen anlegen
 		for ($i = 0; $i <= 15; $i++) {
-			$this->RegisterVariableBoolean("Input_X".$i, sprintf($this->Translate("Input X%d"), $i), array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "ICON" => $this->Icon("", "Power")), ($i + 1) * 10);
+			$this->RegisterVariableBoolean("Input_X".$i, sprintf($this->Translate("Input X%d"), $i), $this->Presentation(array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "ICON" => $this->Icon("", "Power")), "~Switch"), ($i + 1) * 10);
 			$this->DisableAction("Input_X".$i);	
 		}
 	}
@@ -42,7 +42,7 @@ require_once __DIR__ . '/../libs/GeCoSLegacyIcons.php';
 		
 		$arrayElements = array(); 
 		$arrayElements[] = array("name" => "Open", "type" => "CheckBox",  "caption" => "Active"); 
-		$arrayElements[] = array("type" => "CheckBox", "name" => "LegacyIcons", "caption" => "Legacy icons (classic WebFront)");
+		$arrayElements[] = array("type" => "CheckBox", "name" => "LegacyIcons", "caption" => "Legacy mode (variable profiles and icons for classic WebFront/app)");
  		
 		$arrayOptions = array();
 		for ($i = 32; $i <= 35; $i++) {

@@ -25,7 +25,7 @@ require_once __DIR__ . '/../libs/GeCoSLegacyIcons.php';
 		// Wird auch in ApplyChanges aufgerufen: bestehende Variablen behalten ID,
 		// Name und Position, es wird nur die Darstellung aktualisiert
 		//Status-Variablen anlegen
-		$this->RegisterVariableFloat("Temperature", $this->Translate("Temperature"), array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "SUFFIX" => " °C", "DIGITS" => 1, "ICON" => $this->Icon("temperature-half"), "USAGE_TYPE" => 1, "MIN" => -55, "MAX" => 125), 10);
+		$this->RegisterVariableFloat("Temperature", $this->Translate("Temperature"), $this->Presentation(array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "SUFFIX" => " °C", "DIGITS" => 1, "ICON" => $this->Icon("temperature-half"), "USAGE_TYPE" => 1, "MIN" => -55, "MAX" => 125), "~Temperature"), 10);
 	}
  	
 	public function GetConfigurationForm(): string
@@ -40,7 +40,7 @@ require_once __DIR__ . '/../libs/GeCoSLegacyIcons.php';
 		
 		$arrayElements = array(); 
 		$arrayElements[] = array("name" => "Open", "type" => "CheckBox",  "caption" => "Active"); 
-		$arrayElements[] = array("type" => "CheckBox", "name" => "LegacyIcons", "caption" => "Legacy icons (classic WebFront)");
+		$arrayElements[] = array("type" => "CheckBox", "name" => "LegacyIcons", "caption" => "Legacy mode (variable profiles and icons for classic WebFront/app)");
  		
 		$arrayOptions = array();
 		

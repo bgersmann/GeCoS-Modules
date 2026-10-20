@@ -24,13 +24,13 @@ require_once __DIR__ . '/../libs/GeCoSLegacyIcons.php';
 		// Wird auch in ApplyChanges aufgerufen: bestehende Variablen behalten ID,
 		// Name und Position, es wird nur die Darstellung aktualisiert
 		//Status-Variablen anlegen
-		$this->RegisterVariableFloat("Temperature", $this->Translate("Temperature"), array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "SUFFIX" => " °C", "DIGITS" => 1, "ICON" => $this->Icon("temperature-half"), "USAGE_TYPE" => 1, "MIN" => -55, "MAX" => 125), 10);
+		$this->RegisterVariableFloat("Temperature", $this->Translate("Temperature"), $this->Presentation(array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "SUFFIX" => " °C", "DIGITS" => 1, "ICON" => $this->Icon("temperature-half"), "USAGE_TYPE" => 1, "MIN" => -55, "MAX" => 125), "~Temperature"), 10);
           	$this->DisableAction("Temperature");
 
-		$this->RegisterVariableFloat("VAD", $this->Translate("VAD"), array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "SUFFIX" => " V", "DIGITS" => 2, "ICON" => $this->Icon("bolt")), 20);
+		$this->RegisterVariableFloat("VAD", $this->Translate("VAD"), $this->Presentation(array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "SUFFIX" => " V", "DIGITS" => 2, "ICON" => $this->Icon("bolt")), "~Volt"), 20);
           	$this->DisableAction("VAD");
 
-		$this->RegisterVariableFloat("VDD", $this->Translate("VDD"), array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "SUFFIX" => " V", "DIGITS" => 2, "ICON" => $this->Icon("bolt")), 30);
+		$this->RegisterVariableFloat("VDD", $this->Translate("VDD"), $this->Presentation(array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "SUFFIX" => " V", "DIGITS" => 2, "ICON" => $this->Icon("bolt")), "~Volt"), 30);
           	$this->DisableAction("VDD");
 
 		$this->RegisterVariableFloat("XSENS", $this->Translate("XSENS"), array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "DIGITS" => 2), 40);
@@ -49,7 +49,7 @@ require_once __DIR__ . '/../libs/GeCoSLegacyIcons.php';
 
 		$arrayElements = array();
 		$arrayElements[] = array("name" => "Open", "type" => "CheckBox",  "caption" => "Active");
-		$arrayElements[] = array("type" => "CheckBox", "name" => "LegacyIcons", "caption" => "Legacy icons (classic WebFront)");
+		$arrayElements[] = array("type" => "CheckBox", "name" => "LegacyIcons", "caption" => "Legacy mode (variable profiles and icons for classic WebFront/app)");
 		$arrayElements[] = array("type" => "ValidationTextBox", "name" => "DeviceAddress", "caption" => "Sensor ID");
 		$arrayElements[] = array("type" => "NumberSpinner", "name" => "Offset", "caption" => "Offset", "digits" => 1, "suffix" => "°C", "minimum" => -10, "maximum" => 10);
 		$arrayElements[] = array("type" => "NumberSpinner", "name" => "Messzyklus", "caption" => "Measuring interval", "suffix" => "sek", "minimum" => 0);
