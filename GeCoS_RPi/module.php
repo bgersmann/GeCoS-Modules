@@ -1,19 +1,31 @@
 <?php
+require_once __DIR__ . '/../libs/GeCoSLegacyIcons.php';
     // Klassendefinition
     class GeCoS_RPi extends IPSModuleStrict 
     {
+	use GeCoSLegacyIcons;
 	// Überschreibt die interne IPS_Create($id) Funktion
         public function Create(): void
         {
 		// Diese Zeile nicht löschen.
 		parent::Create();
+		$this->RegisterPropertyBoolean("LegacyIcons", false);
 		$this->RegisterPropertyBoolean("Open", false);
 		$this->RegisterPropertyInteger("Messzyklus", 60);
 		$this->RegisterTimer("Messzyklus", 0, 'GeCoSRPi_Measurement_1($_IPS["TARGET"]);');
 		
+		$this->RegisterVariables();
+		$this->SetBuffer("PrevTotal", 0);
+		$this->SetBuffer("PrevIdle", 0);
+	}
+	
+	private function RegisterVariables()
+	{
+		// Wird auch in ApplyChanges aufgerufen: bestehende Variablen behalten ID,
+		// Name und Position, es wird nur die Darstellung aktualisiert
 		// Darstellungen
-		$MB = array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "SUFFIX" => " MB", "DIGITS" => 1, "ICON" => "memory");
-		$MHz = array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "SUFFIX" => " MHz", "DIGITS" => 1, "ICON" => "gauge-high");
+		$MB = array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "SUFFIX" => " MB", "DIGITS" => 1, "ICON" => $this->Icon("memory"));
+		$MHz = array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "SUFFIX" => " MHz", "DIGITS" => 1, "ICON" => $this->Icon("gauge-high"));
 		
 		//Status-Variablen anlegen
 		$this->RegisterVariableString("Board", $this->Translate("Board"), array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION), 10);
@@ -35,19 +47,17 @@
 		$this->RegisterVariableString("Uptime", $this->Translate("Uptime"), array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION), 90);
 		$this->DisableAction("Uptime");
 		// CPU/GPU
-		$this->RegisterVariableFloat("TemperaturCPU", $this->Translate("Temperature CPU"), array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "SUFFIX" => " °C", "DIGITS" => 1, "ICON" => "temperature-half", "USAGE_TYPE" => 1), 100);
+		$this->RegisterVariableFloat("TemperaturCPU", $this->Translate("Temperature CPU"), array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "SUFFIX" => " °C", "DIGITS" => 1, "ICON" => $this->Icon("temperature-half"), "USAGE_TYPE" => 1), 100);
 		$this->DisableAction("TemperaturCPU");
-		$this->RegisterVariableFloat("TemperaturGPU", $this->Translate("Temperature GPU"), array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "SUFFIX" => " °C", "DIGITS" => 1, "ICON" => "temperature-half", "USAGE_TYPE" => 1), 110);
+		$this->RegisterVariableFloat("TemperaturGPU", $this->Translate("Temperature GPU"), array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "SUFFIX" => " °C", "DIGITS" => 1, "ICON" => $this->Icon("temperature-half"), "USAGE_TYPE" => 1), 110);
 		$this->DisableAction("TemperaturGPU");
-		$this->RegisterVariableFloat("VoltageCPU", $this->Translate("Voltage CPU"), array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "SUFFIX" => " V", "DIGITS" => 2, "ICON" => "bolt"), 120);
+		$this->RegisterVariableFloat("VoltageCPU", $this->Translate("Voltage CPU"), array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "SUFFIX" => " V", "DIGITS" => 2, "ICON" => $this->Icon("bolt")), 120);
 		$this->DisableAction("VoltageCPU");
 		$this->RegisterVariableFloat("ARM_Frequenzy", $this->Translate("ARM Frequenzy"), $MHz, 130);
 		$this->DisableAction("ARM_Frequenzy");
 		// CPU Auslastung
-		$this->RegisterVariableFloat("AverageLoad", $this->Translate("CPU AverageLoad"), array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "PERCENTAGE" => true, "MIN" => 0, "MAX" => 1, "SUFFIX" => " %", "DIGITS" => 1, "ICON" => "gauge"), 140);
+		$this->RegisterVariableFloat("AverageLoad", $this->Translate("CPU AverageLoad"), array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "PERCENTAGE" => true, "MIN" => 0, "MAX" => 1, "SUFFIX" => " %", "DIGITS" => 1, "ICON" => $this->Icon("gauge")), 140);
 		$this->DisableAction("AverageLoad");
-		$this->SetBuffer("PrevTotal", 0);
-		$this->SetBuffer("PrevIdle", 0);
 		// Arbeitsspeicher
 		$this->RegisterVariableFloat("MemoryTotal", $this->Translate("Memory Total"), $MB, 200);
 		$this->DisableAction("MemoryTotal");
@@ -62,9 +72,9 @@
 		$this->DisableAction("SD_Card_Used");
 		$this->RegisterVariableFloat("SD_Card_Available", $this->Translate("SD-Card Available"), $MB, 320);
 		$this->DisableAction("SD_Card_Available");
-		$this->RegisterVariableFloat("SD_Card_Used_rel", $this->Translate("SD-Card Used (rel)"), array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "PERCENTAGE" => true, "MIN" => 0, "MAX" => 1, "SUFFIX" => " %", "DIGITS" => 1, "ICON" => "gauge"), 330);
+		$this->RegisterVariableFloat("SD_Card_Used_rel", $this->Translate("SD-Card Used (rel)"), array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "PERCENTAGE" => true, "MIN" => 0, "MAX" => 1, "SUFFIX" => " %", "DIGITS" => 1, "ICON" => $this->Icon("gauge")), 330);
 		$this->DisableAction("SD_Card_Used_rel");
-      }
+	}
 
 	public function GetConfigurationForm(): string
 	{ 
@@ -76,6 +86,7 @@
 		
 		$arrayElements = array(); 
 		$arrayElements[] = array("name" => "Open", "type" => "CheckBox",  "caption" => "Active"); 
+		$arrayElements[] = array("type" => "CheckBox", "name" => "LegacyIcons", "caption" => "Legacy icons (classic WebFront)");
  			
 		$arrayElements[] = array("type" => "IntervalBox", "name" => "Messzyklus", "caption" => "Seconds");
 		$arrayElements[] = array("type" => "Label", "label" => "_____________________________________________________________________________________________________");
@@ -94,6 +105,9 @@
         {
                  // Diese Zeile nicht löschen
                  parent::ApplyChanges();
+		
+		// Darstellungen aktualisieren (z.B. Legacy-Icons)
+		$this->RegisterVariables();
 		
                 If ((IPS_GetKernelRunlevel() == 10103) AND ($this->HasActiveParent() == true)) {
 			//ReceiveData-Filter setzen

@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../libs/GeCoSLegacyIcons.php';
 /**
  * AutoLoaderSSHClientPHPSecLib
  */
@@ -27,11 +28,13 @@ class AutoLoaderPHPSecLib
 }
 class GeCoS_IO_V2 extends IPSModuleStrict
 {
+	use GeCoSLegacyIcons;
 	private $Socket = false;
 
 	public function Create(): void
 	{
 		parent::Create();
+		$this->RegisterPropertyBoolean("LegacyIcons", false);
 
 		// Modul-Eigenschaftserstellung
 		$this->RegisterPropertyBoolean("Open", false);
@@ -45,19 +48,7 @@ class GeCoS_IO_V2 extends IPSModuleStrict
 		$this->RegisterTimer("RTC_Data", 0, 'GeCoSIOV2_GetRTC_Data($_IPS["TARGET"]);');
 		$this->RegisterTimer("GetSystemStatus", 0, 'GeCoSIOV2_GetSystemStatus($_IPS["TARGET"]);');
 
-		// Statusvariablen anlegen
-		//$this->RegisterVariableInteger("Boardversion", $this->Translate("GeCoS-Server"), "IPS2CeCoSIO.Boardversion", 25);
-
-		//$this->RegisterVariableInteger("SoftwareVersion", $this->Translate("SoftwareVersion"), "", 30);
-
-		$this->RegisterVariableFloat("RTC_Temperature", $this->Translate("RTC temperature"), array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "SUFFIX" => " °C", "DIGITS" => 1, "ICON" => "temperature-half", "USAGE_TYPE" => 1), 40);
-
-		$this->RegisterVariableInteger("RTC_Timestamp", $this->Translate("RTC timestamp"), array("PRESENTATION" => VARIABLE_PRESENTATION_DATE_TIME, "DATE" => 1, "MONTH_TEXT" => false, "DAY_OF_THE_WEEK" => false, "TIME" => 2), 50);
-
-		$this->RegisterVariableBoolean("ServerStatus", $this->Translate("Server status"), array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "ICON" => "circle-info", "OPTIONS" => json_encode(array(array("Value" => false, "Caption" => $this->Translate("Inactive"), "IconActive" => false, "IconValue" => "", "ColorActive" => true, "ColorValue" => 0xFF0000), array("Value" => true, "Caption" => $this->Translate("Active"), "IconActive" => false, "IconValue" => "", "ColorActive" => true, "ColorValue" => 0x00FF00)))), 60);
-
-		$this->RegisterVariableInteger("LastKeepAlive", $this->Translate("Last keep alive"), array("PRESENTATION" => VARIABLE_PRESENTATION_DATE_TIME, "DATE" => 1, "MONTH_TEXT" => false, "DAY_OF_THE_WEEK" => false, "TIME" => 2), 70);
-
+		$this->RegisterVariables();
 		$ModulesArray = array();
 		$this->SetBuffer("ModulesArray", serialize($ModulesArray));
 		$ModuleSearch = "false";
@@ -67,6 +58,24 @@ class GeCoS_IO_V2 extends IPSModuleStrict
 		$this->SetBuffer("OWArray", serialize($OWArray));
 		$OWSearch = "false";
 		$this->SetBuffer("OWSearch", $OWSearch);
+	}
+	
+	private function RegisterVariables()
+	{
+		// Wird auch in ApplyChanges aufgerufen: bestehende Variablen behalten ID,
+		// Name und Position, es wird nur die Darstellung aktualisiert
+		// Statusvariablen anlegen
+		//$this->RegisterVariableInteger("Boardversion", $this->Translate("GeCoS-Server"), "IPS2CeCoSIO.Boardversion", 25);
+
+		//$this->RegisterVariableInteger("SoftwareVersion", $this->Translate("SoftwareVersion"), "", 30);
+
+		$this->RegisterVariableFloat("RTC_Temperature", $this->Translate("RTC temperature"), array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "SUFFIX" => " °C", "DIGITS" => 1, "ICON" => $this->Icon("temperature-half"), "USAGE_TYPE" => 1), 40);
+
+		$this->RegisterVariableInteger("RTC_Timestamp", $this->Translate("RTC timestamp"), array("PRESENTATION" => VARIABLE_PRESENTATION_DATE_TIME, "DATE" => 1, "MONTH_TEXT" => false, "DAY_OF_THE_WEEK" => false, "TIME" => 2), 50);
+
+		$this->RegisterVariableBoolean("ServerStatus", $this->Translate("Server status"), array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "ICON" => $this->Icon("circle-info"), "OPTIONS" => json_encode(array(array("Value" => false, "Caption" => $this->Translate("Inactive"), "IconActive" => false, "IconValue" => "", "ColorActive" => true, "ColorValue" => 0xFF0000), array("Value" => true, "Caption" => $this->Translate("Active"), "IconActive" => false, "IconValue" => "", "ColorActive" => true, "ColorValue" => 0x00FF00)))), 60);
+
+		$this->RegisterVariableInteger("LastKeepAlive", $this->Translate("Last keep alive"), array("PRESENTATION" => VARIABLE_PRESENTATION_DATE_TIME, "DATE" => 1, "MONTH_TEXT" => false, "DAY_OF_THE_WEEK" => false, "TIME" => 2), 70);
 	}
 
 	public function GetConfigurationForm(): string
@@ -80,6 +89,7 @@ class GeCoS_IO_V2 extends IPSModuleStrict
 
 		$arrayElements = array();
 		$arrayElements[] = array("type" => "CheckBox", "name" => "Open", "caption" => "Active");
+		$arrayElements[] = array("type" => "CheckBox", "name" => "LegacyIcons", "caption" => "Legacy icons (classic WebFront)");
 		$arrayElements[] = array("type" => "Label", "label" => "_____________________________________________________________________________________________________");
 		$arrayElements[] = array("type" => "ValidationTextBox", "name" => "IPAddress", "caption" => "IP");
 		$arrayElements[] = array("type" => "Label", "label" => "_____________________________________________________________________________________________________");
@@ -142,6 +152,9 @@ class GeCoS_IO_V2 extends IPSModuleStrict
 	{
 		//Never delete this line!
 		parent::ApplyChanges();
+		
+		// Darstellungen aktualisieren (z.B. Legacy-Icons)
+		$this->RegisterVariables();
 
 		$this->SetValue("ServerStatus", false);
 

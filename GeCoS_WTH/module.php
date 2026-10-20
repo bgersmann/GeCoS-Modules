@@ -1,12 +1,15 @@
 <?php
+require_once __DIR__ . '/../libs/GeCoSLegacyIcons.php';
     // Klassendefinition
     class GeCoS_WTH extends IPSModuleStrict 
     {
+	use GeCoSLegacyIcons;
 	// Überschreibt die interne IPS_Create($id) Funktion
         public function Create(): void
         {
             	// Diese Zeile nicht löschen.
             	parent::Create();
+		$this->RegisterPropertyBoolean("LegacyIcons", false);
  	    	$this->RegisterPropertyBoolean("Open", false);
 		$this->RegisterPropertyString("IPAddress", "127.0.0.1");
 		$this->RegisterPropertyInteger("Timer_1", 60);
@@ -18,6 +21,13 @@
 		$this->RegisterPropertyInteger("Temperature_ID", 0);
 		$this->RegisterPropertyInteger("Humidity_ID", 0);
 		
+		$this->RegisterVariables();
+	}
+	
+	private function RegisterVariables()
+	{
+		// Wird auch in ApplyChanges aufgerufen: bestehende Variablen behalten ID,
+		// Name und Position, es wird nur die Darstellung aktualisiert
 		//Status-Variablen anlegen
 		$this->RegisterVariableFloat("Hardware", $this->Translate("Hardware version"), $this->ValuePresentation("", 1, "microchip"), 10);
 		$this->DisableAction("Hardware");
@@ -57,7 +67,7 @@
 		
 		$this->RegisterVariableFloat("PressureTrend24h", $this->Translate("Air pressure 24h trend"), $this->ValuePresentation(" hPa", 1, "gauge"), 120);
 		$this->DisableAction("PressureTrend24h");
-        }
+	}
  	
 	public function GetConfigurationForm(): string
 	{ 
@@ -71,6 +81,7 @@
 		
 		$arrayElements = array(); 
 		$arrayElements[] = array("name" => "Open", "type" => "CheckBox",  "caption" => "Active"); 
+		$arrayElements[] = array("type" => "CheckBox", "name" => "LegacyIcons", "caption" => "Legacy icons (classic WebFront)");
 		$arrayElements[] = array("type" => "Label", "label" => "IP or hostname");
 		$arrayElements[] = array("type" => "ValidationTextBox", "name" => "IPAddress", "caption" => "IP");
 		$arrayElements[] = array("type" => "Label", "label" => "Minimum 5 seconds, 0 => off");
@@ -100,6 +111,9 @@
         {
             	// Diese Zeile nicht löschen
             	parent::ApplyChanges();
+		
+		// Darstellungen aktualisieren (z.B. Legacy-Icons)
+		$this->RegisterVariables();
             			
 		// Summary setzen
 		$this->SetSummary($this->ReadPropertyString('IPAddress'));
@@ -331,7 +345,7 @@
 	 
 	private function ValuePresentation(string $Suffix, int $Digits, string $Icon = "", int $UsageType = 0)
 	{
-		return array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "SUFFIX" => $Suffix, "DIGITS" => $Digits, "ICON" => $Icon, "USAGE_TYPE" => $UsageType);
+		return array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "SUFFIX" => $Suffix, "DIGITS" => $Digits, "ICON" => $this->Icon($Icon), "USAGE_TYPE" => $UsageType);
 	}
 }
 ?>

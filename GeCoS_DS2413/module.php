@@ -1,12 +1,15 @@
 <?php
+require_once __DIR__ . '/../libs/GeCoSLegacyIcons.php';
     // Klassendefinition
     class GeCoS_DS2413 extends IPSModuleStrict 
     {
+	use GeCoSLegacyIcons;
 	// Überschreibt die interne IPS_Create($id) Funktion
         public function Create(): void
         {
             	// Diese Zeile nicht löschen.
             	parent::Create();
+		$this->RegisterPropertyBoolean("LegacyIcons", false);
  	    	$this->RegisterPropertyBoolean("Open", false);
 		$this->RegisterPropertyString("DeviceAddress", "Sensor ID");
 		$this->RegisterPropertyInteger("DeviceFunction_0", 1);
@@ -31,6 +34,7 @@
 		
 		$arrayElements = array(); 
 		$arrayElements[] = array("name" => "Open", "type" => "CheckBox",  "caption" => "Active"); 
+		$arrayElements[] = array("type" => "CheckBox", "name" => "LegacyIcons", "caption" => "Legacy icons (classic WebFront)");
  		
 		$arrayOptions = array();
 		
@@ -240,12 +244,12 @@
 			$Ident = "Status_".$Port;
 			If ($this->ReadPropertyInteger("DeviceFunction_".$Port) == 0) {
 				// Ausgang: schaltbar
-				$this->RegisterVariableBoolean($Ident, sprintf($this->Translate("Status (%d)"), $Port), array("PRESENTATION" => VARIABLE_PRESENTATION_SWITCH), ($Port + 1) * 10);
+				$this->RegisterVariableBoolean($Ident, sprintf($this->Translate("Status (%d)"), $Port), $this->SwitchPresentation(), ($Port + 1) * 10);
 				$this->EnableAction($Ident);
 			}
 			else {
 				// Eingang: nur Anzeige
-				$this->RegisterVariableBoolean($Ident, sprintf($this->Translate("Status (%d)"), $Port), array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION), ($Port + 1) * 10);
+				$this->RegisterVariableBoolean($Ident, sprintf($this->Translate("Status (%d)"), $Port), array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "ICON" => $this->Icon("", "Power")), ($Port + 1) * 10);
 				$this->DisableAction($Ident);
 			}
 		}

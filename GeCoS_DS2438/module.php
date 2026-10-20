@@ -1,31 +1,41 @@
 <?php
+require_once __DIR__ . '/../libs/GeCoSLegacyIcons.php';
     // Klassendefinition
     class GeCoS_DS2438 extends IPSModuleStrict
     {
+	use GeCoSLegacyIcons;
 	// Überschreibt die interne IPS_Create($id) Funktion
         public function Create(): void
         {
             	// Diese Zeile nicht löschen.
             	parent::Create();
+		$this->RegisterPropertyBoolean("LegacyIcons", false);
  	    	$this->RegisterPropertyBoolean("Open", false);
 		$this->RegisterPropertyString("DeviceAddress", "Sensor ID");
 		$this->RegisterPropertyInteger("Messzyklus", 60);
 		$this->RegisterPropertyFloat("Offset", 0);
 		$this->RegisterTimer("Messzyklus", 0, 'GeCoSDS2438_Measurement($_IPS["TARGET"]);');
 
+		$this->RegisterVariables();
+	}
+	
+	private function RegisterVariables()
+	{
+		// Wird auch in ApplyChanges aufgerufen: bestehende Variablen behalten ID,
+		// Name und Position, es wird nur die Darstellung aktualisiert
 		//Status-Variablen anlegen
-		$this->RegisterVariableFloat("Temperature", $this->Translate("Temperature"), array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "SUFFIX" => " °C", "DIGITS" => 1, "ICON" => "temperature-half", "USAGE_TYPE" => 1, "MIN" => -55, "MAX" => 125), 10);
+		$this->RegisterVariableFloat("Temperature", $this->Translate("Temperature"), array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "SUFFIX" => " °C", "DIGITS" => 1, "ICON" => $this->Icon("temperature-half"), "USAGE_TYPE" => 1, "MIN" => -55, "MAX" => 125), 10);
           	$this->DisableAction("Temperature");
 
-		$this->RegisterVariableFloat("VAD", $this->Translate("VAD"), array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "SUFFIX" => " V", "DIGITS" => 2, "ICON" => "bolt"), 20);
+		$this->RegisterVariableFloat("VAD", $this->Translate("VAD"), array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "SUFFIX" => " V", "DIGITS" => 2, "ICON" => $this->Icon("bolt")), 20);
           	$this->DisableAction("VAD");
 
-		$this->RegisterVariableFloat("VDD", $this->Translate("VDD"), array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "SUFFIX" => " V", "DIGITS" => 2, "ICON" => "bolt"), 30);
+		$this->RegisterVariableFloat("VDD", $this->Translate("VDD"), array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "SUFFIX" => " V", "DIGITS" => 2, "ICON" => $this->Icon("bolt")), 30);
           	$this->DisableAction("VDD");
 
 		$this->RegisterVariableFloat("XSENS", $this->Translate("XSENS"), array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "DIGITS" => 2), 40);
           	$this->DisableAction("XSENS");
-        }
+	}
 
 	public function GetConfigurationForm(): string
 	{
@@ -39,6 +49,7 @@
 
 		$arrayElements = array();
 		$arrayElements[] = array("name" => "Open", "type" => "CheckBox",  "caption" => "Active");
+		$arrayElements[] = array("type" => "CheckBox", "name" => "LegacyIcons", "caption" => "Legacy icons (classic WebFront)");
 		$arrayElements[] = array("type" => "ValidationTextBox", "name" => "DeviceAddress", "caption" => "Sensor ID");
 		$arrayElements[] = array("type" => "NumberSpinner", "name" => "Offset", "caption" => "Offset", "digits" => 1, "suffix" => "°C", "minimum" => -10, "maximum" => 10);
 		$arrayElements[] = array("type" => "NumberSpinner", "name" => "Messzyklus", "caption" => "Measuring interval", "suffix" => "sek", "minimum" => 0);
@@ -53,6 +64,9 @@
         {
             	// Diese Zeile nicht löschen
             	parent::ApplyChanges();
+		
+		// Darstellungen aktualisieren (z.B. Legacy-Icons)
+		$this->RegisterVariables();
 
 		// Summary setzen
 		$this->SetSummary("SC: ".$this->ReadPropertyString("DeviceAddress"));

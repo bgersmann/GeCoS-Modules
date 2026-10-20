@@ -1,25 +1,34 @@
 <?php
+require_once __DIR__ . '/../libs/GeCoSLegacyIcons.php';
     // Klassendefinition
     class GeCoS_16In extends IPSModuleStrict 
     {
+	use GeCoSLegacyIcons;
 	// PCA9655E
 	// Überschreibt die interne IPS_Create($id) Funktion
         public function Create(): void
         {
             	// Diese Zeile nicht löschen.
             	parent::Create();
+		$this->RegisterPropertyBoolean("LegacyIcons", false);
  	    	$this->RegisterPropertyBoolean("Open", false);
  	    	$this->RegisterPropertyInteger("DeviceAddress", 32);
 		$this->RegisterPropertyInteger("DeviceBus", 0);
 		$this->RegisterTimer("GetInput", 0, 'GeCoS16In_GetInput($_IPS["TARGET"]);');
 		
+		$this->RegisterVariables();
+	}
+	
+	private function RegisterVariables()
+	{
+		// Wird auch in ApplyChanges aufgerufen: bestehende Variablen behalten ID,
+		// Name und Position, es wird nur die Darstellung aktualisiert
 		//Status-Variablen anlegen
 		for ($i = 0; $i <= 15; $i++) {
-			$this->RegisterVariableBoolean("Input_X".$i, sprintf($this->Translate("Input X%d"), $i), array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION), ($i + 1) * 10);
+			$this->RegisterVariableBoolean("Input_X".$i, sprintf($this->Translate("Input X%d"), $i), array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "ICON" => $this->Icon("", "Power")), ($i + 1) * 10);
 			$this->DisableAction("Input_X".$i);	
 		}
-		
-        }
+	}
  	
 	public function GetConfigurationForm(): string
 	{ 
@@ -33,6 +42,7 @@
 		
 		$arrayElements = array(); 
 		$arrayElements[] = array("name" => "Open", "type" => "CheckBox",  "caption" => "Active"); 
+		$arrayElements[] = array("type" => "CheckBox", "name" => "LegacyIcons", "caption" => "Legacy icons (classic WebFront)");
  		
 		$arrayOptions = array();
 		for ($i = 32; $i <= 35; $i++) {
@@ -61,6 +71,9 @@
         {
             	// Diese Zeile nicht löschen
             	parent::ApplyChanges();
+		
+		// Darstellungen aktualisieren (z.B. Legacy-Icons)
+		$this->RegisterVariables();
 		
 		// Summary setzen
 		$this->SetSummary("0x".dechex($this->ReadPropertyInteger("DeviceAddress"))." - I²C-Bus ".($this->ReadPropertyInteger("DeviceBus")));

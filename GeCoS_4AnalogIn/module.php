@@ -1,12 +1,15 @@
 <?php
+require_once __DIR__ . '/../libs/GeCoSLegacyIcons.php';
     // Klassendefinition
     class GeCoS_4AnalogIn extends IPSModuleStrict 
     {
+	use GeCoSLegacyIcons;
 	// Überschreibt die interne IPS_Create($id) Funktion
         public function Create(): void
         {
             	// Diese Zeile nicht löschen.
             	parent::Create();
+		$this->RegisterPropertyBoolean("LegacyIcons", false);
  	    	$this->RegisterPropertyBoolean("Open", false);
  	    	$this->RegisterPropertyInteger("DeviceAddress", 105);
 		$this->RegisterPropertyInteger("DeviceBus", 0);
@@ -25,15 +28,22 @@
 		$this->RegisterPropertyBoolean("Active_3", true);
 		$this->RegisterTimer("Messzyklus", 0, 'GeCoS4AnalogIn_GetInput($_IPS["TARGET"]);');
 		
+		$this->RegisterVariables();
+	}
+	
+	private function RegisterVariables()
+	{
+		// Wird auch in ApplyChanges aufgerufen: bestehende Variablen behalten ID,
+		// Name und Position, es wird nur die Darstellung aktualisiert
 		// Profil anlegen
-	    	$Volt = array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "SUFFIX" => " V", "DIGITS" => 3, "ICON" => "bolt");
+	    	$Volt = array("PRESENTATION" => VARIABLE_PRESENTATION_VALUE_PRESENTATION, "SUFFIX" => " V", "DIGITS" => 3, "ICON" => $this->Icon("bolt"));
 		
 		//Status-Variablen anlegen
 		for ($i = 0; $i <= 3; $i++) {
 			$this->RegisterVariableFloat("Input_X".$i, sprintf($this->Translate("Input X%d"), $i), $Volt, ($i + 1) * 10);
 			$this->DisableAction("Input_X".$i);
 		}
-        }
+	}
  	
 	public function GetConfigurationForm(): string
 	{ 
@@ -46,6 +56,7 @@
 		
 		$arrayElements = array(); 
 		$arrayElements[] = array("name" => "Open", "type" => "CheckBox",  "caption" => "Active"); 
+		$arrayElements[] = array("type" => "CheckBox", "name" => "LegacyIcons", "caption" => "Legacy icons (classic WebFront)");
  		
 		$arrayOptions = array();
 		for ($i = 105; $i <= 107; $i++) {
@@ -98,6 +109,9 @@
         {
             	// Diese Zeile nicht löschen
             	parent::ApplyChanges();
+		
+		// Darstellungen aktualisieren (z.B. Legacy-Icons)
+		$this->RegisterVariables();
 		
 		// Summary setzen
 		$this->SetSummary("0x".dechex($this->ReadPropertyInteger("DeviceAddress"))." - I²C-Bus ".($this->ReadPropertyInteger("DeviceBus") - 4));

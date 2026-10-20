@@ -47,6 +47,8 @@ Bei mehreren GeCoS-Servern wird je Server ein eigener IO mit eigenen Konfigurato
 
 WTH, WTHQ und WSens benötigen keinen IO und werden direkt angelegt.
 
+**Legacy-Icons:** Jede Geräte-Instanz hat die Option „Legacy-Icons (klassisches WebFront)“. Ist sie aktiv, werden in den Darstellungen die klassischen WebFront-Icons hinterlegt (z. B. Temperature, Gauge, Drops, Electricity, Intensity, Power) statt der neuen Icons der Kachel-Visualisierung. Die Variablen bleiben dabei erhalten, es wird nur ihre Darstellung angepasst.
+
 ## 4. Module
 
 ### GeCoS IO V2
@@ -120,12 +122,24 @@ Listet die am GeCoS-Server gefundenen 1-Wire-Sensoren (DS18S20, DS18B20, DS2413,
 
 ### GeCoS PWM16Out
 
-16 PWM-Ausgänge mit je einer Schalt- und einer Helligkeitsvariable (0–4095, Anzeige in %).
+16 PWM-Ausgänge mit je einer Schalt- und einer Helligkeitsvariable.
+
+**Dimmkurven:** Unter „Dimmkurven“ kann für jeden Ausgang eine Kennlinie gewählt werden:
+
+| Dimmkurve | Helligkeitsvariable | Umrechnung |
+|---|---|---|
+| Keine | Rohwert 0–4095 | keine |
+| Linear | 0–100 % | gleichmäßig auf 0–4095 |
+| Logarithmisch | 0–100 % | Kennlinie des gecosDimmAktor (1 % ≈ 656, 50 % ≈ 1624) |
+| CIE 1931 | 0–100 % | wahrnehmungsgleiche Helligkeit nach CIE 1931 (1 % ≈ 5, 50 % ≈ 754) |
+
+Beim Wechsel der Dimmkurve bleibt die Variable mit ihrer ID erhalten, nur ihre Darstellung wird angepasst. Der aktuelle Wert wird umgerechnet, sodass sich die Helligkeit nicht ändert. 0 % schaltet den PWM-Wert auf 0.
 
 | Funktion | Beschreibung |
 |---|---|
 | `GeCoSPWM16Out_SetOutputPinStatus(int $InstanzID, int $Kanal, bool $Status)` | Kanal (0–15) ein-/ausschalten |
-| `GeCoSPWM16Out_SetOutputPinValue(int $InstanzID, int $Kanal, int $Wert)` | Helligkeit (0–4095) setzen |
+| `GeCoSPWM16Out_SetOutputPinValue(int $InstanzID, int $Kanal, int $Wert)` | PWM-Rohwert (0–4095) setzen, unabhängig von der Dimmkurve |
+| `GeCoSPWM16Out_SetOutputPinIntensity(int $InstanzID, int $Kanal, int $Prozent)` | Helligkeit (0–100 %) über die Dimmkurve des Kanals setzen (ohne Dimmkurve linear) |
 
 ### GeCoS RGBW
 
@@ -241,6 +255,8 @@ Aus den Messwerten werden Taupunkt, absolute Luftfeuchtigkeit und der relative L
 ## 5. Versionshistorie
 
 ### 3.0
+- Option „Legacy-Icons“ für das klassische WebFront
+- PWM16Out: Dimmkurve je Ausgang wählbar (Keine, Linear, Logarithmisch, CIE 1931)
 - Lokalisierung Englisch (Konfigurationsformulare, Variablennamen, Logmeldungen)
 - Umstellung auf `IPSModuleStrict`, Mindestversion Symcon 8.2
 - Darstellungen statt Variablenprofilen

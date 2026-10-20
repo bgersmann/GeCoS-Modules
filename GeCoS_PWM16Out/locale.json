@@ -2,8 +2,11 @@
     "translations": {
         "de": {
             "Active": "Aktiv",
+            "Apply to all outputs": "Auf alle Ausgänge anwenden",
             "Device address": "Device Adresse",
             "Device could not be found": "Device konnte nicht gefunden werden",
+            "Dimming curve for all outputs": "Dimmkurve für alle Ausgänge",
+            "Dimming curves": "Dimmkurven",
             "GeCoS I²C bus": "GeCoS I²C-Bus",
             "GeCoS I²C bus 0": "GeCoS I²C-Bus 0",
             "GeCoS I²C bus 1": "GeCoS I²C-Bus 1",
@@ -12,8 +15,13 @@
             "Instance is being created": "Instanz wird erstellt",
             "Instance is faulty": "Instanz ist fehlerhaft",
             "Instance is inactive": "Instanz ist inaktiv",
+            "Legacy icons (classic WebFront)": "Legacy-Icons (klassisches WebFront)",
+            "Logarithmic (0-100 %)": "Logarithmisch (0-100 %)",
             "Manufacturer information": "Herstellerinformationen",
-            "Output X%d": "Ausgang X%d"
+            "None (raw value 0-4095)": "Keine (Rohwert 0-4095)",
+            "Output X%d": "Ausgang X%d",
+            "The selection is entered for all outputs under \"Dimming curves\" and takes effect after \"Apply changes\".": "Die Auswahl wird unter \"Dimmkurven\" für alle Ausgänge eingetragen und mit \"Änderungen übernehmen\" wirksam.",
+            "With a dimming curve the intensity variable shows 0-100 % and is converted to the PWM value 0-4095. The variable is kept, existing values are converted.": "Mit Dimmkurve zeigt die Helligkeitsvariable 0-100 % und wird in den PWM-Wert 0-4095 umgerechnet. Die Variable bleibt erhalten, vorhandene Werte werden umgerechnet."
         }
     }
 }
